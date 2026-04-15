@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#262626",
+                        "primary-container": "#769dff",
+                        "primary-fixed-dim": "#5f8fff",
+                        "primary-dim": "#2c6dec",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "on-tertiary-fixed": "#271300",
+                        "on-secondary-container": "#ffddfd",
+                        "inverse-surface": "#fcf8f8",
+                        "primary": "#8cacff",
+                        "error": "#ff716c",
+                        "secondary-container": "#8f15a4",
+                        "surface-container": "#1a1919",
+                        "on-primary-fixed-variant": "#002869",
+                        "on-secondary-fixed": "#5d006d",
+                        "on-primary-container": "#001f56",
+                        "error-dim": "#d7383b",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#ff9800",
+                        "error-container": "#9f0519",
+                        "outline": "#777575",
+                        "secondary": "#ea73fb",
+                        "tertiary-dim": "#ec8c00",
+                        "surface-container-lowest": "#000000",
+                        "surface-container-highest": "#262626",
+                        "surface-container-low": "#131313",
+                        "tertiary-fixed": "#ff9800",
+                        "on-error": "#490006",
+                        "surface-container-high": "#201f1f",
+                        "secondary-dim": "#e46df5",
+                        "on-tertiary": "#583100",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "on-tertiary-container": "#4a2800",
+                        "outline-variant": "#484847",
+                        "surface": "#0e0e0e",
+                        "on-secondary": "#450051",
+                        "on-error-container": "#ffa8a3",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "inverse-on-surface": "#565554",
+                        "primary-fixed": "#769dff",
+                        "inverse-primary": "#0057d1",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "surface-tint": "#8cacff",
+                        "on-surface-variant": "#adaaaa",
+                        "tertiary": "#ffac54",
+                        "on-background": "#ffffff",
+                        "surface-dim": "#0e0e0e",
+                        "surface-bright": "#2c2c2c",
+                        "on-primary": "#002a6e",
+                        "secondary-fixed": "#fcbcff",
+                        "background": "#0e0e0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1a1919; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #201f1f; }
+        .markdown-editor { tab-size: 4; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 antialiased overflow-hidden">
+<!-- Sidebar Shell (Shared Component: SideNavBar) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 h-screen w-64 border-r border-[#ffffff]/10 bg-[#0e0e0e]/60 backdrop-blur-xl z-50">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-bold tracking-tighter text-[#8cacff] uppercase">Obsidian Flux</h1>
+<p class="font-['Manrope'] tracking-tight text-xs text-on-surface-variant mt-1">Technical Editorial</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 cursor-pointer flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span> Dashboard
+            </div>
+<div class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 cursor-pointer flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="article">article</span> Articles
+            </div>
+<div class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 cursor-pointer flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="perm_media">perm_media</span> Media
+            </div>
+<div class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 cursor-pointer flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="analytics">analytics</span> Analytics
+            </div>
+<!-- Active State: Editor -->
+<div class="bg-[#201f1f] text-[#8cacff] rounded-md font-bold px-4 py-2 flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="edit_note" style="font-variation-settings: 'FILL' 1;">edit_note</span> Editor
+            </div>
+</nav>
+<div class="mt-auto space-y-1">
+<div class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 cursor-pointer flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="settings">settings</span> Settings
+            </div>
+<div class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 cursor-pointer flex items-center gap-3 font-['Manrope'] tracking-tight text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="help_outline">help_outline</span> Support
+            </div>
+<div class="mt-6 flex items-center gap-3 px-4 py-3 bg-surface-container-low rounded-lg">
+<img alt="Curator Profile" class="w-8 h-8 rounded-full border border-primary/20" data-alt="close-up portrait of a professional technical editor with creative lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgeKFAKWyBRKMk0S7JEY317-MgGcPF37l0tIbddU_ln8EcBKTCA33Kf0X7d7bKRHpvL9cEAxG5FYupbL-dMPW7j5EwSZy-JWtGeR2Db4Tn9_N23EIfNE67kVQe0S0k82rKKxqmiP2xJ5i6GmI0c2HcKM5yLsqKaAZeEYazTu-fsiY_IatTHv_VGa0aoKrFhYvhsM_BFWhRvt7l4d7MgCiBiL3uxmLtHeRFuTa1m6N-lT--HEXUT9W_D9vObjttFOMdGi5bKWQdL-4"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-on-surface truncate">Admin Curator</p>
+<p class="text-[10px] text-on-surface-variant truncate">Premium Status</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar Shell (Shared Component: TopAppBar) -->
+<header class="flex items-center justify-between px-8 ml-64 w-[calc(100%-16rem)] h-16 bg-[#0e0e0e]/60 backdrop-blur-xl border-b border-[#ffffff]/10 fixed top-0 z-40">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg cursor-pointer hover:text-primary transition-colors" data-icon="arrow_back">arrow_back</span>
+<span class="font-label text-xs uppercase tracking-widest text-[#8cacff] border-b-2 border-[#8cacff] pb-1">Editor</span>
+<span class="font-label text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#f5f5f5] cursor-pointer">Drafts</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<button class="px-5 py-1.5 rounded-md font-label text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all active:scale-95">
+                    保存草稿
+                </button>
+<button class="px-6 py-1.5 rounded-md font-label text-xs font-bold text-on-primary bg-gradient-to-br from-primary to-primary-dim hover:brightness-110 transition-all active:scale-95 shadow-[0_10px_20px_-5px_rgba(140,172,255,0.3)]">
+                    正式发布
+                </button>
+</div>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-xl cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-xl cursor-pointer hover:text-primary transition-colors" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="ml-64 mt-16 h-[calc(100vh-4rem)] flex overflow-hidden">
+<!-- Left: Metadata & Configuration Panel (Collapsible Feel) -->
+<section class="w-80 h-full border-r border-outline-variant/10 bg-surface-container-low flex flex-col p-6 overflow-y-auto">
+<div class="space-y-8">
+<!-- Title & Slug -->
+<div class="space-y-3">
+<label class="font-label text-[10px] uppercase tracking-[0.2em] text-primary/70">文章标题</label>
+<input class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary/40 rounded-lg text-on-surface text-sm p-3 font-headline font-semibold" placeholder="输入极简主义标题..." type="text"/>
+</div>
+<!-- Cover Image -->
+<div class="space-y-3">
+<label class="font-label text-[10px] uppercase tracking-[0.2em] text-primary/70">封面图</label>
+<div class="relative group aspect-video rounded-xl bg-surface-container overflow-hidden border border-dashed border-outline-variant/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-all">
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 grayscale group-hover:opacity-50 transition-opacity" data-alt="abstract architectural geometry with strong shadows and clean lines in monochrome technical style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLzNytLqHHt5gnZHAWPwaLbxfExRiQHuEkAZzSpSE6aUpOOhahzR8u7u8fsyEGgTiRy_U0k7okUA2sG08fk5eXVGHdyQ1ML5yWBIIoDR-2NQ8gyNDtlOZ5gKFHSlEOQUzX53Rqn66Mumj2UVHmNkDxuU37ZHYZ1lYmsJ_a8u--1x_VPQa1sFg-ds_iuFOak969mz51B_ENqo5THXEpo5pri4CI124id5S1wUlwemNmwg04CFUcKnhmhJ3Njw-I-lqXrzKl_X4giY0"/>
+<div class="relative z-10 flex flex-col items-center gap-2 text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="add_photo_alternate">add_photo_alternate</span>
+<span class="text-[10px] font-label uppercase tracking-widest">上传资源</span>
+</div>
+</div>
+</div>
+<!-- Tags Selection -->
+<div class="space-y-3">
+<label class="font-label text-[10px] uppercase tracking-[0.2em] text-primary/70">标签分类</label>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-[10px] font-label font-bold cursor-pointer">RUST</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant border border-outline-variant/20 rounded-full text-[10px] font-label font-bold hover:bg-surface-variant transition-colors cursor-pointer">AI</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant border border-outline-variant/20 rounded-full text-[10px] font-label font-bold hover:bg-surface-variant transition-colors cursor-pointer">KERNEL</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant border border-outline-variant/20 rounded-full text-[10px] font-label font-bold hover:bg-surface-variant transition-colors cursor-pointer">SYSTEMS</span>
+</div>
+</div>
+<!-- SEO Description -->
+<div class="space-y-3">
+<label class="font-label text-[10px] uppercase tracking-[0.2em] text-primary/70">SEO 描述</label>
+<textarea class="w-full h-32 bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary/40 rounded-lg text-on-surface-variant text-xs p-3 leading-relaxed resize-none" placeholder="简洁的摘要有助于搜索引擎收录..."></textarea>
+</div>
+<!-- Article Settings -->
+<div class="pt-4 border-t border-outline-variant/10 space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">允许评论</span>
+<div class="w-8 h-4 bg-primary/40 rounded-full relative">
+<div class="absolute right-0.5 top-0.5 w-3 h-3 bg-primary rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">显示目录</span>
+<div class="w-8 h-4 bg-surface-container-highest rounded-full relative">
+<div class="absolute left-0.5 top-0.5 w-3 h-3 bg-outline rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Editor & Preview Core -->
+<section class="flex-1 flex overflow-hidden">
+<!-- Markdown Editor -->
+<div class="flex-1 h-full bg-surface-container-lowest relative group">
+<div class="absolute top-4 left-6 z-10 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="px-2 py-1 bg-surface-container text-[10px] font-label text-primary rounded border border-primary/20">MARKDOWN EDITOR</div>
+</div>
+</div></section></main></body></html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space_Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#262626",
+                        "primary-container": "#769dff",
+                        "primary-fixed-dim": "#5f8fff",
+                        "primary-dim": "#2c6dec",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "on-tertiary-fixed": "#271300",
+                        "on-secondary-container": "#ffddfd",
+                        "inverse-surface": "#fcf8f8",
+                        "primary": "#8cacff",
+                        "error": "#ff716c",
+                        "secondary-container": "#8f15a4",
+                        "surface-container": "#1a1919",
+                        "on-primary-fixed-variant": "#002869",
+                        "on-secondary-fixed": "#5d006d",
+                        "on-primary-container": "#001f56",
+                        "error-dim": "#d7383b",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#ff9800",
+                        "error-container": "#9f0519",
+                        "outline": "#777575",
+                        "secondary": "#ea73fb",
+                        "tertiary-dim": "#ec8c00",
+                        "surface-container-lowest": "#000000",
+                        "surface-container-highest": "#262626",
+                        "surface-container-low": "#131313",
+                        "tertiary-fixed": "#ff9800",
+                        "on-error": "#490006",
+                        "surface-container-high": "#201f1f",
+                        "secondary-dim": "#e46df5",
+                        "on-tertiary": "#583100",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "on-tertiary-container": "#4a2800",
+                        "outline-variant": "#484847",
+                        "surface": "#0e0e0e",
+                        "on-secondary": "#450051",
+                        "on-error-container": "#ffa8a3",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "inverse-on-surface": "#565554",
+                        "primary-fixed": "#769dff",
+                        "inverse-primary": "#0057d1",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "surface-tint": "#8cacff",
+                        "on-surface-variant": "#adaaaa",
+                        "tertiary": "#ffac54",
+                        "on-background": "#ffffff",
+                        "surface-dim": "#0e0e0e",
+                        "surface-bright": "#2c2c2c",
+                        "on-primary": "#002a6e",
+                        "secondary-fixed": "#fcbcff",
+                        "background": "#0e0e0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333333; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 selection:text-primary">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 h-screen w-64 bg-[#0e0e0e]/60 backdrop-blur-xl border-r border-[#ffffff]/10 z-50">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-bold tracking-tighter text-[#8cacff] uppercase font-headline">Obsidian Flux</h1>
+<p class="font-['Manrope'] tracking-tight text-sm text-on-surface-variant mt-1">Technical Editorial</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="article">article</span>
+<span>Articles</span>
+</a>
+<a class="flex items-center gap-3 bg-[#201f1f] text-[#8cacff] rounded-md font-bold px-4 py-2 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="perm_media">perm_media</span>
+<span>Media</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span>Editor</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-white/5 pt-6 space-y-2">
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<div class="mt-6 flex items-center gap-3 px-4">
+<img alt="Curator Profile" class="w-8 h-8 rounded-full bg-surface-container" data-alt="High-contrast black and white portrait of a technical curator in a minimalist editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX_8SGW0uAnjZZAi9QKH98PRgf-j05n_ZxZJ86CaSOCPDFXT0gWZSyS3jDq3V9jZWoYIICR8sbc41wDxxKhLLKObcRESKesmhrR9e5AX-Kf94I51yJhDGhsjd8dt53jJt9MpAHRti71x66mWB59eR5lQdXIv3kxYvc9M0CSEU5iyT86hmS7RtPBCiVNEYDcBlFD5yVn2gC17q1ctDh1AO9aYT8q5Q2173Gl4xcMz8Cl21g-y2R95aJnIUD03I-rhDdljzSaB6Bl8c"/>
+<div>
+<p class="text-xs font-bold text-on-surface">Admin</p>
+<p class="text-[10px] text-on-surface-variant">Technical Editor</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 h-16 bg-[#0e0e0e]/60 backdrop-blur-xl border-b border-[#ffffff]/10 flex items-center justify-between px-8 ml-64 w-[calc(100%-16rem)] z-40">
+<div class="flex items-center gap-8">
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#8cacff]">Media Library</span>
+<nav class="flex gap-6">
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#f5f5f5] transition-colors" href="#">Images</a>
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#f5f5f5] transition-colors" href="#">Videos</a>
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#f5f5f5] transition-colors" href="#">Docs</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-1.5 text-xs font-label w-64 focus:ring-1 focus:ring-primary/50 text-on-surface transition-all" placeholder="搜索素材..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen bg-surface">
+<!-- Dropzone / Header Action Area -->
+<div class="mb-12">
+<div class="group relative flex flex-col items-center justify-center p-12 border-2 border-dashed border-outline-variant/30 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+<div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="upload_file">upload_file</span>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-2">上传新媒体素材</h3>
+<p class="text-on-surface-variant font-body text-sm">拖拽文件到此处，或点击浏览本地文件 (Max 50MB)</p>
+</div>
+</div>
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-headline font-extrabold tracking-tight">所有素材 <span class="text-on-surface-variant font-normal text-sm ml-2">(124 见)</span></h2>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-sm font-label text-on-surface hover:brightness-125 transition-all">
+<span class="material-symbols-outlined text-sm">filter_list</span> 筛选
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-sm font-label text-on-surface hover:brightness-125 transition-all">
+<span class="material-symbols-outlined text-sm">sort</span> 日期
+                </button>
+</div>
+</div>
+<!-- Media Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+<!-- Media Card 1 -->
+<div class="group flex flex-col bg-surface-container rounded-xl overflow-hidden cursor-pointer hover:ring-2 ring-primary/40 transition-all">
+<div class="aspect-square relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="abstract fluid digital 3d rendering with vibrant blue and purple flowing silk textures on dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_mOKb7n6jhyOCST8npn_F9G8UfI1nCQmrNVgXIYqoXk1sY3Thk8xLS7a8NlhCPMCbEbLhBAvvFjY6_Ag484XEbqOmFDDV6LGwa8nAbT-hEt8B3MgPQuBpM8LUreASWk9vjgvwXBEJtE9gKOmmDjJ-g7VbFOSWP1bnnJ22O5z0TG6uitx8bAMPHvWT3fbewJfebfcvGsUhQLonPuRnaRL6gLBNQpgoP0SnVAARFuZSfum8aSnFc-wsLZBqFedSPDB-ke27bPFkp4Q"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="p-2 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-white text-lg">link</span>
+</button>
+<button class="p-2 bg-white/10 backdrop-blur-md rounded-full hover:bg-error transition-colors">
+<span class="material-symbols-outlined text-white text-lg">delete</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<p class="text-xs font-label text-primary uppercase tracking-tighter mb-1">IMAGE / PNG</p>
+<p class="text-sm font-medium text-on-surface truncate">abstract-fluid-render-01.png</p>
+<p class="text-[10px] text-on-surface-variant mt-2">1280 × 720 • 2.4 MB</p>
+</div>
+</div>
+<!-- Media Card 2 -->
+<div class="group flex flex-col bg-surface-container rounded-xl overflow-hidden cursor-pointer hover:ring-2 ring-primary/40 transition-all">
+<div class="aspect-square relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="vintage collection of old computers and technology hardware on minimalist gray shelves in high contrast lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRadpWzVcijjrlRfZfjL2OCHCqs_vY5Fd8Dt9gGxL30e3-b871UgSWm2JhQJc67PglchIWY2ajRxNF5hoWEwpTtl8Ru1mUTtPGUaODXzLgnTs6uMWhpUjL71uLawr86OejaGtx7Zx7LStgRZRsDrlp4MNm2LkNN5wJWEEcl2Vko2WxH5fKWrFmPK0YRJXJpZ_XPMI_2HDzSJtuBgJLM6I92vxV1xd4DouT2ck-AieS4bg72bdh1GNTuZ97naeaPrG5D47J74pCvf4"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] font-label text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">videocam</span> 00:45
+                    </div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+</div>
+</div>
+<div class="p-4">
+<p class="text-xs font-label text-secondary uppercase tracking-tighter mb-1">VIDEO / MP4</p>
+<p class="text-sm font-medium text-on-surface truncate">tech-heritage-broll.mp4</p>
+<p class="text-[10px] text-on-surface-variant mt-2">1920 × 1080 • 45.8 MB</p>
+</div>
+</div>
+<!-- Media Card 3 (Selected/Details Context) -->
+<div class="group flex flex-col bg-surface-container ring-2 ring-primary rounded-xl overflow-hidden cursor-pointer transition-all relative">
+<div class="aspect-square relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="close-up of high-tech silver laptop with illuminated glowing circuitry on a dark desk with blue neon light accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7nIuf3ECnl6DJMvqPZZHVxL79U6Qoe__V5cxCMlIDkma8UXK3hzKHR52MuT2K1_WV13uKrq2o7fGHILmKia470uQDn7ws7ANGt7xJivezXOWTlXZkZmRP1fD4df8nwL_gdtg3NLXfamzp83VtdimyttE3z176aKHOr-HKNCQ-LFo-8sS3Kr7gL2NeMCkPP7oLwHDmcNyczEjNx_xte_yKqK-evGvEuCjXFpZxESlIrsxV39B3rLloZCNrp1-3hVODb-eSZqO84IU"/>
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div class="p-4">
+<p class="text-xs font-label text-primary uppercase tracking-tighter mb-1">IMAGE / JPEG</p>
+<p class="text-sm font-medium text-on-surface truncate">future-workstation.jpg</p>
+<p class="text-[10px] text-on-surface-variant mt-2">3840 × 2160 • 5.1 MB</p>
+</div>
+</div>
+<!-- Media Card 4 -->
+<div class="group flex flex-col bg-surface-container rounded-xl overflow-hidden cursor-pointer hover:ring-2 ring-primary/40 transition-all">
+<div class="aspect-square relative overflow-hidden bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-5xl" data-icon="description">description</span>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<button class="p-2 bg-white/10 backdrop-blur-md rounded-full hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-white text-lg">download</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<p class="text-xs font-label text-tertiary uppercase tracking-tighter mb-1">DOC / PDF</p>
+<p class="text-sm font-medium text-on-surface truncate">quarterly-editorial-guidelines.pdf</p>
+<p class="text-[10px] text-on-surface-variant mt-2">12 Pages • 1.2 MB</p>
+</div>
+</div>
+<!-- Media Card 5 -->
+<div class="group flex flex-col bg-surface-container rounded-xl overflow-hidden cursor-pointer hover:ring-2 ring-primary/40 transition-all">
+<div class="aspect-square relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="earth from space showing global digital communication network with glowing data lines connecting continents at night" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjO2QYmQlAJxqJ9nKm5Ug6cXdxJ5cBdUQQ9xlpR9t0zRP5uI1r38Tnlle28Ue017W7BvQQlHqbpW0JM1fPJhKeHoVVJL8ftpaY_V1Qv1p_RYpno8eYI8plWN4qMaBA7Qsi5ddKbuZbg1qAOsX7UBaegw6SzayDPacaYdkS698h7Z1lhfnWKsbMZGibO-nSjgjktpZ-UuWhuX8lkdkaE78ODENpwISNpOIG3pTeWV0ij47Ixp66bsxGxyFcy4VzhFapGmM7J4DNQ_Y"/>
+</div>
+<div class="p-4">
+<p class="text-xs font-label text-primary uppercase tracking-tighter mb-1">IMAGE / WEBP</p>
+<p class="text-sm font-medium text-on-surface truncate">global-connectivity.webp</p>
+<p class="text-[10px] text-on-surface-variant mt-2">2000 × 2000 • 0.8 MB</p>
+</div>
+</div>
+<!-- Additional Empty Grid Spots -->
+<div class="group flex flex-col bg-surface-container rounded-xl overflow-hidden cursor-pointer hover:ring-2 ring-primary/40 transition-all opacity-80">
+<div class="aspect-square relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="clean coding environment showing high-resolution lines of code on a monitor with soft colorful bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNKQhIwI-Dp_Io7TAT_qwKB2zcsyv9ZCdvhF1z8CkUgCpvksC1_MzbOfdQ-c1CZG2oJ-DdzyjC6m4z9bn6irGzYQVjkh5poZwYo-r2Gaku39JjfoBKBvVa7cdj88Z6ysmLL25gjC1hUoKJKTusOc5nEoa1-wn99zSBLdaeJ_zjxX1TS-YXaRvMChLJHdnXV4odOGo8AvQ98plBQKgf9d2kyF5X4v-d1h74HKPHEA6EotbsMws_0fc05A2L3umzd0mLJCofry_5FM4"/>
+</div>
+<div class="p-4">
+<p class="text-xs font-label text-primary uppercase tracking-tighter mb-1">IMAGE / PNG</p>
+<p class="text-sm font-medium text-on-surface truncate">code-snippet-dark.png</p>
+<p class="text-[10px] text-on-surface-variant mt-2">1440 × 900 • 1.5 MB</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Details Overlay Panel (Triggered by selection) -->
+<div class="fixed right-0 top-16 bottom-0 w-96 bg-[#131313] border-l border-white/10 z-30 transform translate-x-0 transition-transform shadow-2xl">
+<div class="h-full flex flex-col p-6 overflow-y-auto">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-lg font-headline font-bold">素材详情</h3>
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="aspect-video w-full rounded-lg overflow-hidden bg-black mb-6">
+<img class="w-full h-full object-contain" data-alt="close-up of high-tech silver laptop with illuminated glowing circuitry on a dark desk with blue neon light accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlkRHezGgwALAal_6k1KcOFUeeB6y7x_iQ2oNWiT6O5YTKz0ZEJBe7HKBYKaU0esnfnsuAIyKXzSl6AgvHmtEcoHHfjkJR8qoltwPqlqVl65QAQwu2kPQc0_08MLmFLvV7wlEXWReKCj79Ht8VwWjsNN9Rb47Qy8GhixlfaCBzxSr5bdx4_AOdTZbuz0SPysm3FFMsUD8L9VsDIWD7IfWhKjssc8J7uiMUNuJGZr9yO2CBL9-x9U5ZaJRWHMW9AeDMu0xivYCtK_w"/>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">文件名</label>
+<p class="text-sm font-medium">future-workstation.jpg</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">尺寸</label>
+<p class="text-sm font-medium">3840 × 2160 px</p>
+</div>
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">格式</label>
+<p class="text-sm font-medium">JPEG Image</p>
+</div>
+</div>
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">上传日期</label>
+<p class="text-sm font-medium">2023年10月24日 14:30</p>
+</div>
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">引用位置</label>
+<ul class="mt-2 space-y-2">
+<li class="flex items-center gap-2 p-2 bg-surface-container rounded text-xs hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[16px]">link</span>
+                            《2024年科技趋势预测》
+                        </li>
+<li class="flex items-center gap-2 p-2 bg-surface-container rounded text-xs hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[16px]">link</span>
+                            《极简工作空间指南》
+                        </li>
+</ul>
+</div>
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">素材 URL</label>
+<div class="flex items-center gap-2 mt-1">
+<input class="flex-1 bg-surface-container-lowest border-none rounded-lg py-2 px-3 text-[10px] font-label text-on-surface-variant truncate" readonly="" type="text" value="https://cdn.flux.io/media/future-workstation.jpg"/>
+<button class="p-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+</button>
+</div>
+</div>
+<div class="pt-6 mt-6 border-t border-white/5 flex gap-3">
+<button class="flex-1 py-3 bg-primary text-on-primary text-xs font-label font-bold uppercase rounded-lg hover:brightness-110 active:scale-95 transition-all">
+                        下载原图
+                    </button>
+<button class="p-3 bg-error/10 text-error rounded-lg hover:bg-error hover:text-white transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

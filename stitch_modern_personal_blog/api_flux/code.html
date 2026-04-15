@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>API 接口定义 - Obsidian Flux</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#777575",
+                        "on-primary-fixed": "#000000",
+                        "primary-dim": "#2c6dec",
+                        "surface-container-high": "#201f1f",
+                        "on-surface-variant": "#adaaaa",
+                        "on-surface": "#ffffff",
+                        "on-tertiary-fixed": "#271300",
+                        "surface-container-lowest": "#000000",
+                        "error-container": "#9f0519",
+                        "on-primary-container": "#001f56",
+                        "on-secondary-container": "#ffddfd",
+                        "primary-container": "#769dff",
+                        "on-primary-fixed-variant": "#002869",
+                        "tertiary-dim": "#ec8c00",
+                        "on-tertiary": "#583100",
+                        "secondary-container": "#8f15a4",
+                        "secondary": "#ea73fb",
+                        "on-error-container": "#ffa8a3",
+                        "on-background": "#ffffff",
+                        "background": "#0e0e0e",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "error": "#ff716c",
+                        "surface-variant": "#262626",
+                        "surface-bright": "#2c2c2c",
+                        "tertiary-fixed": "#ff9800",
+                        "outline-variant": "#484847",
+                        "inverse-on-surface": "#565554",
+                        "tertiary-container": "#ff9800",
+                        "on-secondary": "#450051",
+                        "secondary-fixed": "#fcbcff",
+                        "inverse-surface": "#fcf8f8",
+                        "primary": "#8cacff",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "on-error": "#490006",
+                        "surface-tint": "#8cacff",
+                        "on-primary": "#002a6e",
+                        "surface-container-low": "#131313",
+                        "on-tertiary-container": "#4a2800",
+                        "surface-container-highest": "#262626",
+                        "primary-fixed-dim": "#5f8fff",
+                        "secondary-dim": "#e46df5",
+                        "surface": "#0e0e0e",
+                        "primary-fixed": "#769dff",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "on-secondary-fixed": "#5d006d",
+                        "surface-dim": "#0e0e0e",
+                        "tertiary": "#ffac54",
+                        "inverse-primary": "#0057d1",
+                        "surface-container": "#1a1919",
+                        "error-dim": "#d7383b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #0e0e0e; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body text-on-surface-variant selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl transition-colors duration-300 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.04)]">
+<div class="flex justify-between items-center px-8 h-16 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black tracking-tighter text-[#8cacff] font-headline">Obsidian Flux</span>
+<div class="hidden md:flex gap-6">
+<a class="font-headline tracking-tight font-bold text-sm text-[#adaaaa] hover:text-white transition-all" href="#">Docs</a>
+<a class="font-headline tracking-tight font-bold text-sm text-[#8cacff] border-b-2 border-[#8cacff] pb-1 hover:text-white transition-all" href="#">API</a>
+<a class="font-headline tracking-tight font-bold text-sm text-[#adaaaa] hover:text-white transition-all" href="#">Changelog</a>
+<a class="font-headline tracking-tight font-bold text-sm text-[#adaaaa] hover:text-white transition-all" href="#">Community</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label text-xs font-bold px-2 py-1 bg-surface-container rounded text-primary">v2.4.0</span>
+<div class="flex gap-2">
+<button class="p-2 hover:text-white transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 hover:text-white transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#0e0e0e] border-r border-transparent bg-[#131313] hidden md:block overflow-y-auto">
+<div class="flex flex-col py-6 px-4 space-y-2">
+<div class="mb-4 px-4">
+<p class="font-headline text-xs font-medium uppercase tracking-widest text-[#8cacff]">Documentation</p>
+<p class="text-[10px] text-outline mt-1 uppercase font-label">v2.4.0 Stable</p>
+</div>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+<span>Introduction</span>
+</a>
+<a class="flex items-center gap-3 bg-[#201f1f] text-[#8cacff] rounded-md px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="psychology">psychology</span>
+<span>Core Concepts</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="architecture">architecture</span>
+<span>Advanced Guides</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="rocket_launch">rocket_launch</span>
+<span>Deployment</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="build">build</span>
+<span>Troubleshooting</span>
+</a>
+<div class="mt-8 border-t border-outline-variant/20 pt-4">
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="code">code</span>
+<span>GitHub</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-headline text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="forum">forum</span>
+<span>Discord</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-16 min-h-screen">
+<div class="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
+<!-- Left Side: Endpoint Details -->
+<section class="flex-1 px-8 py-12 lg:px-12 max-w-4xl">
+<header class="mb-12">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary text-on-primary text-[10px] font-black px-2 py-0.5 rounded uppercase font-label">Requirement</span>
+<span class="text-outline text-xs font-label">Sync Service v2.4</span>
+</div>
+<h1 class="text-4xl font-headline font-extrabold text-on-surface tracking-tighter mb-4 text-wrap-balance">API 接口定义</h1>
+<div class="flex items-center gap-4 bg-surface-container-low p-3 rounded-lg w-fit">
+<span class="text-primary font-label font-bold text-sm">POST</span>
+<code class="text-on-surface font-label text-sm">/v2/ledger/sync</code>
+<button class="text-outline hover:text-white transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</header>
+<div class="space-y-12">
+<!-- Request Parameters -->
+<div class="section-block">
+<h2 class="text-xl font-headline font-bold text-on-surface mb-6 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            请求参数 (Request Parameters)
+                        </h2>
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<table class="w-full text-left text-sm font-inter">
+<thead>
+<tr class="bg-surface-container border-b border-outline-variant/10">
+<th class="px-6 py-4 font-label text-xs uppercase tracking-widest text-on-surface">名称 (Name)</th>
+<th class="px-6 py-4 font-label text-xs uppercase tracking-widest text-on-surface">类型 (Type)</th>
+<th class="px-6 py-4 font-label text-xs uppercase tracking-widest text-on-surface">描述 (Description)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr>
+<td class="px-6 py-5 font-label text-primary font-bold">ledger_id</td>
+<td class="px-6 py-5"><span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label text-outline uppercase">String</span></td>
+<td class="px-6 py-5 text-on-surface-variant">目标账本的唯一标识符。必须是有效的 UUID 格式。</td>
+</tr>
+<tr>
+<td class="px-6 py-5 font-label text-primary font-bold">sync_mode</td>
+<td class="px-6 py-5"><span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label text-outline uppercase">Enum</span></td>
+<td class="px-6 py-5 text-on-surface-variant">同步模式。可选值：<code class="text-tertiary">delta</code>, <code class="text-tertiary">full</code>。</td>
+</tr>
+<tr>
+<td class="px-6 py-5 font-label text-primary font-bold">timestamp</td>
+<td class="px-6 py-5"><span class="bg-surface-container-high px-2 py-0.5 rounded text-[10px] font-label text-outline uppercase">Integer</span></td>
+<td class="px-6 py-5 text-on-surface-variant">Unix 时间戳（毫秒级）。用于检测版本冲突。</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Response Codes -->
+<div class="section-block">
+<h2 class="text-xl font-headline font-bold text-on-surface mb-6 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            响应代码 (Response Codes)
+                        </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container p-4 rounded-lg flex items-start gap-4">
+<span class="font-label text-primary font-bold">200</span>
+<div>
+<p class="text-on-surface text-sm font-bold">OK</p>
+<p class="text-xs text-on-surface-variant mt-1">数据同步成功启动。</p>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-lg flex items-start gap-4">
+<span class="font-label text-error font-bold">400</span>
+<div>
+<p class="text-on-surface text-sm font-bold">Bad Request</p>
+<p class="text-xs text-on-surface-variant mt-1">请求格式错误或参数校验失败。</p>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-lg flex items-start gap-4">
+<span class="font-label text-error font-bold">401</span>
+<div>
+<p class="text-on-surface text-sm font-bold">Unauthorized</p>
+<p class="text-xs text-on-surface-variant mt-1">API 密钥缺失或无效。</p>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-lg flex items-start gap-4">
+<span class="font-label text-tertiary font-bold">409</span>
+<div>
+<p class="text-on-surface text-sm font-bold">Conflict</p>
+<p class="text-xs text-on-surface-variant mt-1">版本冲突，请合并后重试。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Interactive Playground -->
+<aside class="flex-1 bg-surface-container-low border-l border-outline-variant/10 p-8 lg:p-12">
+<div class="sticky top-28 space-y-8">
+<!-- Language Tabs -->
+<div class="code-playground bg-surface-container rounded-xl overflow-hidden shadow-2xl">
+<div class="flex items-center px-4 pt-4 gap-4 bg-surface-container">
+<button class="font-label text-xs font-bold py-2 px-3 border-b-2 border-primary text-primary uppercase tracking-widest">BASH</button>
+<button class="font-label text-xs font-bold py-2 px-3 border-b-2 border-transparent text-outline hover:text-white uppercase tracking-widest transition-all">PYTHON</button>
+<button class="font-label text-xs font-bold py-2 px-3 border-b-2 border-transparent text-outline hover:text-white uppercase tracking-widest transition-all">NODE.JS</button>
+</div>
+<!-- Syntax Highlighted Box -->
+<div class="p-6 font-mono text-sm leading-relaxed overflow-x-auto bg-[#131313]">
+<pre class="text-[#adaaaa]"><span class="text-primary">curl</span> -X POST <span class="text-secondary">"https://api.obsidianflux.com/v2/ledger/sync"</span> \
+  -H <span class="text-secondary">"Authorization: Bearer YOUR_API_KEY"</span> \
+  -H <span class="text-secondary">"Content-Type: application/json"</span> \
+  -d <span class="text-on-surface-variant">{</span>
+    <span class="text-tertiary">"ledger_id"</span>: <span class="text-secondary">"flux_99x_01j"</span>,
+    <span class="text-tertiary">"sync_mode"</span>: <span class="text-secondary">"delta"</span>,
+    <span class="text-tertiary">"timestamp"</span>: <span class="text-primary">1715234890000</span>
+  <span class="text-on-surface-variant">}</span></pre>
+</div>
+<!-- Response Preview -->
+<div class="border-t border-outline-variant/10 p-6 bg-[#0e0e0e]">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Response Body</span>
+<span class="font-label text-[10px] font-bold text-primary uppercase">200 OK</span>
+</div>
+<pre class="text-[#8cacff] text-xs font-mono leading-normal">{
+  <span class="text-outline">"status"</span>: <span class="text-white">"success"</span>,
+  <span class="text-outline">"sync_id"</span>: <span class="text-white">"sync_v_7721"</span>,
+  <span class="text-outline">"records_processed"</span>: <span class="text-white">128</span>,
+  <span class="text-outline">"latency_ms"</span>: <span class="text-white">42</span>
+}</pre>
+</div>
+</div>
+<!-- Call to Action -->
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-label font-bold py-4 rounded-lg uppercase tracking-wider transition-all hover:brightness-110 active:scale-95 shadow-[0_12px_24px_-8px_rgba(140,172,255,0.4)]">
+                        测试运行 (Run Simulation)
+                    </button>
+<!-- Info Tip Card -->
+<div class="bg-surface-container p-6 rounded-xl border-l-4 border-tertiary">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="tips_and_updates">tips_and_updates</span>
+<h4 class="font-headline font-bold text-sm text-on-surface">最佳实践</h4>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                            建议在大型账本同步时使用 <code class="text-tertiary">delta</code> 模式以降低延迟。全文同步 <code class="text-tertiary">full</code> 建议仅在初始构建或数据损坏修复时使用。
+                        </p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full border-t border-[#1a1919] bg-[#0e0e0e] md:ml-64 w-[calc(100%-16rem)]">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6">
+<div class="flex flex-col gap-2">
+<span class="text-sm font-bold text-white font-headline">Obsidian Flux</span>
+<p class="font-inter text-xs leading-relaxed text-[#adaaaa]">© 2024 Obsidian Flux. Built for the modern architect.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-inter text-xs leading-relaxed text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Privacy Policy</a>
+<a class="font-inter text-xs leading-relaxed text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Terms of Service</a>
+<a class="font-inter text-xs leading-relaxed text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Security</a>
+<a class="font-inter text-xs leading-relaxed text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Status</a>
+</div>
+</div>
+</footer>
+</body></html>

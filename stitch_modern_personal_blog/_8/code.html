@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#4a2800",
+                    "on-surface-variant": "#adaaaa",
+                    "secondary-dim": "#e46df5",
+                    "error-dim": "#d7383b",
+                    "surface-container-highest": "#262626",
+                    "surface-container": "#1a1919",
+                    "tertiary-dim": "#ec8c00",
+                    "surface-variant": "#262626",
+                    "primary-dim": "#2c6dec",
+                    "on-background": "#ffffff",
+                    "surface-tint": "#8cacff",
+                    "surface-container-lowest": "#000000",
+                    "outline-variant": "#484847",
+                    "on-primary": "#002a6e",
+                    "background": "#0e0e0e",
+                    "on-error-container": "#ffa8a3",
+                    "surface": "#0e0e0e",
+                    "on-secondary-fixed-variant": "#8a0b9f",
+                    "surface-bright": "#2c2c2c",
+                    "error-container": "#9f0519",
+                    "primary-fixed-dim": "#5f8fff",
+                    "on-error": "#490006",
+                    "primary": "#8cacff",
+                    "secondary-fixed-dim": "#f9a7ff",
+                    "surface-container-high": "#201f1f",
+                    "tertiary-fixed": "#ff9800",
+                    "outline": "#777575",
+                    "primary-fixed": "#769dff",
+                    "error": "#ff716c",
+                    "secondary": "#ea73fb",
+                    "on-secondary": "#450051",
+                    "surface-container-low": "#131313",
+                    "tertiary-fixed-dim": "#ec8c00",
+                    "surface-dim": "#0e0e0e",
+                    "secondary-container": "#8f15a4",
+                    "tertiary": "#ffac54",
+                    "on-surface": "#ffffff",
+                    "on-primary-fixed": "#000000",
+                    "on-secondary-container": "#ffddfd",
+                    "primary-container": "#769dff",
+                    "on-tertiary-fixed-variant": "#563000",
+                    "secondary-fixed": "#fcbcff",
+                    "inverse-on-surface": "#565554",
+                    "on-primary-fixed-variant": "#002869",
+                    "on-tertiary-fixed": "#271300",
+                    "inverse-primary": "#0057d1",
+                    "on-tertiary": "#583100",
+                    "tertiary-container": "#ff9800",
+                    "on-secondary-fixed": "#5d006d",
+                    "on-primary-container": "#001f56",
+                    "inverse-surface": "#fcf8f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(14, 14, 14, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .glow-btn {
+            box-shadow: 0 0 20px rgba(140, 172, 255, 0.3);
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 35px rgba(140, 172, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl shadow-[0_40px_40px_-10px_rgba(140,172,255,0.04)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-bold tracking-tighter text-white font-headline">
+                Obsidian Flux
+            </div>
+<div class="hidden md:flex gap-8 items-center font-headline tracking-tight text-sm">
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Docs</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Journal</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Tags</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Changelog</a>
+<button class="bg-primary-container text-on-primary-container px-4 py-1.5 rounded-lg font-semibold hover:bg-white/5 transition-all duration-300 active:scale-95">Subscribe</button>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
+<!-- Hero Section -->
+<header class="mb-16">
+<h1 class="text-5xl md:text-7xl font-headline font-extrabold tracking-tighter text-wrap balance text-white mb-4">
+                Establish Connection
+            </h1>
+<p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+                连接数字经脉。无论您是发现系统漏洞、寻求技术协作，还是仅仅想在虚空中留下回响，我们的协议接口始终保持开启。
+            </p>
+</header>
+<!-- Content Grid: Asymmetric Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Side: Feedback Form (8 Cols) -->
+<section class="lg:col-span-7 bg-surface-container-low p-8 md:p-12 rounded-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+<form class="space-y-8 relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block font-label text-xs uppercase tracking-widest text-[#8cacff]">姓名 / NAME</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 focus:bg-surface-container-low transition-all" placeholder="输入您的称呼" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-xs uppercase tracking-widest text-[#8cacff]">电子邮箱 / EMAIL</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 focus:bg-surface-container-low transition-all" placeholder="example@obsidian.flux" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-xs uppercase tracking-widest text-[#8cacff]">主题 / SUBJECT</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 focus:bg-surface-container-low transition-all appearance-none">
+<option>General Inquiry / 一般咨询</option>
+<option>Bug Report / 故障报告</option>
+<option>Collaboration / 商务合作</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-xs uppercase tracking-widest text-[#8cacff]">内容 / MESSAGE</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 focus:bg-surface-container-low transition-all resize-none" placeholder="在此输入您的讯息..." rows="6"></textarea>
+</div>
+<div class="flex items-center justify-between pt-4">
+<button class="glow-btn bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-label font-bold uppercase py-4 px-10 rounded-xl transition-all duration-300 active:scale-95 tracking-wider" type="submit">
+                            发送协议传输
+                        </button>
+<span class="hidden md:flex items-center gap-2 text-on-surface-variant text-xs font-label">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                            STATUS: ENCRYPTED UPLOAD READY
+                        </span>
+</div>
+</form>
+</section>
+<!-- Right Side: Location & Socials (5 Cols) -->
+<aside class="lg:col-span-5 space-y-8">
+<!-- Stylized Map/Location Card -->
+<div class="bg-surface-container rounded-xl overflow-hidden group">
+<div class="relative h-64 w-full grayscale contrast-125 opacity-80 group-hover:opacity-100 transition-opacity duration-700">
+<img class="w-full h-full object-cover" data-alt="stylized dark abstract satellite view of an urban grid with glowing blue lines and high contrast deep shadows" data-location="Shenzhen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdlWFQOvlVnFeuaYvFPzjx3nXWZEKjoE0yIGVche2C-rAmbu98laca39M7N0ac4IRHjTpxDWQPzZdsVE4YZIiMqVzNOVSDvlDciG_x3cTPk4vLkn5WJVsm_Zj-WvB3sJKt2VqbOr-6l-wOU6sqXVUlCPoyWubzp5f5OsvIpBY35xrWo1M5d32yXqawoitFV09FDkY1pJakHLc3D0naqbwKBOHI4qGraA2SDcwmEGc-3y6J_RG8G0D3jz39tdobRwm8kESgbjveQ7A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<div class="bg-background/80 backdrop-blur-md px-3 py-1 rounded border border-white/5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">location_on</span>
+<span class="text-xs font-label text-white uppercase tracking-tighter">Node: Shenzhen, PRC</span>
+</div>
+</div>
+</div>
+<div class="p-6">
+<h3 class="text-lg font-bold text-white mb-2">我们的基站</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                            位于深圳核心技术区。虽然我们提倡全数字化的分布式协作，但物理锚点依旧存在。
+                        </p>
+</div>
+</div>
+<!-- Social/Technical Links -->
+<div class="grid grid-cols-1 gap-4">
+<a class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl group hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">terminal</span>
+<div>
+<p class="text-xs font-label text-[#8cacff] uppercase tracking-widest">GITHUB</p>
+<p class="text-on-surface font-semibold">Open-source Core</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl group hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors">alternate_email</span>
+<div>
+<p class="text-xs font-label text-secondary uppercase tracking-widest">X / TWITTER</p>
+<p class="text-on-surface font-semibold">@ObsidianFlux</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl group hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors">forum</span>
+<div>
+<p class="text-xs font-label text-tertiary uppercase tracking-widest">DISCORD</p>
+<p class="text-on-surface font-semibold">Join the Collective</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="w-full border-t border-white/5 mt-20 bg-[#0e0e0e]">
+<div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="text-sm font-bold text-white uppercase tracking-tighter">Obsidian Flux</span>
+<p class="text-xs font-inter text-[#adaaaa] leading-relaxed opacity-80">© 2024 Obsidian Flux. Built for the technical elite.</p>
+</div>
+<div class="flex gap-8 text-sm font-inter">
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Documentation</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Terms of Service</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Security</a>
+</div>
+</div>
+</footer>
+</body></html>

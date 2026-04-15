@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Obsidian Flux | 数据概览仪表盘</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#262626",
+                        "primary-container": "#769dff",
+                        "primary-fixed-dim": "#5f8fff",
+                        "primary-dim": "#2c6dec",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "on-tertiary-fixed": "#271300",
+                        "on-secondary-container": "#ffddfd",
+                        "inverse-surface": "#fcf8f8",
+                        "primary": "#8cacff",
+                        "error": "#ff716c",
+                        "secondary-container": "#8f15a4",
+                        "surface-container": "#1a1919",
+                        "on-primary-fixed-variant": "#002869",
+                        "on-secondary-fixed": "#5d006d",
+                        "on-primary-container": "#001f56",
+                        "error-dim": "#d7383b",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#ff9800",
+                        "error-container": "#9f0519",
+                        "outline": "#777575",
+                        "secondary": "#ea73fb",
+                        "tertiary-dim": "#ec8c00",
+                        "surface-container-lowest": "#000000",
+                        "surface-container-highest": "#262626",
+                        "surface-container-low": "#131313",
+                        "tertiary-fixed": "#ff9800",
+                        "on-error": "#490006",
+                        "surface-container-high": "#201f1f",
+                        "secondary-dim": "#e46df5",
+                        "on-tertiary": "#583100",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "on-tertiary-container": "#4a2800",
+                        "outline-variant": "#484847",
+                        "surface": "#0e0e0e",
+                        "on-secondary": "#450051",
+                        "on-error-container": "#ffa8a3",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "inverse-on-surface": "#565554",
+                        "primary-fixed": "#769dff",
+                        "inverse-primary": "#0057d1",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "surface-tint": "#8cacff",
+                        "on-surface-variant": "#adaaaa",
+                        "tertiary": "#ffac54",
+                        "on-background": "#ffffff",
+                        "surface-dim": "#0e0e0e",
+                        "surface-bright": "#2c2c2c",
+                        "on-primary": "#002a6e",
+                        "secondary-fixed": "#fcbcff",
+                        "background": "#0e0e0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .label-font { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary/30">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 h-screen w-64 bg-[#0e0e0e]/60 backdrop-blur-xl border-r border-[#ffffff]/10 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.04)] font-['Manrope'] tracking-tight text-sm z-50">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-bold tracking-tighter text-[#8cacff] uppercase">Obsidian Flux</h1>
+<p class="text-[10px] text-on-surface-variant tracking-[0.2em] uppercase mt-1">Technical Editorial</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active: Dashboard -->
+<a class="bg-[#201f1f] text-[#8cacff] rounded-md font-bold px-4 py-2 flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] hover:bg-[#1a1919] px-4 py-2 rounded-md flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="article">article</span>
+<span>Articles</span>
+</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] hover:bg-[#1a1919] px-4 py-2 rounded-md flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="perm_media">perm_media</span>
+<span>Media</span>
+</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] hover:bg-[#1a1919] px-4 py-2 rounded-md flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] hover:bg-[#1a1919] px-4 py-2 rounded-md flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit_note">edit_note</span>
+<span>Editor</span>
+</a>
+</nav>
+<div class="mt-auto space-y-6">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-['Space_Grotesk'] font-bold py-3 rounded-lg text-xs uppercase tracking-widest active:scale-95 transition-transform">
+                New Post
+            </button>
+<div class="space-y-1">
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 flex items-center gap-3 text-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 flex items-center gap-3 text-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+</div>
+<div class="px-4 flex items-center gap-3 pt-4 border-t border-white/5">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="Curator Profile" data-alt="close-up portrait of a professional technical editor in a dark modern office setting, dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1WEUvwDqAEcoptt3SeRHU0JZP66rdIq92Zbve73O3e2KwciDE5VIHJCWfDVOdIxfqek5_H1opXmfM-2iZm3WmRueaQW1O88f0iBwMfzUsb6s1xn3sJqkQxUymQlgVsty2TvN7FcN9O54a6PJgDGr0RZBlkTneatGGSLG2bC0klXdNyb66aZ7KCQ8HRoGiS_Fiz1U1Mgn5AigsENnr-Nms9-k0Fu7QUyV4qtVenxWhwz3cIWdMWzpsPqw9hGttr5a_jDzhfDfHzQc"/>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Admin</p>
+<p class="text-[10px] text-on-surface-variant">Technical Editorial</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar (Shared Component) -->
+<header class="ml-64 w-[calc(100%-16rem)] flex items-center justify-between px-8 fixed top-0 h-16 bg-[#0e0e0e]/60 backdrop-blur-xl border-b border-[#ffffff]/10 z-40">
+<div class="flex items-center gap-8">
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-on-surface-variant">Current: <span class="text-primary font-bold">Dashboard</span></span>
+<nav class="flex gap-6">
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] transition-colors text-xs font-['Space_Grotesk'] uppercase tracking-widest" href="#">Drafts</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] transition-colors text-xs font-['Space_Grotesk'] uppercase tracking-widest" href="#">Published</a>
+<a class="text-[#adaaaa] hover:text-[#f5f5f5] transition-colors text-xs font-['Space_Grotesk'] uppercase tracking-widest" href="#">Scheduled</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<input class="bg-surface-container-low border-none text-[10px] font-['Space_Grotesk'] tracking-widest rounded-full px-4 py-1.5 w-48 focus:ring-1 focus:ring-primary/50 text-on-surface placeholder:text-outline transition-all" placeholder="SEARCH ANALYTICS..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1.5 text-sm text-outline" data-icon="search">search</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer active:scale-95 transition-all" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer active:scale-95 transition-all" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+<!-- Welcome Header -->
+<div class="mb-12 flex justify-between items-end">
+<div>
+<h2 class="text-4xl font-extrabold tracking-tight mb-2">数据概览 <span class="text-primary">.</span></h2>
+<p class="text-on-surface-variant max-w-lg">Flux Curator 技术编辑平台实时数据分析。您的内容影响力正在以 12% 的周环比速度增长。</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-container-high hover:bg-surface-variant transition-colors rounded-lg flex items-center gap-2 text-xs font-['Space_Grotesk'] uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                    导出报告
+                </button>
+<button class="px-4 py-2 bg-primary text-on-primary font-bold rounded-lg flex items-center gap-2 text-xs font-['Space_Grotesk'] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">
+                    实时更新
+                </button>
+</div>
+</div>
+<!-- Core Metric Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<!-- Card 1 -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="visibility">visibility</span>
+</div>
+<p class="text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-[0.2em] mb-4">总阅读量</p>
+<div class="flex items-end gap-3">
+<h3 class="text-3xl font-bold font-['Space_Grotesk']">1,284,930</h3>
+<span class="text-xs text-[#4ade80] font-bold mb-1">+5.2%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary w-[75%] rounded-full shadow-[0_0_8px_rgba(140,172,255,0.4)]"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="group">group</span>
+</div>
+<p class="text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-[0.2em] mb-4">总订阅人数</p>
+<div class="flex items-end gap-3">
+<h3 class="text-3xl font-bold font-['Space_Grotesk']">42,501</h3>
+<span class="text-xs text-[#4ade80] font-bold mb-1">+12.8%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-primary-container w-[40%] rounded-full shadow-[0_0_8px_rgba(118,157,255,0.4)]"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="add_chart">add_chart</span>
+</div>
+<p class="text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-[0.2em] mb-4">本月新增</p>
+<div class="flex items-end gap-3">
+<h3 class="text-3xl font-bold font-['Space_Grotesk']">3,892</h3>
+<span class="text-xs text-primary-fixed-dim font-bold mb-1">稳步增长</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-secondary w-[60%] rounded-full shadow-[0_0_8px_rgba(234,115,251,0.4)]"></div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="timer">timer</span>
+</div>
+<p class="text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-[0.2em] mb-4">平均阅读时长</p>
+<div class="flex items-end gap-3">
+<h3 class="text-3xl font-bold font-['Space_Grotesk']">04:12</h3>
+<span class="text-xs text-[#f87171] font-bold mb-1">-2.1%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container-low rounded-full">
+<div class="h-full bg-tertiary w-[85%] rounded-full shadow-[0_0_8px_rgba(255,172,84,0.4)]"></div>
+</div>
+</div>
+</div>
+<!-- Charts Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+<!-- Traffic Trend Line Chart -->
+<div class="lg:col-span-2 bg-surface-container rounded-xl p-8 flex flex-col">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-lg font-bold mb-1">流量趋势分析</h3>
+<p class="text-xs text-on-surface-variant">过去 30 天的每日访问量峰值</p>
+</div>
+<select class="bg-surface-container-low border-none text-[10px] font-['Space_Grotesk'] uppercase tracking-widest rounded-lg px-3 py-1 text-on-surface-variant focus:ring-primary">
+<option>LAST 30 DAYS</option>
+<option>LAST 7 DAYS</option>
+</select>
+</div>
+<!-- Simulated Chart -->
+<div class="flex-1 w-full flex items-end gap-2 group/chart min-h-[240px]">
+<div class="flex-1 bg-primary/5 hover:bg-primary/20 transition-all rounded-t h-[40%]"></div>
+<div class="flex-1 bg-primary/10 hover:bg-primary/20 transition-all rounded-t h-[55%]"></div>
+<div class="flex-1 bg-primary/5 hover:bg-primary/20 transition-all rounded-t h-[35%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/30 transition-all rounded-t h-[75%] border-t-2 border-primary"></div>
+<div class="flex-1 bg-primary/15 hover:bg-primary/20 transition-all rounded-t h-[60%]"></div>
+<div class="flex-1 bg-primary/25 hover:bg-primary/40 transition-all rounded-t h-[90%] border-t-2 border-primary"></div>
+<div class="flex-1 bg-primary/10 hover:bg-primary/20 transition-all rounded-t h-[45%]"></div>
+<div class="flex-1 bg-primary/5 hover:bg-primary/20 transition-all rounded-t h-[30%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/30 transition-all rounded-t h-[80%] border-t-2 border-primary"></div>
+<div class="flex-1 bg-primary/15 hover:bg-primary/20 transition-all rounded-t h-[65%]"></div>
+<div class="flex-1 bg-primary/10 hover:bg-primary/20 transition-all rounded-t h-[50%]"></div>
+<div class="flex-1 bg-primary/30 hover:bg-primary/50 transition-all rounded-t h-[95%] border-t-2 border-primary shadow-[0_0_15px_rgba(140,172,255,0.2)]"></div>
+</div>
+<div class="flex justify-between mt-4 px-2 text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-widest">
+<span>MAY 01</span>
+<span>MAY 10</span>
+<span>MAY 20</span>
+<span>MAY 30</span>
+</div>
+</div>
+<!-- Traffic Sources Pie Chart -->
+<div class="bg-surface-container rounded-xl p-8 flex flex-col">
+<h3 class="text-lg font-bold mb-1">流量来源分配</h3>
+<p class="text-xs text-on-surface-variant mb-8">本季度用户获取渠道</p>
+<div class="flex-1 flex items-center justify-center relative">
+<!-- Donut Chart Visualization -->
+<div class="w-40 h-40 rounded-full border-[12px] border-surface-container-low relative flex items-center justify-center">
+<div class="absolute inset-0 rounded-full border-[12px] border-primary border-t-transparent border-r-transparent rotate-[45deg]"></div>
+<div class="absolute inset-0 rounded-full border-[12px] border-secondary border-b-transparent border-l-transparent border-t-transparent rotate-[140deg]"></div>
+<div class="text-center">
+<span class="block text-2xl font-bold font-['Space_Grotesk']">84%</span>
+<span class="text-[8px] uppercase tracking-widest text-on-surface-variant">转化率</span>
+</div>
+</div>
+</div>
+<div class="space-y-3 mt-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs">搜索引擎 (SEO)</span>
+</div>
+<span class="text-xs font-bold font-['Space_Grotesk']">52%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-xs">社交媒体营销</span>
+</div>
+<span class="text-xs font-bold font-['Space_Grotesk']">28%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<span class="text-xs">直接访问</span>
+</div>
+<span class="text-xs font-bold font-['Space_Grotesk']">20%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Popular Articles Table -->
+<div class="bg-surface-container rounded-xl overflow-hidden">
+<div class="p-8 border-b border-white/5 flex justify-between items-center">
+<h3 class="text-lg font-bold">热门文章排行</h3>
+<button class="text-xs text-primary font-bold font-['Space_Grotesk'] uppercase tracking-widest hover:underline">查看全部列表</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-8 py-4 text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-widest">文章标题</th>
+<th class="px-8 py-4 text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-widest">发布日期</th>
+<th class="px-8 py-4 text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-widest">阅读量</th>
+<th class="px-8 py-4 text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-widest">互动率</th>
+<th class="px-8 py-4 text-[10px] font-['Space_Grotesk'] text-on-surface-variant uppercase tracking-widest text-right">状态</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest overflow-hidden shrink-0">
+<img alt="Article Thumbnail" data-alt="vibrant abstract digital art representing artificial intelligence neural networks, neon blue and violet tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQNCqqaR7BQqKl6RjcIl1QEchD7tTbbfaK0qYMx-vhZC01kM5kwCarPjfNCXGckJ4iOUun253esMR1W63E-K4cMmXFO8d960vHm6WKdtuK8q0Y-eoLBSmKfGSCBCu_aGW2Mca1a1pmbsjHJqHfpF_pv97Y_d4pD-eNAGqUenZMm-L2K4xpUso2Kk5iHFwQZaeSTnIOb8otFN9ij02keFXAhv3ddm4cxGCA-GKJ3PDUp1hTcVpIt05iuS0EAcL-Wtyhl1ZRkQEIauk"/>
+</div>
+<div>
+<p class="text-sm font-bold group-hover:text-primary transition-colors">深度解析：2024年量子计算的技术奇点</p>
+<p class="text-[10px] text-on-surface-variant mt-1">#QUANTUM #TECH #FUTURE</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-xs text-on-surface-variant font-['Space_Grotesk']">2024.05.12</td>
+<td class="px-8 py-5 text-sm font-bold font-['Space_Grotesk']">124,092</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-low rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[88%]"></div>
+</div>
+<span class="text-[10px] font-bold">8.8%</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<span class="px-2 py-1 bg-[#4ade80]/10 text-[#4ade80] text-[10px] font-bold rounded">热推中</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest overflow-hidden shrink-0">
+<img alt="Article Thumbnail" data-alt="minimalist design blueprint on dark surface, clean architectural lines and technical details" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyR6yStGTpJxOOe_oDqUcgvQvGShatC4pqQPNN3G1Lioz3Q5srt0kBI7FE8Qi_B6_sqK_Yyj-tSt9eZsqSH3onBQzKZOsXdq6Zug5vz4AEWOo7Dky_tZ30lESZRSP1QMMiengA8aaNlimPxXZC542NhLU3WZ_BNyi904unZBP2Braw6r69Oj66TMSP1VTXVAyAX4G9CmagxKJMSfoU6C2qqT2RHlkuLsoqiRpUtwjsSndce_12p7NVXthUpUNKni79XGxcDp2Ts2w"/>
+</div>
+<div>
+<p class="text-sm font-bold group-hover:text-primary transition-colors">设计系统中的暗模式色彩平衡指南</p>
+<p class="text-[10px] text-on-surface-variant mt-1">#DESIGN #UX #COLOR</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-xs text-on-surface-variant font-['Space_Grotesk']">2024.05.08</td>
+<td class="px-8 py-5 text-sm font-bold font-['Space_Grotesk']">89,421</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-low rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[62%]"></div>
+</div>
+<span class="text-[10px] font-bold">6.2%</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<span class="px-2 py-1 bg-outline/10 text-outline text-[10px] font-bold rounded">已归档</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest overflow-hidden shrink-0">
+<img alt="Article Thumbnail" data-alt="close-up of glowing code on a dark screen with soft bokeh background lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp7FU2opUicw11wBIWE2lS9ehNohk2dQWxNqP8l_GSBYOdrWkw5i6YZM31Xyj704gRAYF9QXn5yhe2_Hweb3mO5WSG4bm5ppML-Ug9NKMTCIMx1ly7UCvxxLHn-E963pgsml7LC0eVqr1_iKK2OnFA3XyUCVaOzcNdAQHEOealcaW4_JetHZn5XBS_c_E487jEkqcDb5jI0sIvAtQ4o97rnLfKd8I9P9_ZjksNKM0SPyCH7wi-t0nGMlQFF87LLjkF-PywbFFrsBw"/>
+</div>
+<div>
+<p class="text-sm font-bold group-hover:text-primary transition-colors">从零开始：构建高性能边缘计算节点</p>
+<p class="text-[10px] text-on-surface-variant mt-1">#DEV #EDGE #NODES</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-xs text-on-surface-variant font-['Space_Grotesk']">2024.05.01</td>
+<td class="px-8 py-5 text-sm font-bold font-['Space_Grotesk']">76,110</td>
+<td class="px-8 py-5">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-low rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[45%]"></div>
+</div>
+<span class="text-[10px] font-bold">4.5%</span>
+</div>
+</td>
+<td class="px-8 py-5 text-right">
+<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded">稳定</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Customized for Dashboard) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-on-primary-container rounded-full shadow-[0_10px_20px_-5px_rgba(140,172,255,0.4)] flex items-center justify-center group active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
+</button>
+</body></html>

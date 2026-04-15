@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#777575",
+                    "on-primary-fixed": "#000000",
+                    "primary-dim": "#2c6dec",
+                    "surface-container-high": "#201f1f",
+                    "on-surface-variant": "#adaaaa",
+                    "on-surface": "#ffffff",
+                    "on-tertiary-fixed": "#271300",
+                    "surface-container-lowest": "#000000",
+                    "error-container": "#9f0519",
+                    "on-primary-container": "#001f56",
+                    "on-secondary-container": "#ffddfd",
+                    "primary-container": "#769dff",
+                    "on-primary-fixed-variant": "#002869",
+                    "tertiary-dim": "#ec8c00",
+                    "on-tertiary": "#583100",
+                    "secondary-container": "#8f15a4",
+                    "secondary": "#ea73fb",
+                    "on-error-container": "#ffa8a3",
+                    "on-background": "#ffffff",
+                    "background": "#0e0e0e",
+                    "tertiary-fixed-dim": "#ec8c00",
+                    "on-tertiary-fixed-variant": "#563000",
+                    "error": "#ff716c",
+                    "surface-variant": "#262626",
+                    "surface-bright": "#2c2c2c",
+                    "tertiary-fixed": "#ff9800",
+                    "outline-variant": "#484847",
+                    "inverse-on-surface": "#565554",
+                    "tertiary-container": "#ff9800",
+                    "on-secondary": "#450051",
+                    "secondary-fixed": "#fcbcff",
+                    "inverse-surface": "#fcf8f8",
+                    "primary": "#8cacff",
+                    "on-secondary-fixed-variant": "#8a0b9f",
+                    "on-error": "#490006",
+                    "surface-tint": "#8cacff",
+                    "on-primary": "#002a6e",
+                    "surface-container-low": "#131313",
+                    "on-tertiary-container": "#4a2800",
+                    "surface-container-highest": "#262626",
+                    "primary-fixed-dim": "#5f8fff",
+                    "secondary-dim": "#e46df5",
+                    "surface": "#0e0e0e",
+                    "primary-fixed": "#769dff",
+                    "secondary-fixed-dim": "#f9a7ff",
+                    "on-secondary-fixed": "#5d006d",
+                    "surface-dim": "#0e0e0e",
+                    "tertiary": "#ffac54",
+                    "inverse-primary": "#0057d1",
+                    "surface-container": "#1a1919",
+                    "error-dim": "#d7383b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-gradient {
+            background: linear-gradient(135deg, #8cacff 0%, #769dff 100%);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #1a1919; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #262626; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 selection:text-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl transition-colors duration-300 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.04)] flex justify-between items-center px-8 h-16 max-w-full">
+<div class="text-xl font-black tracking-tighter text-[#8cacff] font-headline">Obsidian Flux</div>
+<div class="hidden md:flex items-center gap-8 font-headline tracking-tight font-bold text-sm">
+<a class="text-[#8cacff] border-b-2 border-[#8cacff] pb-1 hover:text-white transition-all" href="#">Docs</a>
+<a class="text-[#adaaaa] hover:text-white transition-all" href="#">API</a>
+<a class="text-[#adaaaa] hover:text-white transition-all" href="#">Changelog</a>
+<a class="text-[#adaaaa] hover:text-white transition-all" href="#">Community</a>
+</div>
+<div class="flex items-center gap-4 text-[#adaaaa]">
+<span class="font-label text-xs tracking-widest uppercase opacity-60">v2.4.0</span>
+<div class="flex gap-2">
+<button class="p-2 hover:text-white transition-all scale-95 duration-200">
+<span class="material-symbols-outlined text-lg">settings</span>
+</button>
+<button class="p-2 hover:text-white transition-all scale-95 duration-200">
+<span class="material-symbols-outlined text-lg">dark_mode</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#0e0e0e] flex flex-col py-6 px-4 space-y-2 border-r border-[#1a1919]">
+<div class="px-4 mb-4">
+<h3 class="font-headline text-lg font-bold text-white">Documentation</h3>
+<p class="font-label text-[10px] text-primary tracking-widest uppercase opacity-70">v2.4.0 Stable</p>
+</div>
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-label text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white transition-transform translate-x-1" href="#">
+<span class="material-symbols-outlined text-lg">info</span>
+<span>Introduction</span>
+</a>
+<a class="flex items-center gap-3 bg-[#201f1f] text-[#8cacff] rounded-md px-4 py-2 font-label text-xs font-medium uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-lg">psychology</span>
+<span>Core Concepts</span>
+</a>
+<div class="ml-8 mt-2 space-y-1">
+<a class="block py-1.5 px-4 text-xs text-[#adaaaa] hover:text-white transition-colors" href="#">Core Loop</a>
+<a class="block py-1.5 px-4 text-xs text-primary font-bold border-l border-primary" href="#">Agent 循环</a>
+</div>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-label text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white transition-transform" href="#">
+<span class="material-symbols-outlined text-lg">architecture</span>
+<span>Advanced Guides</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-label text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white transition-transform" href="#">
+<span class="material-symbols-outlined text-lg">rocket_launch</span>
+<span>Deployment</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-label text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white transition-transform" href="#">
+<span class="material-symbols-outlined text-lg">build</span>
+<span>Troubleshooting</span>
+</a>
+</div>
+<div class="pt-6 mt-6 border-t border-[#1a1919] space-y-1">
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-label text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white transition-transform" href="#">
+<span class="material-symbols-outlined text-lg">code</span>
+<span>GitHub</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-2 font-label text-xs font-medium uppercase tracking-widest hover:bg-[#1a1919] hover:text-white transition-transform" href="#">
+<span class="material-symbols-outlined text-lg">forum</span>
+<span>Discord</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 mt-16 p-12 lg:p-20 bg-surface min-h-screen">
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 mb-8 font-label text-[10px] tracking-[0.2em] uppercase text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<span class="material-symbols-outlined text-[12px] opacity-40">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Core Concepts</a>
+<span class="material-symbols-outlined text-[12px] opacity-40">chevron_right</span>
+<span class="text-primary font-bold">Agent Loop</span>
+</nav>
+<!-- Hero Section -->
+<header class="mb-16">
+<h1 class="font-headline text-6xl md:text-7xl font-extrabold tracking-tighter text-on-surface mb-6 text-wrap-balance">
+                    Agent 循环
+                </h1>
+<p class="text-xl text-on-surface-variant font-body leading-relaxed max-w-2xl">
+                    自主系统（Autonomous Systems）的核心在于其自我维持的反馈循环。Agent 循环定义了系统如何接收外部刺激、处理上下文并执行具有长期影响的决策。
+                </p>
+</header>
+<!-- Technical Diagram (Asymmetric Layout) -->
+<section class="mb-20">
+<div class="bg-surface-container-low rounded-xl p-10 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10">
+<div class="w-full h-full editorial-gradient blur-[80px]"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center relative z-10">
+<div class="col-span-1 space-y-6">
+<div class="bg-surface-container p-6 rounded-lg border-l-4 border-primary shadow-lg">
+<span class="font-label text-[10px] text-primary uppercase tracking-widest">Input</span>
+<h4 class="text-lg font-headline font-bold text-white mt-2">环境感知 (Perception)</h4>
+<p class="text-xs text-on-surface-variant mt-2">流式观测数据与静态上下文注入。</p>
+</div>
+<div class="material-symbols-outlined text-primary mx-auto block text-center opacity-30">arrow_downward</div>
+<div class="bg-surface-container p-6 rounded-lg border-l-4 border-secondary shadow-lg">
+<span class="font-label text-[10px] text-secondary uppercase tracking-widest">Process</span>
+<h4 class="text-lg font-headline font-bold text-white mt-2">策略决策 (Reasoning)</h4>
+<p class="text-xs text-on-surface-variant mt-2">通过 LLM 进行链式思考与逻辑推导。</p>
+</div>
+</div>
+<div class="col-span-1 flex justify-center">
+<div class="relative w-48 h-48 flex items-center justify-center">
+<div class="absolute inset-0 border-[1px] border-dashed border-primary/30 rounded-full animate-spin-slow"></div>
+<div class="w-32 h-32 editorial-gradient rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(140,172,255,0.3)]">
+<span class="material-symbols-outlined text-on-primary-fixed text-4xl">autorenew</span>
+</div>
+</div>
+</div>
+<div class="col-span-1 space-y-6">
+<div class="bg-surface-container p-6 rounded-lg border-r-4 border-tertiary shadow-lg text-right">
+<span class="font-label text-[10px] text-tertiary uppercase tracking-widest">Output</span>
+<h4 class="text-lg font-headline font-bold text-white mt-2">执行动作 (Execution)</h4>
+<p class="text-xs text-on-surface-variant mt-2">API 调用、系统变更或自然语言响应。</p>
+</div>
+<div class="material-symbols-outlined text-tertiary mx-auto block text-center opacity-30">arrow_upward</div>
+<div class="bg-surface-container p-6 rounded-lg border-r-4 border-primary-container shadow-lg text-right">
+<span class="font-label text-[10px] text-primary-container uppercase tracking-widest">Feedback</span>
+<h4 class="text-lg font-headline font-bold text-white mt-2">记忆固化 (Memory)</h4>
+<p class="text-xs text-on-surface-variant mt-2">将结果写入短期缓存或向量数据库。</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Core Principle Callout -->
+<section class="mb-20">
+<div class="bg-primary-container/10 border border-primary/20 rounded-xl p-8 flex gap-6 items-start">
+<div class="bg-primary p-3 rounded-lg text-on-primary">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold text-white mb-2">核心原则：原子性循环</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                            Agent 循环必须是原子的（Atomic）。这意味着每个循环周期应该具备独立的观测边界和明确的退出条件。避免在单个循环内处理过于复杂的子任务，建议将大型复杂逻辑分解为多层级的嵌套循环。
+                        </p>
+</div>
+</div>
+</section>
+<!-- Detailed Breakdowns -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
+<div class="space-y-6">
+<h2 class="font-headline text-3xl font-bold text-white">01. 感知层 (Perception)</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                        这是循环的起点。Agent 通过配置的 <strong>Connectors</strong> 实时拉取外部世界的快照。这不仅包括原始文本，还包括结构化 JSON、数据库状态以及历史对话摘要。
+                    </p>
+<ul class="space-y-3 font-body text-sm">
+<li class="flex items-center gap-3 text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            多模态输入解析（Text, Image, Logs）
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            自适应上下文窗口管理
+                        </li>
+</ul>
+</div>
+<div class="space-y-6">
+<h2 class="font-headline text-3xl font-bold text-white">02. 决策层 (Decision)</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                        在感知之后，Agent 进入 <strong>ReAct</strong>（Reasoning and Acting）阶段。Obsidian Flux 利用专有的 Prompt 架构确保 Agent 在执行前生成详细的执行计划。
+                    </p>
+<ul class="space-y-3 font-body text-sm">
+<li class="flex items-center gap-3 text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            逻辑链 (CoT) 验证
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            工具使用权限校验
+                        </li>
+</ul>
+</div>
+</section>
+<!-- Code Block -->
+<section class="mb-20">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-headline text-2xl font-bold text-white">代码示例：LedgerAgent 实现</h3>
+<span class="font-label text-[10px] text-on-surface-variant tracking-widest uppercase">python / obsidian-sdk</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-2xl">
+<div class="flex items-center gap-2 px-6 py-3 bg-surface-container border-b border-white/5">
+<div class="flex gap-1.5">
+<div class="w-3 h-3 rounded-full bg-error-dim opacity-40"></div>
+<div class="w-3 h-3 rounded-full bg-tertiary-dim opacity-40"></div>
+<div class="w-3 h-3 rounded-full bg-primary-dim opacity-40"></div>
+</div>
+<span class="text-[10px] font-label text-on-surface-variant ml-4 tracking-tighter">ledger_agent.py</span>
+</div>
+<pre class="p-8 text-sm font-mono leading-relaxed overflow-x-auto"><span class="text-secondary">class</span> <span class="text-primary">LedgerAgent</span>(BaseAgent):
+    <span class="text-on-surface-variant">"""自主分类账处理 Agent"""</span>
+    
+    <span class="text-secondary">def</span> <span class="text-primary">__init__</span>(self, config: AgentConfig):
+        <span class="text-secondary">super</span>().__init__(config)
+        self.cycle_count = <span class="text-tertiary">0</span>
+
+    <span class="text-secondary">async def</span> <span class="text-primary">run_loop</span>(self, environment):
+        <span class="text-secondary">while</span> <span class="text-secondary">not</span> self.check_termination():
+            <span class="text-on-surface-variant"># 1. Perception</span>
+            state = <span class="text-secondary">await</span> environment.get_current_state()
+            
+            <span class="text-on-surface-variant"># 2. Decision via Obsidian Reasoning Engine</span>
+            action = <span class="text-secondary">await</span> self.reason(state)
+            
+            <span class="text-on-surface-variant"># 3. Execution</span>
+            result = <span class="text-secondary">await</span> self.execute(action)
+            
+            <span class="text-on-surface-variant"># 4. Log &amp; Memory update</span>
+            <span class="text-secondary">await</span> self.memory.commit(result)
+            self.cycle_count += <span class="text-tertiary">1</span>
+            
+            <span class="text-primary">print</span>(f<span class="text-on-secondary-container">"Cycle {self.cycle_count} completed."</span>)</pre>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-[#1a1919] bg-[#0e0e0e] flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 relative z-10">
+<div class="text-sm font-bold text-white">Obsidian Flux</div>
+<div class="font-inter text-xs leading-relaxed text-[#adaaaa] text-center md:text-left max-w-sm">
+            © 2024 Obsidian Flux. Built for the modern architect.
+        </div>
+<div class="flex gap-6 font-inter text-xs">
+<a class="text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Privacy Policy</a>
+<a class="text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Terms of Service</a>
+<a class="text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Security</a>
+<a class="text-[#adaaaa] hover:text-[#8cacff] underline opacity-80 hover:opacity-100 transition-all" href="#">Status</a>
+</div>
+</footer>
+</body></html>

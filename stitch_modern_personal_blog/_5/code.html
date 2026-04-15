@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#313030",
+                        "primary": "#4edea3",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-container-highest": "#353534",
+                        "surface": "#131313",
+                        "surface-bright": "#3a3939",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-primary-container": "#00422b",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "surface-dim": "#131313",
+                        "outline-variant": "#3c4a42",
+                        "tertiary-container": "#e29100",
+                        "surface-tint": "#4edea3",
+                        "on-surface": "#e5e2e1",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-surface-variant": "#bbcabf",
+                        "outline": "#86948a",
+                        "background": "#131313",
+                        "surface-variant": "#353534",
+                        "primary-container": "#10b981",
+                        "on-background": "#e5e2e1",
+                        "secondary-container": "#0566d9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-container": "#e6ecff",
+                        "tertiary": "#ffb95f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-secondary-fixed-variant": "#004395",
+                        "inverse-primary": "#006c49",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#472a00",
+                        "on-tertiary-container": "#523200",
+                        "primary-fixed": "#6ffbbe",
+                        "on-tertiary-fixed": "#2a1700",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "on-secondary": "#002e6a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-primary": "#003824",
+                        "surface-container-high": "#2a2a2a",
+                        "error": "#ffb4ab",
+                        "secondary": "#adc6ff",
+                        "on-secondary-fixed": "#001a42"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(53, 53, 52, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(60, 74, 66, 0.15);
+        }
+        .code-syntax-keyword { color: #ffb95f; }
+        .code-syntax-func { color: #adc6ff; }
+        .code-syntax-string { color: #4edea3; }
+        .code-syntax-comment { color: #86948a; font-style: italic; }
+    </style>
+</head>
+<body class="bg-surface-dim text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313] border-b border-[#3C4A42]/15 flex justify-between items-center h-16 px-8 font-['Manrope'] antialiased">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-[#E5E2E1]">Architectural Ledger</span>
+<div class="hidden md:flex space-x-6 items-center">
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Guides</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">API</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Changelog</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Support</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-[#86948A] cursor-pointer hover:text-primary transition-all duration-200" data-icon="dark_mode">dark_mode</span>
+<span class="material-symbols-outlined text-[#86948A] cursor-pointer hover:text-primary transition-all duration-200" data-icon="github">hub</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User Profile" data-alt="professional male software architect portrait with neutral background and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUWrXyqRJwWpoeilBzbTBWEetMeYBDj-127e1XS51EXrPgEInTR3F5CpSyQycQZ5-9PR6uPI84lyWDUSkNvJZ5B7t5MhLgx67KRiBOA9XuuUT-10W0mtzqJgws9feNV4UalWHPgcgCf7ezawhvfIHgNgIBP0hmm9QAEvSpG2gviNrtaeNSmhKK2UXSwSGJiwG1GFb6SdpmRAnhjoyBZLHqh6rWA5XCrNydk6iPlWv_VD9a_lMywjLhzPunSAQyLBXXbI8wihmh3yc"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#131313] border-r border-[#3C4A42]/15 flex flex-col py-8 px-6 space-y-2 font-['Manrope'] text-sm overflow-y-auto">
+<div class="mb-6 px-4">
+<p class="text-xs uppercase tracking-widest text-outline font-bold">Documentation</p>
+<p class="text-[10px] text-primary/70 font-mono">v2.4.0-stable</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="menu_book">menu_book</span>
+                Introduction
+            </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="bolt">bolt</span>
+                Quick Start
+            </a>
+<a class="text-[#E5E2E1] font-semibold relative before:content-[''] before:absolute before:left-[-12px] before:w-[2px] before:h-full before:bg-[#4EDE63] py-2 px-4 block bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg text-primary" data-icon="architecture">architecture</span>
+                Core Concepts
+            </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="Layers">layers</span>
+                Advanced Patterns
+            </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="rocket_launch">rocket_launch</span>
+                Deployment
+            </a>
+</nav>
+<div class="pt-6 border-t border-[#3C4A42]/10 space-y-1">
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help">help</span>
+                Help
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-12 max-w-[1200px]">
+<header class="mb-12">
+<div class="flex items-center gap-2 mb-4">
+<span class="text-[0.75rem] font-medium tracking-[0.1em] text-outline uppercase font-label">Core Concepts</span>
+<span class="text-outline/40">/</span>
+<span class="text-[0.75rem] font-medium tracking-[0.1em] text-primary uppercase font-label">Deep Dive</span>
+</div>
+<h1 class="text-[2.75rem] font-extrabold tracking-tighter text-on-surface leading-tight mb-4">深入探索 - 核心逻辑</h1>
+<p class="text-body-lg text-on-surface-variant max-w-[720px] leading-relaxed">
+                本章节详细解析 Agent 循环的底层架构。我们将探讨推理引擎如何协调模型预测与外部工具调用，确保在复杂的非确定性环境中保持逻辑闭环。
+            </p>
+</header>
+<!-- Asymmetric Layout: Diagram & Meta -->
+<section class="grid grid-cols-12 gap-8 mb-16">
+<div class="col-span-12 lg:col-span-9">
+<div class="bg-surface-container-low rounded-lg p-8 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
+<h2 class="text-headline-sm font-semibold mb-8 flex items-center gap-3">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                        Agent Reasoning Loop
+                    </h2>
+<!-- Custom Architecture Diagram (Mermaid Style) -->
+<div class="flex flex-col items-center py-12 px-4 bg-surface-container-lowest rounded-md border border-outline-variant/10">
+<div class="flex flex-col items-center gap-8 w-full max-w-2xl">
+<!-- Start Node -->
+<div class="px-6 py-3 rounded-full border border-primary/40 bg-primary/5 text-primary font-mono text-sm uppercase tracking-widest shadow-[0_0_15px_rgba(78,222,163,0.1)]">
+                                Start Input
+                            </div>
+<span class="material-symbols-outlined text-outline/40" data-icon="south">south</span>
+<!-- Model Node -->
+<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+<div class="hidden md:block h-px bg-gradient-to-r from-transparent via-outline-variant/30 to-outline-variant/30"></div>
+<div class="bg-surface-container-high p-6 rounded-lg border border-outline-variant/20 text-center">
+<p class="text-xs text-outline font-label uppercase tracking-widest mb-2">Inference Engine</p>
+<p class="font-bold text-lg text-secondary">LLM / Model</p>
+</div>
+<div class="hidden md:block h-px bg-gradient-to-l from-transparent via-outline-variant/30 to-outline-variant/30"></div>
+</div>
+<span class="material-symbols-outlined text-outline/40" data-icon="south">south</span>
+<!-- Branching Logic -->
+<div class="flex flex-col md:flex-row gap-12 items-center justify-center w-full">
+<!-- Tool Use Loop -->
+<div class="flex flex-col items-center gap-4">
+<div class="p-6 bg-surface-container border border-primary/20 rounded-xl flex flex-col items-center gap-3 group hover:border-primary/50 transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+</div>
+<span class="font-mono font-medium text-on-surface">tool_use</span>
+</div>
+<span class="material-symbols-outlined text-primary/60" data-icon="south">south</span>
+<div class="p-4 bg-surface-container-high border border-outline-variant/20 rounded-lg text-center">
+<span class="text-sm font-mono text-secondary">Execution</span>
+</div>
+<span class="material-symbols-outlined text-primary/40" data-icon="south">south</span>
+<div class="p-4 bg-surface-container border border-outline-variant/20 rounded-lg text-center">
+<span class="text-sm font-mono text-on-surface">Result Parser</span>
+</div>
+</div>
+<!-- Feedback Loop Path -->
+<div class="hidden md:flex flex-col items-center h-full">
+<div class="w-32 h-48 border-y-2 border-r-2 border-outline-variant/30 rounded-r-3xl relative">
+<div class="absolute -bottom-2 -left-4">
+<span class="material-symbols-outlined text-primary" data-icon="west">west</span>
+</div>
+<div class="absolute top-1/2 -right-12 -translate-y-1/2 rotate-90 text-[10px] text-outline font-mono uppercase tracking-[0.2em] whitespace-nowrap">
+                                            Feedback Loop
+                                        </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Metadata / Editorial Aside -->
+<div class="col-span-12 lg:col-span-3 space-y-6">
+<div class="glass-panel p-6 rounded-lg">
+<h4 class="text-label-md font-bold text-primary mb-4 uppercase">Architectural Note</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                        The "Repeat" phase is critical. Unlike standard DAGs, the agent loop is recursive. Ensure your memory buffers are cleared to prevent context tokens from exploding.
+                    </p>
+</div>
+<div class="p-6 border-l border-outline-variant/20">
+<h4 class="text-xs font-bold text-outline mb-4 uppercase tracking-widest">Related Components</h4>
+<ul class="space-y-3 text-sm">
+<li class="flex items-center gap-2 text-on-surface-variant hover:text-secondary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="memory">memory</span>
+                            State Manager
+                        </li>
+<li class="flex items-center gap-2 text-on-surface-variant hover:text-secondary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="api">api</span>
+                            Protocol Buffers
+                        </li>
+<li class="flex items-center gap-2 text-on-surface-variant hover:text-secondary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="security">security</span>
+                            Sandbox Isolation
+                        </li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Code Block Section -->
+<section class="mb-16">
+<h3 class="text-title-md font-semibold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="code">code</span>
+                Implementation: The Infinite Reason Loop
+            </h3>
+<div class="rounded-md overflow-hidden bg-surface-container-lowest border border-outline-variant/10 shadow-2xl">
+<!-- Action Bar -->
+<div class="flex justify-between items-center px-6 py-3 bg-surface-container-highest/40 border-b border-outline-variant/10">
+<span class="text-xs font-mono text-outline uppercase tracking-wider">python v3.11+</span>
+<button class="flex items-center gap-2 text-xs text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
+                        Copy Code
+                    </button>
+</div>
+<!-- Code Body -->
+<div class="p-8 font-mono text-[0.875rem] leading-relaxed overflow-x-auto">
+<pre><code><span class="code-syntax-keyword">async def</span> <span class="code-syntax-func">agent_reasoning_loop</span>(prompt: str, max_iterations: int = 10):
+    <span class="code-syntax-comment"># Initialize logical state context</span>
+    state = AgentState(input=prompt)
+    
+    <span class="code-syntax-keyword">while</span> state.is_active <span class="code-syntax-keyword">and</span> state.step &lt; max_iterations:
+        <span class="code-syntax-keyword">try</span>:
+            <span class="code-syntax-comment"># Step 1: Model Prediction</span>
+            prediction = <span class="code-syntax-keyword">await</span> model.<span class="code-syntax-func">predict</span>(state.context)
+            
+            <span class="code-syntax-keyword">if</span> prediction.type == <span class="code-syntax-string">"tool_call"</span>:
+                <span class="code-syntax-comment"># Step 2: Tool Execution with Error Handling</span>
+                result = <span class="code-syntax-keyword">await</span> executor.<span class="code-syntax-func">run</span>(prediction.tool, prediction.args)
+                state.<span class="code-syntax-func">update_memory</span>(observation=result)
+            <span class="code-syntax-keyword">else</span>:
+                <span class="code-syntax-comment"># Final result achieved</span>
+                state.is_active = <span class="code-syntax-keyword">False</span>
+                <span class="code-syntax-keyword">return</span> prediction.content
+
+        <span class="code-syntax-keyword">except</span> ExecutionError <span class="code-syntax-keyword">as</span> e:
+            <span class="code-syntax-comment"># Self-Correction Protocol</span>
+            <span class="code-syntax-func">logger</span>.<span class="code-syntax-func">warning</span>(f<span class="code-syntax-string">"Step {state.step} failed: {e}"</span>)
+            state.<span class="code-syntax-func">inject_feedback</span>(error_message=str(e))
+            
+        state.step += 1
+        
+    <span class="code-syntax-keyword">raise</span> <span class="code-syntax-func">TimeoutError</span>(<span class="code-syntax-string">"Agent failed to converge within limits."</span>)</code></pre>
+</div>
+</div>
+<!-- Callout Box -->
+<div class="mt-8 relative group">
+<div class="absolute inset-0 bg-primary/5 rounded-lg border border-primary/20 blur-sm group-hover:blur-md transition-all"></div>
+<div class="relative glass-panel rounded-lg p-6 flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-1">Optimization Tip</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            Implementing exponential backoff in the <code class="bg-surface-container px-1.5 rounded text-secondary">ExecutionError</code> catch block significantly improves the resilience of loops targeting unstable third-party APIs.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 mt-20 bg-[#0E0E0E] border-t border-[#3C4A42]/10 font-['Manrope'] text-xs uppercase tracking-widest">
+<div class="max-w-7xl mx-auto px-8 flex flex-col items-center space-y-4">
+<div class="flex space-x-8">
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Privacy</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Terms</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Security</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Status</a>
+</div>
+<p class="text-[#86948A] opacity-70">© 2024 Architectural Ledger. Built for deep technical focus.</p>
+</div>
+</footer>
+</body></html>

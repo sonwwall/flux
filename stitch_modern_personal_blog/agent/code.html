@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agent 循环 - Architectural Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#313030",
+                        "primary": "#4edea3",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-container-highest": "#353534",
+                        "surface": "#131313",
+                        "surface-bright": "#3a3939",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-primary-container": "#00422b",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "surface-dim": "#131313",
+                        "outline-variant": "#3c4a42",
+                        "tertiary-container": "#e29100",
+                        "surface-tint": "#4edea3",
+                        "on-surface": "#e5e2e1",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-surface-variant": "#bbcabf",
+                        "outline": "#86948a",
+                        "background": "#131313",
+                        "surface-variant": "#353534",
+                        "primary-container": "#10b981",
+                        "on-background": "#e5e2e1",
+                        "secondary-container": "#0566d9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-container": "#e6ecff",
+                        "tertiary": "#ffb95f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary-fixed-variant": "#005236",
+                        "on-secondary-fixed-variant": "#004395",
+                        "inverse-primary": "#006c49",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#472a00",
+                        "on-tertiary-container": "#523200",
+                        "primary-fixed": "#6ffbbe",
+                        "on-tertiary-fixed": "#2a1700",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "on-secondary": "#002e6a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-primary": "#003824",
+                        "surface-container-high": "#2a2a2a",
+                        "error": "#ffb4ab",
+                        "secondary": "#adc6ff",
+                        "on-secondary-fixed": "#001a42"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ghost-border { border: 1px solid rgba(60, 74, 66, 0.15); }
+        .glass-callout { background: rgba(78, 222, 163, 0.05); border: 1px solid rgba(78, 222, 163, 0.2); }
+        body { font-family: 'Manrope', sans-serif; }
+        .code-syntax-primary { color: #4edea3; }
+        .code-syntax-secondary { color: #adc6ff; }
+        .code-syntax-tertiary { color: #ffb95f; }
+    </style>
+</head>
+<body class="bg-surface-dim text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313] border-b border-[#3C4A42]/15 h-16 flex justify-between items-center px-8 font-['Manrope']">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-[#E5E2E1]">Architectural Ledger</span>
+<nav class="hidden md:flex items-center space-x-6 text-sm">
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Guides</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">API</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Changelog</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-md pl-10 pr-4 py-1.5 text-xs w-64 focus:ring-1 focus:ring-primary/30 text-on-surface" placeholder="Search documentation..." type="text"/>
+</div>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-on-surface transition-colors" data-icon="dark_mode">dark_mode</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-on-surface transition-colors" data-icon="github">hub</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User Profile" data-alt="minimalist user avatar placeholder with a dark sleek aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB33F_jhR3Q2wxY2M31TMy4MERJmP5Sq579VPA1__6mV0GfeoGuxLDVx6t2qEiEicElb-y0Srs2jFeIAD9fCMdDdcVgmjlGe1of_C7fY8ZTzGCl3c_UYHHCnaGhxEzKkiGd5vU_oTKu9smURFhIaNiArhdeQReUvy2YYNpGdX5KeCUwZRB9rSt_2AwZ0tVQQFF7B90naUHlA_EX8kX820fNzk0o4I490iIZzIOPCLG2R7qbRhG8ZVdLQ6kXRO8eOELKy4uGxHWdddg"/>
+</div>
+</div>
+</header>
+<div class="flex pt-16 min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-[#131313] border-r border-[#3C4A42]/15 flex flex-col py-8 px-6 space-y-2 overflow-y-auto">
+<div class="mb-6 px-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-primary mb-1">Documentation</h3>
+<p class="text-[10px] text-outline">v2.4.0-stable</p>
+</div>
+<!-- Core Loop Section -->
+<div class="space-y-1">
+<p class="px-4 text-[10px] font-bold text-outline-variant uppercase tracking-wider mb-2">Core Loop</p>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm" href="#">Introduction</a>
+<a class="text-[#E5E2E1] font-semibold relative before:content-[''] before:absolute before:left-[-12px] before:w-[2px] before:h-full before:bg-[#4EDE63] py-2 px-4 block text-sm" href="#">Agent 循环</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm" href="#">Quick Start</a>
+</div>
+<!-- System Hardening Section -->
+<div class="mt-8 space-y-1">
+<p class="px-4 text-[10px] font-bold text-outline-variant uppercase tracking-wider mb-2">System Hardening</p>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="architecture">architecture</span> Core Concepts
+                </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="Layers">layers</span> Advanced Patterns
+                </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="rocket_launch">rocket_launch</span> Deployment
+                </a>
+</div>
+<div class="mt-auto pt-8 flex flex-col space-y-1">
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="settings">settings</span> Settings
+                </a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] py-2 px-4 block transition-all hover:bg-[#1C1B1B] rounded-sm text-sm flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span> Help
+                </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 p-12 pr-80 max-w-full overflow-x-hidden">
+<!-- Breadcrumbs -->
+<nav class="flex items-center space-x-2 text-[10px] font-medium uppercase tracking-widest text-outline mb-8">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<span class="opacity-40">/</span>
+<a class="hover:text-primary transition-colors" href="#">Core Loop</a>
+<span class="opacity-40">/</span>
+<span class="text-on-surface">Agent 循环</span>
+</nav>
+<article class="max-w-[720px]">
+<h1 class="text-[2.75rem] font-extrabold tracking-tight text-on-surface leading-tight mb-6">Agent 循环</h1>
+<p class="text-lg leading-relaxed text-on-surface-variant mb-8 font-body">
+                    Agent 循环是自主系统的核心架构组件。它定义了模型如何感知环境、制定计划、执行操作并观察结果，从而形成一个持续改进的反馈闭环。在 Architectural Ledger 中，我们优先考虑循环的确定性和可观测性。
+                </p>
+<!-- Featured Image -->
+<div class="rounded-xl overflow-hidden mb-12 aspect-video bg-surface-container-low border border-outline-variant/10">
+<img alt="Architecture Diagram" data-alt="A futuristic abstract architectural diagram with neon green glowing lines representing a data flow loop on a dark obsidian background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlSc1iQGHa9sv3t-wq-EYRLc5v_ZGOQ4imrbcCFwYN0pyZODusjlsqzbi44TknfaoYwICDwHk50FrGUBfHbiZL2nt9rRre27CsUvydib0TZvTGJx9QCYQdsDvrMIvMhMvPkddA5lvA-FRlArQ1gFT89w4Dgr1JK6iI0C2fokuhSxpQqz46ma9al8io688HJbQvHOB7RgyRHN6oaH5Edm3mXemJupG2TMgSYIKvHngatBGhpwcfs7diYlEe5P_N4VauNGeieaCW2-Y"/>
+</div>
+<!-- Callout Box -->
+<div class="glass-callout rounded-lg p-6 mb-10 flex gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-primary mb-1 uppercase tracking-wide">核心原则：确定性</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            有效的 Agent 循环必须具备可回溯性。每一次迭代的状态转换都应被记录在 Ledger 中，以确保在发生故障时能够精确还原决策路径。
+                        </p>
+</div>
+</div>
+<h2 class="text-2xl font-semibold tracking-tight text-on-surface mb-4">循环阶段分解</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+<div class="p-5 bg-surface-container-low rounded-lg border border-outline-variant/10 hover:border-primary/30 transition-all group">
+<h5 class="text-primary text-xs font-bold uppercase mb-2 tracking-widest flex items-center gap-2">
+                            01. 感知 <span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity" data-icon="visibility">visibility</span>
+</h5>
+<p class="text-sm text-on-surface-variant">集成外部传感器、数据库钩子和实时流数据，构建当前的上下文状态。</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-lg border border-outline-variant/10 hover:border-primary/30 transition-all group">
+<h5 class="text-secondary text-xs font-bold uppercase mb-2 tracking-widest flex items-center gap-2">
+                            02. 决策 <span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity" data-icon="psychology">psychology</span>
+</h5>
+<p class="text-sm text-on-surface-variant">基于预设策略和机器学习模型，在当前状态下生成最优的执行指令序列。</p>
+</div>
+</div>
+<h2 class="text-2xl font-semibold tracking-tight text-on-surface mb-4">代码实现示例</h2>
+<!-- Code Block -->
+<div class="bg-surface-container-lowest rounded-md overflow-hidden mb-12 border border-outline-variant/20">
+<div class="bg-surface-container-highest/40 px-4 py-2 flex justify-between items-center border-b border-outline-variant/10">
+<span class="text-[10px] font-mono text-outline uppercase tracking-widest">ledger_agent.py</span>
+<button class="flex items-center gap-1.5 text-[10px] text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xs" data-icon="content_copy">content_copy</span> Copy
+                        </button>
+</div>
+<div class="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+<pre><span class="code-syntax-secondary">class</span> <span class="code-syntax-primary">ArchitectAgent</span>:
+    <span class="code-syntax-secondary">async def</span> <span class="code-syntax-primary">run_loop</span>(self, initial_state):
+        <span class="code-syntax-tertiary"># Initialize the ledger for state tracking</span>
+        ledger = LedgerStore(session_id=<span class="text-secondary">"session_01"</span>)
+        current_state = initial_state
+
+        <span class="code-syntax-secondary">while not</span> self.is_finished(current_state):
+            <span class="code-syntax-tertiary"># 1. Perception Phase</span>
+            obs = <span class="code-syntax-secondary">await</span> self.perceive(current_state)
+            
+            <span class="code-syntax-tertiary"># 2. Decision &amp; Execution</span>
+            action = self.planner.decide(obs)
+            result = <span class="code-syntax-secondary">await</span> self.execute(action)
+            
+            <span class="code-syntax-tertiary"># 3. Commit to Ledger</span>
+            ledger.commit(state=current_state, action=action, outcome=result)
+            
+            current_state = result.next_state
+        
+        <span class="code-syntax-secondary">return</span> current_state</pre>
+</div>
+</div>
+<h3 class="text-xl font-semibold tracking-tight text-on-surface mb-4">性能优化建议</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">
+                    在处理高频循环时，建议使用分布式 Ledger 架构。通过将感知层与执行层解耦，可以显著降低延迟并提高吞吐量。
+                </p>
+<ul class="space-y-4 mb-12">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-lg mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="text-sm text-on-surface-variant">使用 <strong>Redis Streams</strong> 进行感知数据的实时缓冲。</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-lg mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="text-sm text-on-surface-variant">为复杂的决策逻辑配置 <strong>Fallback 策略</strong>。</span>
+</li>
+</ul>
+</article>
+<!-- Footer -->
+<footer class="w-full py-12 mt-20 border-t border-[#3C4A42]/10 flex flex-col items-center space-y-4">
+<div class="flex space-x-8">
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors text-xs uppercase tracking-widest" href="#">Privacy</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors text-xs uppercase tracking-widest" href="#">Terms</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors text-xs uppercase tracking-widest" href="#">Security</a>
+<a class="text-[#86948A] hover:text-[#E5E2E1] transition-colors text-xs uppercase tracking-widest" href="#">Status</a>
+</div>
+<p class="text-[#86948A] text-[10px] uppercase tracking-widest opacity-70">© 2024 Architectural Ledger. Built for deep technical focus.</p>
+</footer>
+</main>
+<!-- Table of Contents (Right Side) -->
+<aside class="fixed right-0 top-16 h-[calc(100vh-4rem)] w-80 py-12 px-8 overflow-y-auto hidden xl:block">
+<h4 class="text-[10px] font-bold text-outline-variant uppercase tracking-[0.2em] mb-6">On this page</h4>
+<nav class="space-y-4">
+<a class="block text-xs text-primary font-semibold border-l-2 border-primary pl-4 transition-all" href="#">Agent 循环概述</a>
+<a class="block text-xs text-outline hover:text-on-surface pl-4 transition-all border-l-2 border-transparent" href="#">循环阶段分解</a>
+<a class="block text-xs text-outline hover:text-on-surface pl-4 transition-all border-l-2 border-transparent" href="#">代码实现示例</a>
+<a class="block text-xs text-outline hover:text-on-surface pl-4 transition-all border-l-2 border-transparent" href="#">性能优化建议</a>
+</nav>
+<div class="mt-12 p-6 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<h5 class="text-xs font-bold text-on-surface mb-3">需要帮助？</h5>
+<p class="text-[11px] text-outline leading-relaxed mb-4">我们的架构师团队随时为您解答集成问题。</p>
+<button class="w-full py-2 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest rounded hover:opacity-90 transition-opacity">
+                    联系技术支持
+                </button>
+</div>
+</aside>
+</div>
+</body></html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#5d006d",
+                        "on-error-container": "#ffa8a3",
+                        "primary-fixed-dim": "#5f8fff",
+                        "primary-dim": "#2c6dec",
+                        "on-secondary-container": "#ffddfd",
+                        "surface-container-high": "#201f1f",
+                        "background": "#0e0e0e",
+                        "on-secondary": "#450051",
+                        "surface-container-lowest": "#000000",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "secondary-fixed": "#fcbcff",
+                        "on-primary": "#002a6e",
+                        "on-error": "#490006",
+                        "primary-fixed": "#769dff",
+                        "error": "#ff716c",
+                        "inverse-primary": "#0057d1",
+                        "on-tertiary-fixed": "#271300",
+                        "on-surface-variant": "#adaaaa",
+                        "surface-dim": "#0e0e0e",
+                        "surface-container-highest": "#262626",
+                        "error-dim": "#d7383b",
+                        "on-primary-fixed": "#000000",
+                        "surface-container-low": "#131313",
+                        "outline": "#777575",
+                        "inverse-surface": "#fcf8f8",
+                        "surface": "#0e0e0e",
+                        "secondary-dim": "#e46df5",
+                        "on-surface": "#ffffff",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "tertiary-dim": "#ec8c00",
+                        "surface-bright": "#2c2c2c",
+                        "inverse-on-surface": "#565554",
+                        "tertiary-container": "#ff9800",
+                        "tertiary": "#ffac54",
+                        "on-tertiary": "#583100",
+                        "secondary-container": "#8f15a4",
+                        "on-tertiary-container": "#4a2800",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "primary-container": "#769dff",
+                        "on-primary-container": "#001f56",
+                        "on-primary-fixed-variant": "#002869",
+                        "primary": "#8cacff",
+                        "outline-variant": "#484847",
+                        "surface-tint": "#8cacff",
+                        "on-background": "#ffffff",
+                        "error-container": "#9f0519",
+                        "surface-container": "#1a1919",
+                        "secondary": "#ea73fb",
+                        "tertiary-fixed": "#ff9800",
+                        "surface-variant": "#262626"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-gradient {
+            background: linear-gradient(135deg, #8cacff 0%, #769dff 100%);
+        }
+        .glass-header {
+            background: rgba(38, 38, 38, 0.6);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar from Shared Components -->
+<nav class="fixed top-0 w-full z-50 bg-zinc-950/60 backdrop-blur-xl flex justify-between items-center px-8 h-16 w-full shadow-[0_40px_40px_-10px_rgba(140,172,255,0.04)]">
+<div class="text-xl font-bold tracking-tighter text-zinc-100 font-manrope">TechJournal</div>
+<div class="hidden md:flex items-center gap-8 font-manrope tracking-tight">
+<a class="text-zinc-400 hover:text-zinc-200 transition-all duration-300" href="#">Docs</a>
+<a class="text-zinc-400 hover:text-zinc-200 transition-all duration-300" href="#">Versions</a>
+<a class="text-zinc-400 hover:text-zinc-200 transition-all duration-300" href="#">Language</a>
+<a class="text-zinc-400 hover:text-zinc-200 transition-all duration-300" href="#">Theme</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-zinc-400 hover:brightness-110 transition-all duration-300">settings</button>
+<button class="material-symbols-outlined text-zinc-400 hover:brightness-110 transition-all duration-300">account_circle</button>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<div class="flex pt-16 min-h-screen">
+<!-- SideNavBar from Shared Components (Hidden on small screens) -->
+<aside class="hidden md:flex flex-col py-6 px-4 space-y-2 fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-zinc-950 border-r border-outline-variant/10">
+<div class="px-4 mb-6">
+<h3 class="font-space-grotesk uppercase text-xs font-bold text-blue-400">Navigation</h3>
+<p class="text-[10px] text-zinc-500 font-label tracking-widest mt-1 uppercase">Technical Index</p>
+</div>
+<nav class="space-y-1">
+<a class="text-zinc-500 flex items-center gap-3 px-4 py-2 hover:text-zinc-300 hover:bg-zinc-900/50 transition-colors font-space-grotesk uppercase text-xs font-bold opacity-80 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">refresh</span> Core Loop
+                </a>
+<a class="text-zinc-500 flex items-center gap-3 px-4 py-2 hover:text-zinc-300 hover:bg-zinc-900/50 transition-colors font-space-grotesk uppercase text-xs font-bold opacity-80 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">memory</span> System Enhancement
+                </a>
+<a class="text-zinc-500 flex items-center gap-3 px-4 py-2 hover:text-zinc-300 hover:bg-zinc-900/50 transition-colors font-space-grotesk uppercase text-xs font-bold opacity-80 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">terminal</span> Mission Runtime
+                </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10">
+<a class="text-zinc-500 flex items-center gap-3 px-4 py-2 hover:text-zinc-300 font-space-grotesk uppercase text-xs font-bold" href="#">
+<span class="material-symbols-outlined">help</span> Support
+                </a>
+<a class="text-zinc-500 flex items-center gap-3 px-4 py-2 hover:text-zinc-300 font-space-grotesk uppercase text-xs font-bold" href="#">
+<span class="material-symbols-outlined">history</span> Archive
+                </a>
+</div>
+</aside>
+<!-- Search & About Canvas -->
+<main class="flex-1 md:ml-64 px-6 md:px-12 py-12 bg-surface-dim">
+<!-- Hero Search Section -->
+<section class="max-w-5xl mx-auto mb-20">
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+<div class="relative flex items-center bg-surface-container-low px-6 py-4 rounded-xl border border-outline-variant/15">
+<span class="material-symbols-outlined text-on-surface-variant mr-4">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface placeholder-on-surface-variant/50 font-body text-lg" placeholder="Search technical documentation, system logs, or authors..." type="text"/>
+<kbd class="hidden md:flex items-center gap-1 px-2 py-1 bg-surface-container-high rounded text-[10px] font-label text-on-surface-variant">
+<span class="text-xs">⌘</span>K
+                        </kbd>
+</div>
+</div>
+</section>
+<!-- Bento Layout: About Author & Trending -->
+<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- About Author Card -->
+<div class="lg:col-span-8 bg-surface-container rounded-xl p-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+<div class="relative flex flex-col md:flex-row gap-8 items-start">
+<div class="shrink-0">
+<div class="w-32 h-32 rounded-xl overflow-hidden ring-4 ring-surface-container-high relative">
+<img alt="Profile image" class="w-full h-full object-cover" data-alt="close-up portrait of a serious male technologist in a dark turtleneck against a minimalist grey architectural background with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds"/>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<h1 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Dr. Elias Vance</h1>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-widest">Lead Architect</span>
+</div>
+<p class="font-label text-primary-fixed-dim text-sm mb-6">@vance_runtime • System Integrity Division</p>
+<p class="text-on-surface-variant leading-relaxed body-md mb-8 max-w-xl">
+                                Specializing in low-latency runtime optimizations and neural-interfaced kernel modules. Elias has spent the last decade curating technical taxonomies for the TechJournal Core Loop, ensuring high-fidelity documentation for the next generation of systems engineers.
+                            </p>
+<div class="flex flex-wrap gap-4">
+<a class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-sm font-label text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">terminal</span> GitHub
+                                </a>
+<a class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-sm font-label text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">podcasts</span> Signal
+                                </a>
+<a class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-lg text-sm font-label text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">alternate_email</span> Contact
+                                </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Metrics/Sidebar Info -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<h4 class="font-label text-xs font-bold uppercase text-on-surface-variant tracking-widest mb-6">Author Stats</h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-sm">Contributions</span>
+<span class="font-label text-on-surface font-bold">1,248</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-sm">Impact Factor</span>
+<span class="font-label text-primary font-bold">9.82</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-sm">Active Nodes</span>
+<span class="font-label text-secondary font-bold">14</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<h4 class="font-label text-xs font-bold uppercase text-on-surface-variant tracking-widest mb-6">Technical Domains</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-highest rounded text-[11px] font-label text-on-surface">KERNEL-X</span>
+<span class="px-3 py-1 bg-surface-container-highest rounded text-[11px] font-label text-on-surface">RUST-LANG</span>
+<span class="px-3 py-1 bg-surface-container-highest rounded text-[11px] font-label text-on-surface">DEEP-VECTORS</span>
+<span class="px-3 py-1 bg-surface-container-highest rounded text-[11px] font-label text-on-surface">WASM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Trending Searches Section -->
+<section class="max-w-6xl mx-auto mt-24">
+<div class="flex items-center gap-4 mb-10">
+<h2 class="font-headline text-2xl font-extrabold tracking-tight">Trending Searches</h2>
+<div class="h-[1px] flex-1 bg-outline-variant/20"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Trending Item 1 -->
+<div class="group bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-all duration-300 cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<span class="text-[10px] font-label text-on-surface-variant/60 uppercase">2.4k Queries</span>
+</div>
+<h3 class="font-headline text-lg font-bold mb-2 group-hover:text-primary transition-colors">Neural Interface Specs</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2">Latest updates on the v4.2 latency improvements for Direct-Neural Kernels.</p>
+</div>
+<!-- Trending Item 2 -->
+<div class="group bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-all duration-300 cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary">memory</span>
+</div>
+<span class="text-[10px] font-label text-on-surface-variant/60 uppercase">1.8k Queries</span>
+</div>
+<h3 class="font-headline text-lg font-bold mb-2 group-hover:text-secondary transition-colors">Quantum Entropy Pool</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2">Understanding the source-level randomness injection in Mission Runtime.</p>
+</div>
+<!-- Trending Item 3 -->
+<div class="group bg-surface-container p-6 rounded-xl hover:bg-surface-container-high transition-all duration-300 cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-tertiary/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary">shield</span>
+</div>
+<span class="text-[10px] font-label text-on-surface-variant/60 uppercase">942 Queries</span>
+</div>
+<h3 class="font-headline text-lg font-bold mb-2 group-hover:text-tertiary transition-colors">Cold-Storage Encryption</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2">Hardening techniques for long-term technical archival of sensitive core data.</p>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Floating Action Button (Suppressed based on context: Details Page) -->
+<!-- Not rendering FAB for author/search page per design system rules -->
+</body></html>

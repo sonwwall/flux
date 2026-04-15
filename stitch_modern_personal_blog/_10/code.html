@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space_Grotesk:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#262626",
+                        "primary-container": "#769dff",
+                        "primary-fixed-dim": "#5f8fff",
+                        "primary-dim": "#2c6dec",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "on-tertiary-fixed": "#271300",
+                        "on-secondary-container": "#ffddfd",
+                        "inverse-surface": "#fcf8f8",
+                        "primary": "#8cacff",
+                        "error": "#ff716c",
+                        "secondary-container": "#8f15a4",
+                        "surface-container": "#1a1919",
+                        "on-primary-fixed-variant": "#002869",
+                        "on-secondary-fixed": "#5d006d",
+                        "on-primary-container": "#001f56",
+                        "error-dim": "#d7383b",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#ffffff",
+                        "tertiary-container": "#ff9800",
+                        "error-container": "#9f0519",
+                        "outline": "#777575",
+                        "secondary": "#ea73fb",
+                        "tertiary-dim": "#ec8c00",
+                        "surface-container-lowest": "#000000",
+                        "surface-container-highest": "#262626",
+                        "surface-container-low": "#131313",
+                        "tertiary-fixed": "#ff9800",
+                        "on-error": "#490006",
+                        "surface-container-high": "#201f1f",
+                        "secondary-dim": "#e46df5",
+                        "on-tertiary": "#583100",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "on-tertiary-container": "#4a2800",
+                        "outline-variant": "#484847",
+                        "surface": "#0e0e0e",
+                        "on-secondary": "#450051",
+                        "on-error-container": "#ffa8a3",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "inverse-on-surface": "#565554",
+                        "primary-fixed": "#769dff",
+                        "inverse-primary": "#0057d1",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "surface-tint": "#8cacff",
+                        "on-surface-variant": "#adaaaa",
+                        "tertiary": "#ffac54",
+                        "on-background": "#ffffff",
+                        "surface-dim": "#0e0e0e",
+                        "surface-bright": "#2c2c2c",
+                        "on-primary": "#002a6e",
+                        "secondary-fixed": "#fcbcff",
+                        "background": "#0e0e0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .font-label { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar Integration -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 h-screen w-64 border-r border-[#ffffff]/10 bg-[#0e0e0e]/60 backdrop-blur-xl z-50">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-bold tracking-tighter text-[#8cacff] uppercase">Obsidian Flux</h1>
+<p class="font-['Manrope'] tracking-tight text-sm text-on-surface-variant opacity-70">Technical Editorial</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-[#201f1f] text-[#8cacff] rounded-md font-bold px-4 py-2 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">article</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Articles</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">perm_media</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Media</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Editor</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-label font-bold uppercase py-3 rounded-lg scale-98 active:opacity-80 transition-transform">
+                New Post
+            </button>
+<div class="pt-4 border-t border-[#ffffff]/10 space-y-1">
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-[#adaaaa] hover:text-[#f5f5f5] px-4 py-2 hover:bg-[#1a1919] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-['Manrope'] tracking-tight text-sm">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- TopAppBar Integration -->
+<header class="fixed top-0 left-64 right-0 h-16 flex items-center justify-between px-8 bg-[#0e0e0e]/60 backdrop-blur-xl border-b border-[#ffffff]/10 z-40">
+<div class="flex items-center gap-8">
+<nav class="flex items-center gap-6">
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#f5f5f5] transition-colors" href="#">Drafts</a>
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#8cacff] border-b-2 border-[#8cacff] pb-1" href="#">Published</a>
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#f5f5f5] transition-colors" href="#">Scheduled</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center bg-surface-container rounded-full px-4 py-1.5 border border-transparent focus-within:border-primary/40 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search articles..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary active:scale-95 transition-all">notifications</span>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="minimalist geometric avatar for a technical curator in obsidian and blue tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcKRWTzJNlb6EUBO0j3KmQgF-GcHIdD7K5qaKZaiVk6TUqIpjuHBxTcZjd6M3Rsvh6SR3doWiKVwu431KpZj55Q6JrhQb6CDL5ceLJeZDDGC7XvVeExaKGc8Cj0QTcbqVYXAiGx1P39Wig7hfPOF2NjwZcDDy0FOJ8PG0GeKLL4xd00QB2rqAKbzAXornQueSoL012s1u_JcsMCjiTv9fb43a23m4H4IedEnvPIj4VRsfP08iVAk8r_gMpWVSKx_yT_Qm6Mxa_Tn0"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-8 min-h-screen bg-surface">
+<!-- Dashboard Header Section -->
+<div class="flex items-end justify-between mb-12">
+<div>
+<h2 class="text-4xl font-headline font-extrabold tracking-tight mb-2">文章管理</h2>
+<p class="text-on-surface-variant max-w-md">管理您的所有技术文章、教程和专题报道。通过我们的实时编辑器提升内容的触达率。</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-lg text-sm border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span>筛选分类</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-lg text-sm border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">sort</span>
+<span>按发布日期</span>
+</div>
+</div>
+</div>
+<!-- Bulk Actions Bar (Sticky logic simulation) -->
+<div class="flex items-center justify-between bg-surface-container-low mb-6 px-6 py-3 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface text-primary focus:ring-primary/40 focus:ring-offset-0 transition-all" type="checkbox"/>
+<span class="text-sm font-medium">全选</span>
+</label>
+<div class="h-4 w-px bg-outline-variant/30 mx-2"></div>
+<button class="text-xs font-label uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-base">archive</span> 批量归档
+                </button>
+<button class="text-xs font-label uppercase tracking-widest text-on-surface-variant hover:text-error transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-base">delete</span> 批量删除
+                </button>
+</div>
+<div class="text-xs font-label text-on-surface-variant/60">
+                共 24 篇文章
+            </div>
+</div>
+<!-- Content Table (Customized Bento-Editorial Layout) -->
+<div class="space-y-3">
+<!-- Article Item 1 -->
+<div class="group flex items-center gap-6 bg-surface-container hover:bg-surface-container-high p-4 rounded-xl transition-all duration-300 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.02)]">
+<div class="flex-shrink-0">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface text-primary focus:ring-primary/40 transition-all" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0 border border-outline-variant/10">
+<img alt="Article Cover" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" data-alt="abstract digital art showing dark neural networks with glowing blue nodes and sharp geometric lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcwYs6kmkpLmeaMpAqWYAbj2y9iwJqWVaeVrPM0gb53eIL6hxor5GZRaAUGkNUTh50hLhyf-rSSEwGNU8SW_NLF9Daoi_DuYsHQotfPPsojLrZMng8fJgJJHiLY3Ub7AONS3W-W3btSm41KTpQU3LLTyawNldmWrAKrL4tSOrXOznUot3GcmrZqGPWOqOox3iJi73zpin9FSaesRXdlC98wu20IS196OqUsJ9XqEjizmoVV5qfn-8GAsXf3sW9e9J3aTnGr0Hcaw8"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-label font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 已发布
+                        </span>
+<span class="text-xs text-on-surface-variant/60 font-label">2023.10.24</span>
+</div>
+<h3 class="text-lg font-headline font-bold text-on-surface truncate group-hover:text-primary transition-colors">深度解析：异步架构在实时数据流中的应用</h3>
+</div>
+<div class="flex items-center gap-12 text-on-surface-variant">
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">12.4k</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">阅读量</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">142</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">评论数</span>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-primary" title="编辑">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant" title="预览">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-error/10 text-error rounded-lg transition-colors" title="删除">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Article Item 2 -->
+<div class="group flex items-center gap-6 bg-surface-container hover:bg-surface-container-high p-4 rounded-xl transition-all duration-300 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.02)]">
+<div class="flex-shrink-0">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface text-primary focus:ring-primary/40 transition-all" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0 border border-outline-variant/10">
+<img alt="Article Cover" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" data-alt="macro photography of a microchip with glowing amber pathways and dark technological textures" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJnL0BW5V9DI05DTDSMRTMz3a4jVTKemglSLVbaZ7EMahWtgxhOdkcxo0od0pyM7vdH98ewUZcqwPX4nx00kI4WU2ilRYb_Cuf43jK4AJoU2YFrcpUmYOEIQYsFyaZjpz7qfL8pj9B4A6PInYpH-CJqsQzf0ZQ-KfgxGjIoWKsivVNpXa9MGRwHRuOn9O4LxCep7qIFcxI60TL_RqP92Mk5OiPjfozYvN-UeDfV0q00RJwzOf_WXEUeETg76ZJJ1cZj5SoiFFoCLQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[10px] font-label font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> 已计划
+                        </span>
+<span class="text-xs text-on-surface-variant/60 font-label">2023.11.01</span>
+</div>
+<h3 class="text-lg font-headline font-bold text-on-surface truncate group-hover:text-primary transition-colors">前端性能优化的极限：从渲染引擎谈起</h3>
+</div>
+<div class="flex items-center gap-12 text-on-surface-variant">
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">--</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">阅读量</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">0</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">评论数</span>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-primary" title="编辑">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant" title="预览">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-error/10 text-error rounded-lg transition-colors" title="删除">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Article Item 3 -->
+<div class="group flex items-center gap-6 bg-surface-container hover:bg-surface-container-high p-4 rounded-xl transition-all duration-300 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.02)]">
+<div class="flex-shrink-0">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface text-primary focus:ring-primary/40 transition-all" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0 border border-outline-variant/10">
+<img alt="Article Cover" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" data-alt="satellite view of earth at night with glowing urban networks representing global connectivity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8OGtNMEJ6mEb3jkcbwdR14E-aoB6iHm4GKe3j1aDJq4dgUQ3DUn017DwTpl50-tTgHBOqC1U8gxd_0kFTCEom2EimXzrgU0MehdAX3UjSnqnVnUrYsQnUxSaxXcIfRg4SNmaEQDL9EfRWU6pzot5GWRe2HLC5U3v0pxJMQ7Wd6fRUNouiMBHNioHMVyZ8TX6YCPn9fAvY1WBiXYpdEMAd2wn9UKbX60RzHBQizpptm6RpZlUJJYi6goX_EjVXfCOjsiE-Xj5h3dA"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-outline-variant/20 text-on-surface-variant text-[10px] font-label font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span> 草稿
+                        </span>
+<span class="text-xs text-on-surface-variant/60 font-label">未修改</span>
+</div>
+<h3 class="text-lg font-headline font-bold text-on-surface truncate group-hover:text-primary transition-colors">Flux 系统架构演进：从单体到 Serverless 的实践记录</h3>
+</div>
+<div class="flex items-center gap-12 text-on-surface-variant">
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">--</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">阅读量</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">0</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">评论数</span>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-primary" title="编辑">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant" title="预览">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-error/10 text-error rounded-lg transition-colors" title="删除">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Article Item 4 -->
+<div class="group flex items-center gap-6 bg-surface-container hover:bg-surface-container-high p-4 rounded-xl transition-all duration-300 shadow-[0_40px_40px_-10px_rgba(140,172,255,0.02)]">
+<div class="flex-shrink-0">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface text-primary focus:ring-primary/40 transition-all" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0 border border-outline-variant/10">
+<img alt="Article Cover" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" data-alt="minimal coding workspace with a mechanical keyboard and low neon ambient light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjtuvlO_YOao36fXKFDDDxwvSWwrGI4VBx0Wl7t1OB0tKIivlUtqEFilt4-4Rb3iI3E2Tye5U7dEm6c0HMSfer_nR-ZHDXP9VFx0TvvNvdjWpG2Gv8-mxjFP7YT7GyZIjJDFBIfMnygvaaYhX_K8I1F0weUZVGO4jc40S84svpzU4ZFQJqT84AZF9UiH5h_YWET0H74HIfHFb__2oeBtmrN_zsO3mEWaGnNfCTDkrNoUpSej90IP8OnewF_JQyXmUMKBMFRcRBaUc"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-label font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 已发布
+                        </span>
+<span class="text-xs text-on-surface-variant/60 font-label">2023.10.12</span>
+</div>
+<h3 class="text-lg font-headline font-bold text-on-surface truncate group-hover:text-primary transition-colors">为什么 Rust 是构建安全高并发系统的首选语言？</h3>
+</div>
+<div class="flex items-center gap-12 text-on-surface-variant">
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">8.9k</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">阅读量</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-sm font-label font-bold text-on-surface">67</span>
+<span class="text-[10px] uppercase tracking-widest opacity-60">评论数</span>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-primary" title="编辑">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant" title="预览">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-error/10 text-error rounded-lg transition-colors" title="删除">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination Section -->
+<div class="mt-12 flex items-center justify-between">
+<div class="text-xs font-label text-on-surface-variant/60 uppercase tracking-widest">
+                Showing 1-10 of 24 articles
+            </div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/10 text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/20 text-primary font-label font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors font-label">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors font-label">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant/10 text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) context-aware -->
+<div class="fixed bottom-10 right-10">
+<button class="flex items-center gap-3 bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed shadow-2xl shadow-primary/20 px-6 py-4 rounded-full font-label font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>撰写文章</span>
+</button>
+</div>
+</body></html>

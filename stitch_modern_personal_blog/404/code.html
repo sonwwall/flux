@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>404 - Lost in the Flux | Obsidian Flux</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0e0e0e;
+            color: #ffffff;
+        }
+        .glitch-overlay {
+            background: linear-gradient(rgba(140, 172, 255, 0.1) 50%, rgba(0, 0, 0, 0) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#4a2800",
+                        "on-surface-variant": "#adaaaa",
+                        "secondary-dim": "#e46df5",
+                        "error-dim": "#d7383b",
+                        "surface-container-highest": "#262626",
+                        "surface-container": "#1a1919",
+                        "tertiary-dim": "#ec8c00",
+                        "surface-variant": "#262626",
+                        "primary-dim": "#2c6dec",
+                        "on-background": "#ffffff",
+                        "surface-tint": "#8cacff",
+                        "surface-container-lowest": "#000000",
+                        "outline-variant": "#484847",
+                        "on-primary": "#002a6e",
+                        "background": "#0e0e0e",
+                        "on-error-container": "#ffa8a3",
+                        "surface": "#0e0e0e",
+                        "on-secondary-fixed-variant": "#8a0b9f",
+                        "surface-bright": "#2c2c2c",
+                        "error-container": "#9f0519",
+                        "primary-fixed-dim": "#5f8fff",
+                        "on-error": "#490006",
+                        "primary": "#8cacff",
+                        "secondary-fixed-dim": "#f9a7ff",
+                        "surface-container-high": "#201f1f",
+                        "tertiary-fixed": "#ff9800",
+                        "outline": "#777575",
+                        "primary-fixed": "#769dff",
+                        "error": "#ff716c",
+                        "secondary": "#ea73fb",
+                        "on-secondary": "#450051",
+                        "surface-container-low": "#131313",
+                        "tertiary-fixed-dim": "#ec8c00",
+                        "surface-dim": "#0e0e0e",
+                        "secondary-container": "#8f15a4",
+                        "tertiary": "#ffac54",
+                        "on-surface": "#ffffff",
+                        "on-primary-fixed": "#000000",
+                        "on-secondary-container": "#ffddfd",
+                        "primary-container": "#769dff",
+                        "on-tertiary-fixed-variant": "#563000",
+                        "secondary-fixed": "#fcbcff",
+                        "inverse-on-surface": "#565554",
+                        "on-primary-fixed-variant": "#002869",
+                        "on-tertiary-fixed": "#271300",
+                        "inverse-primary": "#0057d1",
+                        "on-tertiary": "#583100",
+                        "tertiary-container": "#ff9800",
+                        "on-secondary-fixed": "#5d006d",
+                        "on-primary-container": "#001f56",
+                        "inverse-surface": "#fcf8f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body selection:bg-primary/30 selection:text-primary min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar Component -->
+<nav class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl shadow-[0_40px_40px_-10px_rgba(140,172,255,0.04)]">
+<div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
+<div class="text-xl font-bold tracking-tighter text-white font-headline">Obsidian Flux</div>
+<div class="hidden md:flex items-center gap-8 font-headline tracking-tight text-sm">
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Docs</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Journal</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Tags</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Changelog</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label text-sm font-bold uppercase tracking-wider hover:brightness-110 transition-all active:scale-95">Subscribe</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 relative overflow-hidden">
+<!-- Abstract Geometric Background -->
+<div class="absolute inset-0 z-0 flex items-center justify-center opacity-20 pointer-events-none">
+<div class="w-[800px] h-[800px] border border-primary/20 rounded-full absolute animate-pulse"></div>
+<div class="w-[600px] h-[600px] border border-secondary/10 rounded-full absolute"></div>
+<div class="w-[400px] h-[400px] border border-tertiary/20 absolute rotate-45"></div>
+<div class="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/10 blur-[80px]"></div>
+<div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-secondary/10 blur-[100px]"></div>
+</div>
+<!-- Glitch Effect Overlay -->
+<div class="glitch-overlay absolute inset-0 z-10 opacity-30"></div>
+<!-- 404 Hero Section -->
+<div class="z-20 text-center max-w-2xl">
+<div class="relative inline-block mb-8">
+<h1 class="text-[12rem] md:text-[18rem] font-headline font-extrabold tracking-tighter leading-none text-white opacity-5 select-none">404</h1>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-8xl md:text-9xl font-headline font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 tracking-tighter">404</span>
+</div>
+</div>
+<h2 class="text-4xl md:text-5xl font-headline font-bold text-white mb-4 tracking-tight text-wrap-balance">Lost in the Flux?</h2>
+<p class="text-lg text-on-surface-variant font-body mb-12 max-w-md mx-auto leading-relaxed">
+                The coordinate you are looking for does not exist. 你寻找的坐标并不存在于此。
+            </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+<a class="group flex items-center gap-3 bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-8 py-4 rounded-lg font-label font-bold uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-[0_20px_40px_-15px_rgba(140,172,255,0.3)]" href="/">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+                    Return to Home
+                </a>
+<a class="group flex items-center gap-2 text-on-surface-variant hover:text-white transition-colors font-label font-bold uppercase tracking-widest py-4 px-6 border-b-2 border-transparent hover:border-primary/40" href="/docs">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+                    Search Documentation
+                </a>
+</div>
+</div>
+<!-- Secondary Navigation/Links (Bento Grid Style) -->
+<div class="z-20 mt-24 grid grid-cols-1 md:grid-cols-3 gap-1 max-w-5xl w-full">
+<a class="bg-surface-container-low p-8 group hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="mb-4 text-primary opacity-60 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+</div>
+<h3 class="font-headline font-bold text-lg text-white mb-2">架构指南</h3>
+<p class="text-on-surface-variant text-sm font-body">深入了解 Flux 系统底层的技术架构与设计理念。</p>
+</a>
+<a class="bg-surface-container-low p-8 group hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="mb-4 text-secondary opacity-60 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</div>
+<h3 class="font-headline font-bold text-lg text-white mb-2">API 参考</h3>
+<p class="text-on-surface-variant text-sm font-body">访问完整的技术接口文档与开发者工具套件。</p>
+</a>
+<a class="bg-surface-container-low p-8 group hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="mb-4 text-tertiary opacity-60 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" data-icon="forum">forum</span>
+</div>
+<h3 class="font-headline font-bold text-lg text-white mb-2">社区支持</h3>
+<p class="text-on-surface-variant text-sm font-body">在开发者社区中寻求帮助或参与技术讨论。</p>
+</a>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="w-full border-t border-white/5 mt-20 bg-[#0e0e0e]">
+<div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start gap-2">
+<div class="text-sm font-bold text-white font-headline">Obsidian Flux</div>
+<p class="text-on-surface-variant text-xs font-body opacity-80">© 2024 Obsidian Flux. Built for the technical elite.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-[#adaaaa] hover:text-white transition-colors text-sm font-body" href="#">Documentation</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors text-sm font-body" href="#">Privacy Policy</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors text-sm font-body" href="#">Terms of Service</a>
+<a class="text-[#adaaaa] hover:text-white transition-colors text-sm font-body" href="#">Security</a>
+</div>
+</div>
+</footer>
+</body></html>
