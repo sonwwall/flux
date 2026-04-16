@@ -31,3 +31,7 @@ Thumbs.db
 # Cache
 .vite/
 .cache/
+.gocache/
+
+# Uploaded local media
+backend/uploads/
