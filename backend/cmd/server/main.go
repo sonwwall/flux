@@ -17,6 +17,6 @@ func main() {
 	}
 
 	log.Printf("flux backend listening on %s", cfg.Addr)
-	h := router.New(db, cfg.Addr)
+	h := router.New(db, cfg)
 	h.Spin()
 }

@@ -17,6 +17,15 @@ const normalizeCodeLanguage = (lang = "") => {
 
 const apiOrigin = import.meta.env.VITE_API_ORIGIN || "http://127.0.0.1:8080";
 
+const getToken = () => localStorage.getItem("flux_token");
+const setToken = (t) => localStorage.setItem("flux_token", t);
+const clearToken = () => localStorage.removeItem("flux_token");
+
+const authHeader = () => {
+  const t = getToken();
+  return t ? { Authorization: `Bearer ${t}` } : {};
+};
+
 const mediaURL = (value = "") => {
   if (!value) return "";
   if (value.startsWith("data:") || value.startsWith("blob:")) {
@@ -183,6 +192,19 @@ const fallbackAuthor = {
   bio: "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
   avatar: img.author,
   github: "https://github.com",
+  contact: "",
+  noteSubtitle: "当前阶段普通用户不开放登录",
+  notes: [
+    { label: "原则", title: "先写作，再扩展功能", body: "普通访客可以阅读博客、浏览作者信息和标签云。登录、评论、订阅管理等功能暂不对普通用户开放。" },
+    { label: "后台", title: "作者后台仅作为管理入口", body: "后台用于文章、标签和草稿管理。当前是前端原型，后续可接入真实鉴权和内容接口。" },
+  ],
+};
+
+const fallbackSiteConfig = {
+  heroTitle: "在外城边缘，记录技术、阅读与日常。",
+  heroSubtitle: "外城小站 / 个人博客 / flux 主题",
+  heroDesc: "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
+  heroImage: "",
 };
 
 const fallbackAdminSummary = {
@@ -197,38 +219,54 @@ function Icon({ children, className = "" }) {
 }
 
 function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPageState] = useState(() => {
+    const hash = window.location.hash.slice(1);
+    return hash || "home";
+  });
+
+  const setPage = (p) => {
+    window.location.hash = p;
+    setPageState(p);
+  };
   const [query, setQuery] = useState("");
   const [posts, setPosts] = useState(fallbackPosts);
   const [adminPosts, setAdminPosts] = useState(fallbackPosts);
   const [tags, setTags] = useState(fallbackTags);
   const [author, setAuthor] = useState(fallbackAuthor);
+  const [siteConfig, setSiteConfig] = useState(fallbackSiteConfig);
   const [adminSummary, setAdminSummary] = useState(fallbackAdminSummary);
   const [apiStatus, setApiStatus] = useState("checking");
   const [editorDraft, setEditorDraft] = useState(emptyEditorPost);
   const [selectedPost, setSelectedPost] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [showLogin, setShowLogin] = useState(false);
+
+  const goAdmin = () => getToken() ? setPage("admin") : setShowLogin(true);
 
   useEffect(() => {
     refreshData();
   }, []);
 
   async function refreshData() {
-    const [postData, adminPostData, tagData, authorData, summaryData] = await Promise.all([
+    const [postData, tagData, authorData, siteData] = await Promise.all([
       loadJSON("/api/posts"),
-      loadJSON("/api/admin/posts"),
       loadJSON("/api/tags"),
       loadJSON("/api/author"),
-      loadJSON("/api/admin/summary"),
+      loadJSON("/api/admin/site"),
+    ]);
+    const [adminPostData, summaryData] = await Promise.all([
+      apiJSON("/api/admin/posts"),
+      apiJSON("/api/admin/summary"),
     ]);
 
     if (postData) setPosts(postData.map(normalizePost));
-    if (adminPostData) setAdminPosts(adminPostData.map(normalizePost));
+    if (adminPostData && !adminPostData.error) setAdminPosts(adminPostData.map(normalizePost));
     if (tagData) setTags(tagData.map(normalizeTag));
     if (authorData) setAuthor(authorData);
-    if (summaryData) setAdminSummary(summaryData);
+    if (summaryData && !summaryData.error) setAdminSummary(summaryData);
+    if (siteData && !siteData.error) setSiteConfig(siteData);
 
-    setApiStatus([postData, adminPostData, tagData, authorData, summaryData].some(Boolean) ? "online" : "offline");
+    setApiStatus([postData, tagData, authorData].some(Boolean) ? "online" : "offline");
   }
 
   async function savePost(draft) {
@@ -261,6 +299,18 @@ function App() {
     return updated;
   }
 
+  async function saveAuthor(data) {
+    const saved = await apiJSON("/api/author", { method: "PUT", body: data });
+    if (saved && !saved.error) setAuthor(saved);
+    return saved;
+  }
+
+  async function saveSiteConfig(data) {
+    const saved = await apiJSON("/api/admin/site", { method: "PUT", body: data });
+    if (saved && !saved.error) setSiteConfig(saved);
+    return saved;
+  }
+
   async function deletePost(post) {
     if (!post.id) return { error: "文章缺少 ID，无法删除" };
     const deleted = await apiJSON(`/api/admin/posts/${post.id}`, {
@@ -273,7 +323,7 @@ function App() {
   }
 
   const content = {
-    home: <HomePage posts={posts} setPage={setPage} onSelectPost={setSelectedPost} />,
+    home: <HomePage posts={posts} siteConfig={siteConfig} setPage={setPage} onSelectPost={setSelectedPost} />,
     blog: (
       <BlogPage
         posts={posts}
@@ -286,7 +336,7 @@ function App() {
     ),
     tags: <TagsPage tags={tags} posts={posts} setPage={setPage} setCategoryFilter={setCategoryFilter} />,
     article: <ArticlePage post={selectedPost || posts[0]} author={author} setPage={setPage} setCategoryFilter={setCategoryFilter} />,
-    author: <AuthorPage author={author} adminSummary={adminSummary} setPage={setPage} />,
+    author: <AuthorPage author={author} adminSummary={adminSummary} setPage={setPage} goAdmin={goAdmin} />,
     admin: (
       <AdminPage
         posts={adminPosts}
@@ -301,17 +351,22 @@ function App() {
         }}
         onUpdatePostStatus={updatePostStatus}
         onDeletePost={deletePost}
+        onEditAuthor={() => setPage("authorEditor")}
+        onEditSite={() => setPage("siteConfigEditor")}
       />
     ),
     editor: <EditorPage draft={editorDraft} setDraft={setEditorDraft} onSavePost={saveEditorPost} setPage={setPage} />,
+    authorEditor: <AuthorEditorPage author={author} onSave={saveAuthor} setPage={setPage} />,
+    siteConfigEditor: <SiteConfigEditorPage siteConfig={siteConfig} onSave={saveSiteConfig} setPage={setPage} />,
     missing: <MissingPage setPage={setPage} />,
   }[page] ?? <MissingPage setPage={setPage} />;
 
   return (
     <>
       <TopNav page={page} setPage={setPage} query={query} setQuery={setQuery} apiStatus={apiStatus} setCategoryFilter={setCategoryFilter} />
-      <SideNav page={page} setPage={setPage} setCategoryFilter={setCategoryFilter} />
+      <SideNav page={page} setPage={setPage} setCategoryFilter={setCategoryFilter} goAdmin={goAdmin} />
       <main className={`app-shell ${page === "article" ? "article-shell" : ""}`}>{content}</main>
+      {showLogin && <LoginDialog onSuccess={(token) => { setToken(token); setShowLogin(false); refreshData().then(() => setPage("admin")); }} onClose={() => setShowLogin(false)} />}
     </>
   );
 }
@@ -332,6 +387,7 @@ async function apiJSON(path, options = {}) {
       method: options.method || "GET",
       headers: {
         "Content-Type": "application/json",
+        ...authHeader(),
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
@@ -352,6 +408,7 @@ async function uploadImage(file) {
   try {
     const response = await fetch("/api/admin/uploads/images", {
       method: "POST",
+      headers: authHeader(),
       body: formData,
     });
     const data = await response.json().catch(() => null);
@@ -435,7 +492,7 @@ function TopNav({ page, setPage, query, setQuery, apiStatus, setCategoryFilter }
   );
 }
 
-function SideNav({ page, setPage, setCategoryFilter }) {
+function SideNav({ page, setPage, setCategoryFilter, goAdmin }) {
   const navigate = (id) => {
     if (id === "blog") setCategoryFilter("");
     setPage(id);
@@ -457,7 +514,7 @@ function SideNav({ page, setPage, setCategoryFilter }) {
         ))}
       </nav>
       <div className="side-footer">
-        <button onClick={() => setPage("admin")}>
+        <button onClick={goAdmin}>
           <Icon>admin_panel_settings</Icon>
           作者后台
         </button>
@@ -470,9 +527,8 @@ function SideNav({ page, setPage, setCategoryFilter }) {
   );
 }
 
-function HomePage({ posts, setPage, onSelectPost }) {
-  const heroPost = posts.find((post) => post.image) || posts[0];
-  const heroImage = mediaURL(heroPost?.image) || img.hero;
+function HomePage({ posts, siteConfig, setPage, onSelectPost }) {
+  const heroImage = mediaURL(siteConfig?.heroImage) || img.hero;
 
   return (
     <div className="content-wrap">
@@ -481,13 +537,10 @@ function HomePage({ posts, setPage, onSelectPost }) {
         <div className="hero-shade" />
         <div className="hero-copy">
           <div className="meta-row">
-            <span className="pill gradient">外城小站</span>
-            <span>个人博客 / flux 主题</span>
+            <span className="pill gradient">{siteConfig?.heroSubtitle || "外城小站"}</span>
           </div>
-          <h1>在外城边缘，记录技术、阅读与日常。</h1>
-          <p>
-            这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。
-          </p>
+          <h1>{siteConfig?.heroTitle || "在外城边缘，记录技术、阅读与日常。"}</h1>
+          <p>{siteConfig?.heroDesc || ""}</p>
           <button className="primary-button" onClick={() => setPage("blog")}>
             进入博客 <Icon>arrow_forward</Icon>
           </button>
@@ -613,14 +666,20 @@ function CardMeta({ post }) {
 }
 
 function BlogPage({ posts, query, categoryFilter, setCategoryFilter, setPage, onSelectPost }) {
-  const results = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    return posts.filter((post) => {
-      const matchesCategory = !categoryFilter || post.category === categoryFilter;
-      const matchesQuery = !term || `${post.title} ${post.category} ${post.excerpt}`.toLowerCase().includes(term);
-      return matchesCategory && matchesQuery;
+  const [searchResults, setSearchResults] = useState(null);
+
+  useEffect(() => {
+    const term = query.trim();
+    if (!term) { setSearchResults(null); return; }
+    loadJSON(`/api/posts?q=${encodeURIComponent(term)}`).then((data) => {
+      if (data) setSearchResults(data.map(normalizePost));
     });
-  }, [posts, query, categoryFilter]);
+  }, [query]);
+
+  const results = useMemo(() => {
+    const base = searchResults ?? posts;
+    return base.filter((post) => !categoryFilter || post.category === categoryFilter);
+  }, [searchResults, posts, query, categoryFilter]);
 
   return (
     <div className="content-wrap page-pad">
@@ -846,7 +905,17 @@ function CodeBlock() {
   );
 }
 
-function AuthorPage({ author, adminSummary, setPage }) {
+function AuthorPage({ author, adminSummary, setPage, goAdmin }) {
+  const [copied, setCopied] = useState(false);
+
+  function copyContact() {
+    if (!author.contact) return;
+    navigator.clipboard.writeText(author.contact).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
   return (
     <div className="content-wrap page-pad">
       <section className="about-grid">
@@ -858,53 +927,40 @@ function AuthorPage({ author, adminSummary, setPage }) {
               <span>{author.role}</span>
             </div>
             <p className="handle">{author.handle}</p>
-            <p>
-              {author.bio}
-            </p>
+            <p>{author.bio}</p>
             <div className="link-row">
-              <button onClick={() => setPage("admin")}>
+              <button onClick={goAdmin}>
                 <Icon>admin_panel_settings</Icon> 作者后台
               </button>
-              <button>
-                <Icon>terminal</Icon> GitHub
-              </button>
-              <button>
-                <Icon>podcasts</Icon> 信号
-              </button>
-              <button>
-                <Icon>alternate_email</Icon> 联系
-              </button>
+              {author.github && (
+                <a href={author.github} target="_blank" rel="noopener noreferrer" className="link-row-btn">
+                  <Icon>terminal</Icon> GitHub
+                </a>
+              )}
+              {author.contact && (
+                <button onClick={copyContact}>
+                  <Icon>alternate_email</Icon> {copied ? "已复制" : "联系"}
+                </button>
+              )}
             </div>
           </div>
         </article>
         <aside className="stats-card">
           <h4>小站数据</h4>
-          <p>
-            <span>已发布</span>
-            <strong>{adminSummary.posts - adminSummary.drafts}</strong>
-          </p>
-          <p>
-            <span>标签</span>
-            <strong>{adminSummary.tags}</strong>
-          </p>
-          <p>
-            <span>草稿</span>
-            <strong>{adminSummary.drafts}</strong>
-          </p>
+          <p><span>已发布</span><strong>{adminSummary.posts - adminSummary.drafts}</strong></p>
+          <p><span>标签</span><strong>{adminSummary.tags}</strong></p>
+          <p><span>草稿</span><strong>{adminSummary.drafts}</strong></p>
         </aside>
       </section>
-      <SectionHeader title="作者说明" eyebrow="当前阶段普通用户不开放登录" />
+      <SectionHeader title="作者说明" eyebrow={author.noteSubtitle || ""} />
       <section className="result-list">
-        <article>
-          <CategoryLabel post={{ category: "原则", color: "primary" }} />
-          <h3>先写作，再扩展功能</h3>
-          <p>普通访客可以阅读博客、浏览作者信息和标签云。登录、评论、订阅管理等功能暂不对普通用户开放。</p>
-        </article>
-        <article>
-          <CategoryLabel post={{ category: "后台", color: "secondary" }} />
-          <h3>作者后台仅作为管理入口</h3>
-          <p>后台用于文章、标签和草稿管理。当前是前端原型，后续可接入真实鉴权和内容接口。</p>
-        </article>
+        {(author.notes || []).map((note, i) => (
+          <article key={i}>
+            <CategoryLabel post={{ category: note.label || "说明", color: i % 2 === 0 ? "primary" : "secondary" }} />
+            <h3>{note.title}</h3>
+            <p>{note.body}</p>
+          </article>
+        ))}
       </section>
     </div>
   );
@@ -951,8 +1007,8 @@ function estimateReadTime(content) {
   return `${Math.max(1, Math.ceil(length / 500))} 分钟阅读`;
 }
 
-function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostStatus, onDeletePost }) {
-  const adminPosts = posts.slice(0, 5);
+function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostStatus, onDeletePost, onEditAuthor, onEditSite }) {
+  const adminPosts = posts;
   const [adminMessage, setAdminMessage] = useState("列表中的发布会执行内容校验；失败时请进入编辑器补齐标题、摘要和正文。");
 
   async function changeStatus(post) {
@@ -1007,7 +1063,7 @@ function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostSta
             <button className="primary-button" onClick={onNewPost}>新建文章</button>
           </div>
           <p className="admin-message">{adminMessage}</p>
-          <div className="admin-table">
+          <div className="admin-table" style={{ maxHeight: 320, overflowY: "auto" }}>
             {adminPosts.map((post) => (
               <div className="admin-row" key={post.slug || post.title}>
                 <span>{post.title}</span>
@@ -1027,22 +1083,19 @@ function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostSta
 
         <article className="admin-panel">
           <div className="admin-panel-head">
-            <h2>写作流程</h2>
+            <h2>其他设置</h2>
           </div>
           <div className="admin-actions">
-            <button onClick={onNewPost}>
-              <Icon>edit_square</Icon>
-              打开全屏 Markdown 编辑器
+            <button onClick={onEditSite}>
+              <Icon>home</Icon>
+              编辑首页
             </button>
-            <button>
-              <Icon>schedule</Icon>
-              阅读时间会根据正文自动估算
-            </button>
-            <button>
-              <Icon>task_alt</Icon>
-              发布前会校验标题、摘要和正文长度
+            <button onClick={onEditAuthor}>
+              <Icon>manage_accounts</Icon>
+              编辑作者页面
             </button>
           </div>
+          <ChangeSecretForm />
         </article>
       </section>
     </div>
@@ -1173,6 +1226,320 @@ function EditorPage({ draft, setDraft, onSavePost, setPage }) {
           />
         </article>
       </section>
+    </div>
+  );
+}
+
+function AuthorEditorPage({ author, onSave, setPage }) {
+  const [draft, setDraft] = useState({ ...author });
+  const [message, setMessage] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  async function handleAvatarUpload(file) {
+    if (!file) return;
+    setUploadingAvatar(true);
+    setMessage("正在上传头像...");
+    const uploaded = await uploadImage(file);
+    setUploadingAvatar(false);
+    if (uploaded?.error) {
+      setMessage(`头像上传失败：${uploaded.error}`);
+      return;
+    }
+    setDraft((d) => ({ ...d, avatar: mediaURL(uploaded.path || uploaded.url) }));
+    setMessage("头像已上传。");
+  }
+
+  function update(field, value) {
+    setDraft((d) => ({ ...d, [field]: value }));
+  }
+
+  async function handleSave() {
+    const result = await onSave(draft);
+    if (result?.error) {
+      setMessage(`保存失败：${result.error}`);
+      return;
+    }
+    setMessage("作者信息已保存。");
+  }
+
+  return (
+    <div className="content-wrap page-pad editor-page">
+      <header className="editor-hero">
+        <div>
+          <div className="signal"><i /><span>作者后台</span></div>
+          <h1>编辑作者页面</h1>
+          <p>修改作者简介、头像链接和社交信息，保存后立即生效。</p>
+        </div>
+        <button className="section-back" onClick={() => setPage("admin")}>
+          <Icon>arrow_back</Icon>
+          返回后台
+        </button>
+      </header>
+      <section className="editor-layout">
+        <aside className="editor-sidebar">
+          <label>
+            名称
+            <input value={draft.name || ""} onChange={(e) => update("name", e.target.value)} />
+          </label>
+          <label>
+            身份 / 角色
+            <input value={draft.role || ""} onChange={(e) => update("role", e.target.value)} />
+          </label>
+          <label>
+            Handle
+            <input value={draft.handle || ""} onChange={(e) => update("handle", e.target.value)} />
+          </label>
+          <label>
+            简介
+            <textarea rows="5" value={draft.bio || ""} onChange={(e) => update("bio", e.target.value)} />
+          </label>
+          <div className="editor-image-field">
+            <span>头像</span>
+            {draft.avatar ? (
+              <img src={mediaURL(draft.avatar)} alt="头像预览" style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover" }} />
+            ) : (
+              <div className="editor-image-empty"><Icon>person</Icon>暂无头像</div>
+            )}
+            <label className="upload-button">
+              <Icon>{uploadingAvatar ? "hourglass_top" : "upload"}</Icon>
+              {uploadingAvatar ? "上传中" : "上传头像"}
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploadingAvatar} onChange={(e) => handleAvatarUpload(e.target.files?.[0])} />
+            </label>
+            {draft.avatar && (
+              <button type="button" className="image-clear" onClick={() => setDraft((d) => ({ ...d, avatar: "" }))}>移除头像</button>
+            )}
+          </div>
+          <label>
+            GitHub URL
+            <input value={draft.github || ""} onChange={(e) => update("github", e.target.value)} />
+          </label>
+          <label>
+            联系方式
+            <input value={draft.contact || ""} onChange={(e) => update("contact", e.target.value)} placeholder="邮箱、微信号等，点击联系时复制" />
+          </label>
+          <label>
+            说明副标题
+            <input value={draft.noteSubtitle || ""} onChange={(e) => update("noteSubtitle", e.target.value)} />
+          </label>
+          <div className="editor-image-field">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>作者说明</span>
+              <button className="primary-button" type="button" onClick={() => update("notes", [...(draft.notes || []), { label: "", title: "", body: "" }])}>
+                <Icon>add</Icon> 新增说明
+              </button>
+            </div>
+            {(draft.notes || []).map((note, i) => (
+              <div key={i} style={{ border: "1px solid var(--border, #333)", borderRadius: "var(--radius, 6px)", padding: "10px", marginTop: 8 }}>
+                <label>
+                  标签（如"原则"）
+                  <input value={note.label || ""} onChange={(e) => {
+                    const notes = draft.notes.map((n, j) => j === i ? { ...n, label: e.target.value } : n);
+                    update("notes", notes);
+                  }} />
+                </label>
+                <label>
+                  标题
+                  <input value={note.title} onChange={(e) => {
+                    const notes = draft.notes.map((n, j) => j === i ? { ...n, title: e.target.value } : n);
+                    update("notes", notes);
+                  }} />
+                </label>
+                <label>
+                  内容
+                  <textarea rows="3" value={note.body} onChange={(e) => {
+                    const notes = draft.notes.map((n, j) => j === i ? { ...n, body: e.target.value } : n);
+                    update("notes", notes);
+                  }} />
+                </label>
+                <button className="primary-button" type="button" style={{ marginTop: 6 }} onClick={() => update("notes", draft.notes.filter((_, j) => j !== i))}>
+                  <Icon>delete</Icon> 删除
+                </button>
+              </div>
+            ))}
+          </div>
+          {message && <p className="editor-message">{message}</p>}
+          <div className="editor-actions">
+            <button type="button" onClick={() => setPage("admin")}>取消</button>
+            <button className="primary-button" type="button" onClick={handleSave}>保存</button>
+          </div>
+        </aside>
+        <article className="admin-panel" style={{ flex: 1 }}>
+          <div className="admin-panel-head"><h2>预览</h2></div>
+          <div className="author-card" style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", padding: "1.5rem" }}>
+            <img src={mediaURL(draft.avatar) || img.author} alt="头像" style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <div>
+              <div className="author-heading">
+                <h1 style={{ fontSize: "1.25rem", margin: 0 }}>{draft.name || "（名称）"}</h1>
+                <span>{draft.role || "（角色）"}</span>
+              </div>
+              <p className="handle">{draft.handle || "（handle）"}</p>
+              <p style={{ margin: "0.5rem 0 0" }}>{draft.bio || "（简介）"}</p>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+  );
+}
+
+function SiteConfigEditorPage({ siteConfig, onSave, setPage }) {
+  const [draft, setDraft] = useState({ ...siteConfig });
+  const [message, setMessage] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  function update(field, value) {
+    setDraft((d) => ({ ...d, [field]: value }));
+  }
+
+  async function handleImageUpload(file) {
+    if (!file) return;
+    setUploadingImage(true);
+    setMessage("正在上传图片...");
+    const uploaded = await uploadImage(file);
+    setUploadingImage(false);
+    if (uploaded?.error) { setMessage(`上传失败：${uploaded.error}`); return; }
+    update("heroImage", mediaURL(uploaded.path || uploaded.url));
+    setMessage("图片已上传。");
+  }
+
+  async function handleSave() {
+    const result = await onSave(draft);
+    if (result?.error) { setMessage(`保存失败：${result.error}`); return; }
+    setMessage("首页配置已保存。");
+  }
+
+  return (
+    <div className="content-wrap page-pad editor-page">
+      <header className="editor-hero">
+        <div>
+          <div className="signal"><i /><span>作者后台</span></div>
+          <h1>编辑首页</h1>
+          <p>修改首页 Hero 区域的标题、描述和背景图片。</p>
+        </div>
+        <button className="section-back" onClick={() => setPage("admin")}>
+          <Icon>arrow_back</Icon>返回后台
+        </button>
+      </header>
+      <section className="editor-layout">
+        <aside className="editor-sidebar">
+          <label>
+            标题
+            <input value={draft.heroTitle || ""} onChange={(e) => update("heroTitle", e.target.value)} />
+          </label>
+          <label>
+            副标题（pill 标签）
+            <input value={draft.heroSubtitle || ""} onChange={(e) => update("heroSubtitle", e.target.value)} />
+          </label>
+          <label>
+            描述
+            <textarea rows="4" value={draft.heroDesc || ""} onChange={(e) => update("heroDesc", e.target.value)} />
+          </label>
+          <div className="editor-image-field">
+            <span>背景图片</span>
+            {draft.heroImage ? (
+              <img src={mediaURL(draft.heroImage)} alt="Hero 预览" style={{ width: "100%", borderRadius: "var(--radius)", objectFit: "cover", maxHeight: 120 }} />
+            ) : (
+              <div className="editor-image-empty"><Icon>image</Icon>暂无背景图</div>
+            )}
+            <label className="upload-button">
+              <Icon>{uploadingImage ? "hourglass_top" : "upload"}</Icon>
+              {uploadingImage ? "上传中" : "上传图片"}
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={uploadingImage} onChange={(e) => handleImageUpload(e.target.files?.[0])} />
+            </label>
+            {draft.heroImage && (
+              <button type="button" className="image-clear" onClick={() => update("heroImage", "")}>移除图片</button>
+            )}
+          </div>
+          {message && <p className="editor-message">{message}</p>}
+          <div className="editor-actions">
+            <button type="button" onClick={() => setPage("admin")}>取消</button>
+            <button className="primary-button" type="button" onClick={handleSave}>保存</button>
+          </div>
+        </aside>
+        <article className="admin-panel" style={{ flex: 1 }}>
+          <div className="admin-panel-head"><h2>预览</h2></div>
+          <div style={{ position: "relative", borderRadius: "var(--radius)", overflow: "hidden", minHeight: 160 }}>
+            <img src={mediaURL(draft.heroImage) || img.hero} alt="" style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} />
+            <div className="hero-shade" />
+            <div style={{ position: "absolute", bottom: 16, left: 16, right: 16 }}>
+              <span className="pill gradient" style={{ fontSize: "0.75rem" }}>{draft.heroSubtitle || "外城小站"}</span>
+              <h3 style={{ margin: "8px 0 4px", color: "#fff" }}>{draft.heroTitle || "（标题）"}</h3>
+              <p style={{ margin: 0, color: "rgba(255,255,255,0.7)", fontSize: "0.85rem" }}>{draft.heroDesc || "（描述）"}</p>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+  );
+}
+
+function ChangeSecretForm() {
+  const [secret, setSecret] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function handleChange() {
+    if (!secret.trim()) return;
+    const result = await apiJSON("/api/auth/change-secret", { method: "POST", body: { secret } });
+    if (result?.error) { setMessage(`失败：${result.error}`); return; }
+    clearToken();
+    setSecret("");
+    setMessage("密钥已更新，请重新登录。");
+  }
+
+  return (
+    <div style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border, rgba(255,255,255,0.08))" }}>
+      <div className="admin-panel-head" style={{ marginBottom: "0.75rem" }}>
+        <h2>修改密钥</h2>
+      </div>
+      <label>
+        新密钥
+        <input type="text" style={{ WebkitTextSecurity: "disc" }} value={secret} onChange={(e) => setSecret(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleChange()} />
+      </label>
+      {message && <p className="admin-message" style={{ marginTop: "0.5rem" }}>{message}</p>}
+      <div style={{ marginTop: "0.75rem" }}>
+        <button className="primary-button" type="button" onClick={handleChange}>保存密钥</button>
+      </div>
+    </div>
+  );
+}
+
+function LoginDialog({ onSuccess, onClose }) {
+  const [secret, setSecret] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleLogin() {
+    if (!secret.trim()) return;
+    setLoading(true);
+    const result = await apiJSON("/api/auth/login", { method: "POST", body: { secret } });
+    setLoading(false);
+    if (result?.error) { setMessage("密钥错误"); return; }
+    onSuccess(result.token);
+  }
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+      <div style={{ background: "var(--surface)", borderRadius: "var(--radius)", padding: "2rem", width: 320, display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h2 style={{ margin: 0 }}>进入作者后台</h2>
+        <label>
+          密钥
+          <input
+            type="text"
+            style={{ WebkitTextSecurity: "disc" }}
+            value={secret}
+            onChange={(e) => setSecret(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+            autoFocus
+          />
+        </label>
+        {message && <p className="editor-message">{message}</p>}
+        <div className="editor-actions">
+          <button type="button" onClick={onClose}>取消</button>
+          <button className="primary-button" type="button" onClick={handleLogin} disabled={loading}>
+            {loading ? "验证中" : "进入"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

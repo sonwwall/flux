@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"flux/backend/internal/config"
 	"flux/backend/internal/dao"
 	"flux/backend/internal/handler"
 	"flux/backend/internal/media"
@@ -15,9 +16,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func New(db *gorm.DB, addr string) *server.Hertz {
+func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	h := server.Default(
-		server.WithHostPorts(addr),
+		server.WithHostPorts(cfg.Addr),
 		server.WithMaxRequestBodySize(20<<20),
 	)
 	h.Use(corsAndLog())
@@ -26,24 +27,30 @@ func New(db *gorm.DB, addr string) *server.Hertz {
 		PathRewrite: app.NewPathSlashesStripper(1),
 	})
 
-	hdl := handler.New(service.New(dao.New(db)))
+	hdl := handler.New(service.New(dao.New(db)), cfg.JWTSecret)
 	api := h.Group("/api")
 
 	api.GET("/health", hdl.Health)
 	api.GET("/site", hdl.Site)
-
 	api.GET("/posts", hdl.ListPosts)
 	api.GET("/posts/:slug", hdl.GetPost)
 	api.GET("/tags", hdl.ListTags)
 	api.GET("/author", hdl.GetAuthor)
+	api.GET("/admin/site", hdl.GetSiteConfig)
 
-	api.GET("/admin/summary", hdl.AdminSummary)
-	api.GET("/admin/posts", hdl.ListAdminPosts)
-	api.POST("/admin/posts", hdl.CreatePost)
-	api.PUT("/admin/posts/:id", hdl.UpdatePost)
-	api.PATCH("/admin/posts/:id/status", hdl.UpdatePostStatus)
-	api.DELETE("/admin/posts/:id", hdl.DeletePost)
-	api.POST("/admin/uploads/images", hdl.UploadImage)
+	api.POST("/auth/login", hdl.Login)
+
+	authed := api.Group("", hdl.JWTAuth())
+	authed.POST("/auth/change-secret", hdl.ChangeSecret)
+	authed.PUT("/author", hdl.UpdateAuthor)
+	authed.PUT("/admin/site", hdl.UpdateSiteConfig)
+	authed.GET("/admin/summary", hdl.AdminSummary)
+	authed.GET("/admin/posts", hdl.ListAdminPosts)
+	authed.POST("/admin/posts", hdl.CreatePost)
+	authed.PUT("/admin/posts/:id", hdl.UpdatePost)
+	authed.PATCH("/admin/posts/:id/status", hdl.UpdatePostStatus)
+	authed.DELETE("/admin/posts/:id", hdl.DeletePost)
+	authed.POST("/admin/uploads/images", hdl.UploadImage)
 
 	return h
 }

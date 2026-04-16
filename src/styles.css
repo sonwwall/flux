@@ -477,18 +477,25 @@ p {
 
 .section-actions button,
 .article-actions button,
-.link-row button {
+.link-row button,
+.link-row .link-row-btn {
   min-height: 38px;
   padding: 0 16px;
   border-radius: var(--radius);
   color: var(--text);
   background: var(--surface-high);
   transition: background 180ms ease, color 180ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-size: inherit;
 }
 
 .section-actions button:hover,
 .article-actions button:hover,
-.link-row button:hover {
+.link-row button:hover,
+.link-row .link-row-btn:hover {
   color: var(--primary);
   background: var(--surface-highest);
 }

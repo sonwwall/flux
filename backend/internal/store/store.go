@@ -13,7 +13,7 @@ func Open(dsn string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.AuthorProfile{}); err != nil {
+	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.AuthorProfile{}, &models.SiteConfig{}); err != nil {
 		return nil, err
 	}
 	if err := seed(db); err != nil {
@@ -47,6 +47,13 @@ func seed(db *gorm.DB) error {
 	}
 	if count == 0 {
 		return db.Create(&seedAuthor).Error
+	}
+
+	if err := db.Model(&models.SiteConfig{}).Count(&count).Error; err != nil {
+		return err
+	}
+	if count == 0 {
+		return db.Create(&seedSiteConfig).Error
 	}
 	return nil
 }
@@ -132,4 +139,12 @@ var seedAuthor = models.AuthorProfile{
 	Bio:    "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
 	Avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
 	Github: "https://github.com",
+}
+
+var seedSiteConfig = models.SiteConfig{
+	HeroTitle:    "在外城边缘，记录技术、阅读与日常。",
+	HeroSubtitle: "外城小站 / 个人博客 / flux 主题",
+	HeroDesc:     "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
+	HeroImage:    "",
+	AdminSecret:  "123456",
 }

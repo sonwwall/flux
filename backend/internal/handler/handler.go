@@ -3,9 +3,10 @@ package handler
 import "flux/backend/internal/service"
 
 type Handler struct {
-	svc *service.Service
+	svc       *service.Service
+	jwtSecret string
 }
 
-func New(svc *service.Service) *Handler {
-	return &Handler{svc: svc}
+func New(svc *service.Service, jwtSecret string) *Handler {
+	return &Handler{svc: svc, jwtSecret: jwtSecret}
 }

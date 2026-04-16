@@ -31,16 +31,25 @@ type Tag struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
+type AuthorNote struct {
+	Label string `json:"label"`
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
+
 type AuthorProfile struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	Name      string    `gorm:"size:80;not null" json:"name"`
-	Handle    string    `gorm:"size:80;not null" json:"handle"`
-	Role      string    `gorm:"size:80;not null" json:"role"`
-	Bio       string    `gorm:"size:512;not null" json:"bio"`
-	Avatar    string    `gorm:"size:1024" json:"avatar"`
-	Github    string    `gorm:"size:160" json:"github"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID           uint         `gorm:"primaryKey" json:"id"`
+	Name         string       `gorm:"size:80;not null" json:"name"`
+	Handle       string       `gorm:"size:80;not null" json:"handle"`
+	Role         string       `gorm:"size:80;not null" json:"role"`
+	Bio          string       `gorm:"size:512;not null" json:"bio"`
+	Avatar       string       `gorm:"size:1024" json:"avatar"`
+	Github       string       `gorm:"size:160" json:"github"`
+	Contact      string       `gorm:"size:160" json:"contact"`
+	NoteSubtitle string       `gorm:"size:160" json:"noteSubtitle"`
+	Notes        []AuthorNote `gorm:"serializer:json" json:"notes"`
+	CreatedAt    time.Time    `json:"createdAt"`
+	UpdatedAt    time.Time    `json:"updatedAt"`
 }
 
 type AdminSummary struct {
@@ -48,4 +57,14 @@ type AdminSummary struct {
 	Drafts     int64 `json:"drafts"`
 	Tags       int64 `json:"tags"`
 	MonthPosts int64 `json:"monthPosts"`
+}
+
+type SiteConfig struct {
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	HeroTitle   string    `gorm:"size:200" json:"heroTitle"`
+	HeroSubtitle string   `gorm:"size:200" json:"heroSubtitle"`
+	HeroDesc    string    `gorm:"size:512" json:"heroDesc"`
+	HeroImage   string    `gorm:"size:1024" json:"heroImage"`
+	AdminSecret string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
