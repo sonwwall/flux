@@ -72,7 +72,7 @@ func uploadOrigin(c *app.RequestContext) string {
 	if origin := strings.TrimRight(os.Getenv("UPLOAD_PUBLIC_ORIGIN"), "/"); origin != "" {
 		return origin
 	}
-	return "http://127.0.0.1:8080"
+	return requestOrigin(c)
 }
 
 func requestOrigin(c *app.RequestContext) string {

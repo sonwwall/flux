@@ -9,8 +9,6 @@ services:
       MYSQL_USER: flux
       MYSQL_PASSWORD: flux_pass
       TZ: Asia/Shanghai
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -19,5 +17,34 @@ services:
       timeout: 5s
       retries: 10
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: flux-backend
+    restart: unless-stopped
+    environment:
+      APP_ADDR: 0.0.0.0:8080
+      DB_DSN: flux:flux_pass@tcp(mysql:3306)/flux_blog?charset=utf8mb4&parseTime=True&loc=Local
+      JWT_SECRET: flux-jwt-secret-change-me
+      TZ: Asia/Shanghai
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: flux-frontend
+    restart: unless-stopped
+    ports:
+      - "18897:80"
+    depends_on:
+      - backend
+
 volumes:
   mysql_data:
+  uploads_data:

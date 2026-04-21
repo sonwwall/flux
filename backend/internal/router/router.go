@@ -19,7 +19,7 @@ import (
 func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	h := server.Default(
 		server.WithHostPorts(cfg.Addr),
-		server.WithMaxRequestBodySize(20<<20),
+		server.WithMaxRequestBodySize(25<<20),
 	)
 	h.Use(corsAndLog())
 	h.StaticFS("/uploads", &app.FS{

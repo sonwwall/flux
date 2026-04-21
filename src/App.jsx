@@ -15,7 +15,7 @@ const normalizeCodeLanguage = (lang = "") => {
   return language || "text";
 };
 
-const apiOrigin = import.meta.env.VITE_API_ORIGIN || "http://127.0.0.1:8080";
+const apiOrigin = (import.meta.env.VITE_API_ORIGIN || "").replace(/\/$/, "");
 
 const getToken = () => localStorage.getItem("flux_token");
 const setToken = (t) => localStorage.setItem("flux_token", t);
