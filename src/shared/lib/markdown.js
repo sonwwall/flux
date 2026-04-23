@@ -16,7 +16,7 @@ const normalizeCodeLanguage = (lang = "") => {
 };
 
 const plainTextFromTokens = (tokens = []) =>
-  tokens.map((token) => token.text || plainTextFromTokens(token.tokens)).join("");
+  tokens.map((token) => token.text || plainTextFromTokens(token.tokens || [])).join("");
 
 const slugBase = (value = "") =>
   String(value)
@@ -74,7 +74,7 @@ export function extractToc(markdown = "") {
     .lexer(markdown)
     .filter((token) => token.type === "heading" && token.depth >= 1 && token.depth <= 3)
     .map((token) => {
-      const text = plainTextFromTokens(token.tokens) || token.text;
+      const text = plainTextFromTokens(token.tokens || []) || token.text;
       return {
         id: nextHeadingId(text),
         title: text,

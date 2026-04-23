@@ -64,13 +64,6 @@ export const fallbackTags = [
   ["标签", "内容组织方法", "6", "sell", "secondary"],
 ];
 
-export const navItems = [
-  ["home", "首页", "home"],
-  ["blog", "博客", "article"],
-  ["tags", "标签云", "sell"],
-  ["author", "作者", "person"],
-];
-
 export const fallbackAuthor = {
   name: "外城",
   handle: "@outercity / 外城小站",
@@ -110,5 +103,3 @@ export const emptyEditorPost = {
   image: "",
   status: "draft",
 };
-
-export const categoryOptions = ["随笔", "前端", "工程", "阅读", "项目", "标签"];

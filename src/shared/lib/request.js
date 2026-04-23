@@ -1,5 +1,3 @@
-import { authHeader } from "./auth";
-
 export async function loadJSON(path) {
   try {
     const response = await fetch(path);
@@ -16,7 +14,7 @@ export async function apiJSON(path, options = {}) {
       method: options.method || "GET",
       headers: {
         "Content-Type": "application/json",
-        ...authHeader(),
+        ...(options.headers || {}),
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
