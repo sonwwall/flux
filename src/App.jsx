@@ -1,218 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { marked } from "marked";
-
-const escapeHtml = (value = "") =>
-  String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  })[char]);
-
-const normalizeCodeLanguage = (lang = "") => {
-  const language = String(lang).trim().split(/\s+/)[0].replace(/[^\w-]/g, "");
-  return language || "text";
-};
-
-const apiOrigin = (import.meta.env.VITE_API_ORIGIN || "").replace(/\/$/, "");
-
-const getToken = () => localStorage.getItem("flux_token");
-const setToken = (t) => localStorage.setItem("flux_token", t);
-const clearToken = () => localStorage.removeItem("flux_token");
-
-const authHeader = () => {
-  const t = getToken();
-  return t ? { Authorization: `Bearer ${t}` } : {};
-};
-
-const mediaURL = (value = "") => {
-  if (!value) return "";
-  if (value.startsWith("data:") || value.startsWith("blob:")) {
-    return value;
-  }
-  if (value.startsWith("/uploads/")) {
-    return `${apiOrigin}${value}`;
-  }
-  if (/^https?:\/\//.test(value)) {
-    try {
-      const url = new URL(value);
-      if (url.pathname.startsWith("/uploads/") && ["127.0.0.1", "localhost"].includes(url.hostname)) {
-        return `${apiOrigin}${url.pathname}`;
-      }
-    } catch {
-      return value;
-    }
-    return value;
-  }
-  if (value.startsWith("//")) {
-    return value;
-  }
-  return value;
-};
-
-const plainTextFromTokens = (tokens = []) =>
-  tokens.map((token) => token.text || plainTextFromTokens(token.tokens)).join("");
-
-const slugBase = (value = "") =>
-  String(value)
-    .trim()
-    .toLowerCase()
-    .replace(/<[^>]+>/g, "")
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "") || "section";
-
-let headingSlugCounts = new Map();
-
-const resetHeadingSlugCounts = () => {
-  headingSlugCounts = new Map();
-};
-
-const nextHeadingId = (text) => {
-  const base = slugBase(text);
-  const count = headingSlugCounts.get(base) || 0;
-  headingSlugCounts.set(base, count + 1);
-  return count ? `${base}-${count + 1}` : base;
-};
-
-marked.use({
-  renderer: {
-    code({ text, lang, escaped }) {
-      const language = normalizeCodeLanguage(lang);
-      const code = escaped ? text : escapeHtml(text);
-      return `<pre class="md-code-block" data-lang="${escapeHtml(language.toUpperCase())}"><code class="language-${escapeHtml(language)}">${code}</code></pre>`;
-    },
-    heading({ tokens, depth }) {
-      const text = plainTextFromTokens(tokens);
-      const id = nextHeadingId(text);
-      return `<h${depth} id="${escapeHtml(id)}">${this.parser.parseInline(tokens)}</h${depth}>`;
-    },
-  },
-});
-
-const renderMarkdown = (markdown) => {
-  resetHeadingSlugCounts();
-  return marked.parse(markdown || "");
-};
-
-const extractToc = (markdown) => {
-  resetHeadingSlugCounts();
-  return marked
-    .lexer(markdown || "")
-    .filter((token) => token.type === "heading" && token.depth >= 1 && token.depth <= 3)
-    .map((token) => {
-      const text = plainTextFromTokens(token.tokens) || token.text;
-      return {
-        id: nextHeadingId(text),
-        title: text,
-        depth: token.depth,
-      };
-    });
-};
-
-const img = {
-  hero:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuByKP9le0Lkt5pcL-Aw3-Lcxc4LPwqKo3H0WISzVDyAV8mZ-WkolOk3WoESFkiu6bOQItaZsqlrwohD95XU0-JnsXjWv3szXVEWMc7sMLEN06OZ7Y7I7l0eDDaSOBDVijxtWfI_OttWxSRDx-uS29peA_XLwHM0C_cBT09OTybTfxpu_m_VKvgBNOnk1-4coIPMoz_ru2-dY42AVp8gnSHp3fbpUZVXCy_nDEWk9eZS7qXNYtjX8eyOGWMuyCw1lYID6Ker1h2-qzw",
-  circuit:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuDBQQkm_p8OCktAcCAVDuTRWFTJDVMSyU-cMOnS5E6FNYxsbeyVSG41HjgtFcbb1yYtKPhBdoFcQHCAcErDin7JJ2WahN70DdjHNhR7bf-PQQ--Gp2t9s_R0OCYFnFYcpWHMu2NzbdV82qb8dLuigBy-jSSuq_nm5N0EGR-oYlERrrnGafg9b0TZYW2qMDP6zNppT45uBW1oBkj2-qeBCHL6nrY8A-tS8XoDRY7XkJZzP2Hw2TgAAKk_tYgMo8Ib4HNjciI7mtEvjo",
-  planet:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuDvvfFi2XuU7RlRFZroG13NaUDHeM2zukQoTxw--wwETaNR5ciU3vDzX8BDSwjK7awcdK2a6Z-rE-SFteIJrRtQieyDoy6aWX_BSm2c3ThE2Eadk09VGqHLCpf67q3TmXumzucvFoPN2hE5uMdVQKwzfFeLCYLNFn-0W6LGQxEnZgud0M_Wzy1EyS6qe9a2_NhdYU_SF2U_X1bsRWMFPbwIaBLZza9_oKRWNRV0p4UkxWrafRrtJS-OqmazpdYrALYyTx8DPL8JotU",
-  article:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCeiPXZ-OXJVqMxWk3jP-lDydLGTlinjXCFYM6pE5CRUcjmcNa3rOcpaIwmneTIyyqlPuBJrUc6VCe8gI1M7MeTQcjIoCrICZU7KVdl4i1RNbddJ8V1hUE36ktWGx0vKBVBZRvb72iIwGLu0vdk8ubOVdEhZmorbSYKW5QEEnJ6RF23fYbfHHJVwMtvLVM2iZMNktalBl-4Ykuq7dgEtweJFZ--2GrxvDWVb9uBjyGv0JE4d9CE7erGSg90tQr3GKIj1wPGwx8oXaw",
-  author:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
-};
-
-const fallbackPosts = [
-  {
-    title: "在城市边缘写代码：一个个人站点的长期主义",
-    category: "随笔",
-    color: "primary",
-    date: "2026 年 4 月 12 日",
-    read: "6 分钟阅读",
-    image: img.circuit,
-    featured: true,
-    excerpt:
-      "关于为什么还要搭一个独立博客，以及如何让写作、项目和生活记录在同一个地方沉淀下来。",
-  },
-  {
-    title: "React 小站的页面组织：从静态稿到可维护组件",
-    category: "前端",
-    color: "secondary",
-    date: "2026 年 4 月 8 日",
-    read: "8 分钟阅读",
-    excerpt:
-      "一次把设计稿拆成导航、文章卡片、作者页与后台原型的实践笔记。",
-  },
-  {
-    title: "给标签云一点秩序：内容索引如何服务长期写作",
-    category: "标签",
-    color: "tertiary",
-    date: "2026 年 4 月 2 日",
-    read: "5 分钟阅读",
-    excerpt:
-      "标签不是装饰，而是帮助读者和作者重新发现旧文章的轻量信息架构。",
-  },
-  {
-    title: "从开发机到部署：个人博客的最小发布链路",
-    category: "工程",
-    color: "primary-fixed",
-    date: "2026 年 3 月 28 日",
-    read: "10 分钟阅读",
-    image: img.planet,
-    featured: true,
-    reverse: true,
-    excerpt:
-      "记录依赖安装、构建产物、忽略规则和部署前检查这些容易被忽略的基础细节。",
-  },
-];
-
-const fallbackTags = [
-  ["前端", "React / CSS / 交互", "18", "code", "primary"],
-  ["随笔", "生活观察与长期记录", "12", "edit_note", "secondary"],
-  ["工程", "构建、部署与工具链", "15", "terminal", "tertiary"],
-  ["阅读", "书摘与知识卡片", "9", "auto_stories", "error"],
-  ["项目", "个人作品与复盘", "7", "deployed_code", "primary-fixed"],
-  ["标签", "内容组织方法", "6", "sell", "secondary"],
-];
-
-const navItems = [
-  ["home", "首页", "home"],
-  ["blog", "博客", "article"],
-  ["tags", "标签云", "sell"],
-  ["author", "作者", "person"],
-];
-
-const fallbackAuthor = {
-  name: "外城",
-  handle: "@outercity / 外城小站",
-  role: "站长 / 作者",
-  bio: "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
-  avatar: img.author,
-  github: "https://github.com",
-  contact: "",
-  noteSubtitle: "当前阶段普通用户不开放登录",
-  notes: [
-    { label: "原则", title: "先写作，再扩展功能", body: "普通访客可以阅读博客、浏览作者信息和标签云。登录、评论、订阅管理等功能暂不对普通用户开放。" },
-    { label: "后台", title: "作者后台仅作为管理入口", body: "后台用于文章、标签和草稿管理。当前是前端原型，后续可接入真实鉴权和内容接口。" },
-  ],
-};
-
-const fallbackSiteConfig = {
-  heroTitle: "在外城边缘，记录技术、阅读与日常。",
-  heroSubtitle: "外城小站 / 个人博客 / flux 主题",
-  heroDesc: "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
-  heroImage: "",
-};
-
-const fallbackAdminSummary = {
-  posts: 42,
-  drafts: 6,
-  tags: 18,
-  monthPosts: 4,
-};
+import { getToken, setToken, clearToken } from "./services/auth";
+import { loadJSON, apiJSON } from "./services/api";
+import { uploadImage } from "./services/upload";
+import { renderMarkdown, extractToc } from "./lib/markdown";
+import {
+  normalizePost,
+  normalizeTag,
+  toEditorDraft,
+  newEditorDraft,
+  estimateReadTime,
+  mediaURL,
+} from "./lib/post";
+import {
+  fallbackImages as img,
+  fallbackPosts,
+  fallbackTags,
+  navItems,
+  fallbackAuthor,
+  fallbackSiteConfig,
+  fallbackAdminSummary,
+  emptyEditorPost,
+  categoryOptions,
+} from "./data/fallback";
+import { useHashRoute } from "./hooks/useHashRoute";
 
 function Icon({ children, className = "" }) {
   return <span className={`material-symbols-outlined ${className}`}>{children}</span>;
@@ -369,83 +179,6 @@ function App() {
       {showLogin && <LoginDialog onSuccess={(token) => { setToken(token); setShowLogin(false); refreshData().then(() => setPage("admin")); }} onClose={() => setShowLogin(false)} />}
     </>
   );
-}
-
-async function loadJSON(path) {
-  try {
-    const response = await fetch(path);
-    if (!response.ok) return null;
-    return await response.json();
-  } catch {
-    return null;
-  }
-}
-
-async function apiJSON(path, options = {}) {
-  try {
-    const response = await fetch(path, {
-      method: options.method || "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...authHeader(),
-      },
-      body: options.body ? JSON.stringify(options.body) : undefined,
-    });
-    if (!response.ok) {
-      const data = await response.json().catch(() => null);
-      return { error: data?.error || `request failed: ${response.status}` };
-    }
-    return await response.json();
-  } catch {
-    return { error: "network error" };
-  }
-}
-
-async function uploadImage(file) {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const response = await fetch("/api/admin/uploads/images", {
-      method: "POST",
-      headers: authHeader(),
-      body: formData,
-    });
-    const data = await response.json().catch(() => null);
-    if (!response.ok) {
-      if (response.status === 413) {
-        return { error: "图片太大，请上传 20MB 以内的图片" };
-      }
-      return { error: data?.error || `upload failed: ${response.status}` };
-    }
-    return data;
-  } catch {
-    return { error: "network error" };
-  }
-}
-
-function normalizePost(post) {
-  return {
-    ...post,
-    date: formatDate(post.published) || post.date || "",
-    read: post.readTime || post.read || "5 分钟阅读",
-    image: post.image || "",
-  };
-}
-
-function normalizeTag(tag) {
-  return [tag.name, tag.description, String(tag.count), tag.icon, tag.color];
-}
-
-function formatDate(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 function TopNav({ page, setPage, query, setQuery, apiStatus, setCategoryFilter }) {
@@ -964,47 +697,6 @@ function AuthorPage({ author, adminSummary, setPage, goAdmin }) {
       </section>
     </div>
   );
-}
-
-const emptyEditorPost = {
-  title: "",
-  slug: "",
-  category: "随笔",
-  color: "primary",
-  excerpt: "",
-  content: "",
-  image: "",
-  status: "draft",
-};
-
-const categoryOptions = ["随笔", "前端", "工程", "阅读", "项目", "标签"];
-
-function newEditorDraft() {
-  return {
-    ...emptyEditorPost,
-    title: `新文章 ${new Date().toLocaleString("zh-CN")}`,
-    excerpt: "这是一篇新的草稿摘要，用来说明文章的核心内容。",
-    content: "# 新文章\n\n在这里使用 Markdown 编写正文。\n\n- 可以写列表\n- 可以写代码片段\n- 发布前正文至少需要二十个字符\n",
-  };
-}
-
-function toEditorDraft(post) {
-  return {
-    id: post.id,
-    title: post.title || "",
-    slug: post.slug || "",
-    category: post.category || "随笔",
-    color: post.color || "primary",
-    excerpt: post.excerpt || "",
-    content: post.content || "",
-    image: post.image || "",
-    status: post.status || "draft",
-  };
-}
-
-function estimateReadTime(content) {
-  const length = [...(content || "").trim()].length;
-  return `${Math.max(1, Math.ceil(length / 500))} 分钟阅读`;
 }
 
 function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostStatus, onDeletePost, onEditAuthor, onEditSite }) {
