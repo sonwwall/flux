@@ -35,3 +35,6 @@ Thumbs.db
 
 # Uploaded local media
 backend/uploads/
+
+# Local Codex workspace metadata
+.codex/
