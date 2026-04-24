@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ErrorBoundary } from '../ErrorBoundary';
+import ErrorBoundary from '../ErrorBoundary';
 import { mockApiResponse } from '../../__tests__/utils/test-utils';
 
 // 模拟fetch
