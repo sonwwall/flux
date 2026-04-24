@@ -1,10 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ErrorBoundary from '../ErrorBoundary';
-import { mockApiResponse } from '../../__tests__/utils/test-utils';
-
-// 模拟fetch
-global.fetch = jest.fn();
 
 // 创建一个会抛出错误的组件
 const ThrowError = () => {
@@ -12,12 +8,20 @@ const ThrowError = () => {
 };
 
 describe('ErrorBoundary', () => {
-  beforeEach(() => {
-    fetch.mockClear();
+  // 抑制 console.error 以保持测试输出清洁
+  let originalError;
+  
+  beforeAll(() => {
+    originalError = console.error;
+    console.error = jest.fn();
+  });
+  
+  afterAll(() => {
+    console.error = originalError;
   });
 
   it('renders children without error', () => {
-    const { container } = render(
+    render(
       <ErrorBoundary>
         <div>Content</div>
       </ErrorBoundary>
@@ -28,18 +32,19 @@ describe('ErrorBoundary', () => {
   });
 
   it('catches errors and displays error message', () => {
-    const { container } = render(
+    render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>
     );
 
     expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
-    expect(screen.getByText('We\'re sorry, but something unexpected happened.')).toBeInTheDocument();
+    // 使用更灵活的匹配方式，因为文本被分成多个元素
+    expect(screen.getByText(/We're sorry, but something unexpected happened/)).toBeInTheDocument();
   });
 
   it('shows try again button', () => {
-    const { container } = render(
+    render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>
@@ -53,7 +58,7 @@ describe('ErrorBoundary', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
-    const { container } = render(
+    render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>
@@ -70,7 +75,7 @@ describe('ErrorBoundary', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
 
-    const { container } = render(
+    render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>

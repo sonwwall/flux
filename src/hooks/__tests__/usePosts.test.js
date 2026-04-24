@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { usePosts } from '../usePosts';
-import { mockApiResponse, mockApiError } from '../../__tests__/utils/test-utils';
+import { mockApiResponse } from '../../__tests__/utils/test-utils';
 
 // 模拟fetch
 global.fetch = jest.fn();
@@ -44,8 +44,9 @@ describe('usePosts', () => {
   });
 
   it('handles fetch posts error', async () => {
-    fetch.mockRejectedValueOnce(
-      mockApiError('Failed to fetch posts', 500)
+    // 模拟返回 500 错误状态
+    fetch.mockResolvedValueOnce(
+      mockApiResponse({ message: 'Failed to fetch posts' }, 500)
     );
 
     const { result } = renderHook(() => usePosts());
@@ -67,15 +68,16 @@ describe('usePosts', () => {
   it('creates a new post', async () => {
     const newPost = { id: 3, title: 'New Post', content: 'Content' };
 
+    // 创建文章接口返回格式需要包含 data 字段
     fetch.mockResolvedValueOnce(
-      mockApiResponse(newPost)
+      mockApiResponse({ data: newPost })
     );
 
     const { result } = renderHook(() => usePosts());
 
     // 创建文章
     await act(async () => {
-      await result.current.createPost(newPost);
+      await result.current.createPost({ title: 'New Post', content: 'Content' });
     });
 
     expect(result.current.posts).toContainEqual(newPost);
@@ -90,20 +92,29 @@ describe('usePosts', () => {
 
     const updatedPost = { id: 1, title: 'Updated Post' };
 
+    // 先获取文章列表
     fetch.mockResolvedValueOnce(
-      mockApiResponse(updatedPost)
+      mockApiResponse({
+        data: existingPosts,
+        pagination: { total: 2, page: 1, limit: 10 },
+      })
+    );
+    
+    // 更新文章返回格式需要包含 data 字段
+    fetch.mockResolvedValueOnce(
+      mockApiResponse({ data: updatedPost })
     );
 
     const { result } = renderHook(() => usePosts());
 
-    // 设置初始文章列表
-    act(() => {
-      result.current.posts = existingPosts;
+    // 先获取文章列表
+    await act(async () => {
+      await result.current.fetchPosts();
     });
 
     // 更新文章
     await act(async () => {
-      await result.current.updatePost(1, updatedPost);
+      await result.current.updatePost(1, { title: 'Updated Post' });
     });
 
     expect(result.current.posts).toEqual([
@@ -119,15 +130,24 @@ describe('usePosts', () => {
       { id: 2, title: 'Post 2' },
     ];
 
+    // 先获取文章列表
+    fetch.mockResolvedValueOnce(
+      mockApiResponse({
+        data: existingPosts,
+        pagination: { total: 2, page: 1, limit: 10 },
+      })
+    );
+    
+    // 删除文章返回
     fetch.mockResolvedValueOnce(
       mockApiResponse({ success: true })
     );
 
     const { result } = renderHook(() => usePosts());
 
-    // 设置初始文章列表
-    act(() => {
-      result.current.posts = existingPosts;
+    // 先获取文章列表
+    await act(async () => {
+      await result.current.fetchPosts();
     });
 
     // 删除文章
