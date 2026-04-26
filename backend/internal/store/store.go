@@ -13,7 +13,7 @@ func Open(dsn string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.AuthorProfile{}, &models.SiteConfig{}); err != nil {
+	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.TourConfig{}, &models.AuthorProfile{}, &models.SiteConfig{}); err != nil {
 		return nil, err
 	}
 	if err := seed(db); err != nil {
@@ -46,14 +46,27 @@ func seed(db *gorm.DB) error {
 		return err
 	}
 	if count == 0 {
-		return db.Create(&seedAuthor).Error
+		if err := db.Create(&seedAuthor).Error; err != nil {
+			return err
+		}
+	}
+
+	if err := db.Model(&models.TourConfig{}).Count(&count).Error; err != nil {
+		return err
+	}
+	if count == 0 {
+		if err := db.Create(&seedTourConfig).Error; err != nil {
+			return err
+		}
 	}
 
 	if err := db.Model(&models.SiteConfig{}).Count(&count).Error; err != nil {
 		return err
 	}
 	if count == 0 {
-		return db.Create(&seedSiteConfig).Error
+		if err := db.Create(&seedSiteConfig).Error; err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -139,6 +152,12 @@ var seedAuthor = models.AuthorProfile{
 	Bio:    "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
 	Avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
 	Github: "https://github.com",
+}
+
+var seedTourConfig = models.TourConfig{
+	Badge:       "标签云",
+	Title:       "内容索引",
+	Description: "通过标签快速进入不同主题。标签大小和文章数会随着后续内容增加继续扩展。",
 }
 
 var seedSiteConfig = models.SiteConfig{

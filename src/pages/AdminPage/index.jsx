@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChangeSecretForm } from "../../features/auth/components/ChangeSecretForm";
 import { Icon } from "../../shared/ui/Icon";
 
-export function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostStatus, onDeletePost, onEditAuthor, onEditSite }) {
+export function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdatePostStatus, onDeletePost, onEditAuthor, onEditSite, onEditTour }) {
   const [adminMessage, setAdminMessage] = useState("列表中的发布会执行内容校验；失败时请进入编辑器补齐标题、摘要和正文。");
 
   async function changeStatus(post) {
@@ -83,6 +83,10 @@ export function AdminPage({ posts, adminSummary, onNewPost, onEditPost, onUpdate
             <button onClick={onEditSite}>
               <Icon>home</Icon>
               编辑首页
+            </button>
+            <button onClick={onEditTour}>
+              <Icon>explore</Icon>
+              编辑导览页
             </button>
             <button onClick={onEditAuthor}>
               <Icon>manage_accounts</Icon>

@@ -31,6 +31,14 @@ type Tag struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
+type TourConfig struct {
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	Badge       string    `gorm:"size:60;not null" json:"badge"`
+	Title       string    `gorm:"size:160;not null" json:"title"`
+	Description string    `gorm:"size:512;not null" json:"description"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
 type AuthorNote struct {
 	Label string `json:"label"`
 	Title string `json:"title"`
@@ -60,11 +68,11 @@ type AdminSummary struct {
 }
 
 type SiteConfig struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	HeroTitle   string    `gorm:"size:200" json:"heroTitle"`
-	HeroSubtitle string   `gorm:"size:200" json:"heroSubtitle"`
-	HeroDesc    string    `gorm:"size:512" json:"heroDesc"`
-	HeroImage   string    `gorm:"size:1024" json:"heroImage"`
-	AdminSecret string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	HeroTitle    string    `gorm:"size:200" json:"heroTitle"`
+	HeroSubtitle string    `gorm:"size:200" json:"heroSubtitle"`
+	HeroDesc     string    `gorm:"size:512" json:"heroDesc"`
+	HeroImage    string    `gorm:"size:1024" json:"heroImage"`
+	AdminSecret  string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 }

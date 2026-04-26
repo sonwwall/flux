@@ -35,6 +35,7 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	api.GET("/posts", hdl.ListPosts)
 	api.GET("/posts/:slug", hdl.GetPost)
 	api.GET("/tags", hdl.ListTags)
+	api.GET("/tour", hdl.GetTourConfig)
 	api.GET("/author", hdl.GetAuthor)
 	api.GET("/admin/site", hdl.GetSiteConfig)
 
@@ -44,6 +45,7 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	authed.POST("/auth/change-secret", hdl.ChangeSecret)
 	authed.PUT("/author", hdl.UpdateAuthor)
 	authed.PUT("/admin/site", hdl.UpdateSiteConfig)
+	authed.PUT("/admin/tour", hdl.UpdateTourPage)
 	authed.GET("/admin/summary", hdl.AdminSummary)
 	authed.GET("/admin/posts", hdl.ListAdminPosts)
 	authed.POST("/admin/posts", hdl.CreatePost)

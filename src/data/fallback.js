@@ -64,6 +64,12 @@ export const fallbackTags = [
   ["标签", "内容组织方法", "6", "sell", "secondary"],
 ];
 
+export const fallbackTourConfig = {
+  badge: "标签云",
+  title: "内容索引",
+  description: "通过标签快速进入不同主题。标签大小和文章数会随着后续内容增加继续扩展。",
+};
+
 export const fallbackAuthor = {
   name: "外城",
   handle: "@outercity / 外城小站",

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Icon } from "../../shared/ui/Icon";
 
-export function TagsPage({ tags, posts, setPage, setCategoryFilter }) {
+export function TagsPage({ tags, posts, tourConfig, setPage, setCategoryFilter }) {
   const categoryCounts = useMemo(
     () =>
       posts.reduce((counts, post) => {
@@ -21,21 +21,21 @@ export function TagsPage({ tags, posts, setPage, setCategoryFilter }) {
       <header className="page-hero">
         <div className="signal">
           <i />
-          <span>标签云</span>
+          <span>{tourConfig?.badge || "标签云"}</span>
         </div>
-        <h1>内容索引</h1>
-        <p>通过标签快速进入不同主题。标签大小和文章数会随着后续内容增加继续扩展。</p>
+        <h1>{tourConfig?.title || "内容索引"}</h1>
+        <p>{tourConfig?.description || "通过标签快速进入不同主题。标签大小和文章数会随着后续内容增加继续扩展。"}</p>
       </header>
 
       <section className="category-grid">
-        {tags.map(([name, subtitle, , icon, color]) => (
+        {tags.map(([name, subtitle, count, icon, color]) => (
           <button className="category-card" key={name} type="button" onClick={() => openCategory(name)}>
             <Icon className="ghost-icon">{icon}</Icon>
             <i className={`glow ${color}`} />
             <h3>{name}</h3>
             <p>{subtitle}</p>
             <div>
-              <strong>{categoryCounts[name] || 0}</strong>
+              <strong>{categoryCounts[name] || Number(count) || 0}</strong>
               <span>篇文档</span>
             </div>
           </button>
