@@ -45,6 +45,7 @@ export function RouterView({ page, routeProps }) {
         adminSummary={routeProps.adminSummary}
         posts={routeProps.posts}
         setPage={routeProps.setPage}
+        onSelectPost={routeProps.setSelectedPost}
       />
     ),
     home: <HomePage posts={routeProps.posts} siteConfig={routeProps.siteConfig} onSelectPost={routeProps.setSelectedPost} setPage={routeProps.setPage} />,

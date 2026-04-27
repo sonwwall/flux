@@ -3014,6 +3014,19 @@ p {
   overflow: hidden;
 }
 
+.card-page__mini-card--clickable {
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card-page__mini-card--clickable:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 22px 44px rgba(9, 8, 29, 0.32),
+    inset 0 0 0 1px rgba(168, 176, 255, 0.2);
+  border-color: rgba(168, 176, 255, 0.16);
+}
+
 .card-page__mini-copy {
   display: flex;
   flex-direction: column;

@@ -44,7 +44,7 @@ function Toast({ open, children }) {
   );
 }
 
-export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
+export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onSelectPost }) {
   const [flipped, setFlipped] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -66,6 +66,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
   const audioSrc = mediaURL(siteConfig?.audioSrc || "");
   const publishedCount = Math.max((adminSummary?.posts || posts?.length || 0) - (adminSummary?.drafts || 0), 0);
   const heroPost = posts?.[0] || {};
+  const latestDate = heroPost.date || heroPost.published || "";
+  const formattedDate = latestDate ? new Date(latestDate).toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" }) : "";
   const showcaseCards = [
     {
       eyebrow: "Latest Entry",
@@ -73,20 +75,21 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
       body: heroPost.excerpt || "继续整理博客内容、页面结构和主题细节。",
       image: mediaURL(heroPost.image) || fallbackImages.circuit,
       icon: "deployed_code",
+      post: heroPost,
     },
     {
-      eyebrow: "Writing Rule",
-      title: author?.notes?.[0]?.title || "先写作，再扩展功能",
-      body: author?.notes?.[0]?.body || "先保证内容沉淀，再逐步接入更复杂的能力。",
+      eyebrow: "Last Update",
+      title: formattedDate || "近期活跃",
+      body: `最新文章《${heroPost.title || "—"}》` + (adminSummary?.monthPosts ? ` · 本月 ${adminSummary.monthPosts} 篇` : ""),
       image: fallbackImages.planet,
-      icon: "auto_stories",
+      icon: "history",
     },
     {
-      eyebrow: "Station Data",
-      title: `${publishedCount} 篇文章 / ${adminSummary?.tags || 0} 个标签`,
-      body: "保持轻量、克制、可维护的内容系统和展示入口。",
+      eyebrow: "Station Footprint",
+      title: `${publishedCount} 篇 · ${adminSummary?.tags || 0} 个标签`,
+      body: "持续写作与工程沉淀，保持轻量、克制、可维护。",
       image: fallbackImages.article,
-      icon: "analytics",
+      icon: "globe",
     },
   ];
   const codeLines = useMemo(() => formatCodeLines(siteConfig?.codeBlockContent || defaultCodeBlockContent), [siteConfig?.codeBlockContent]);
@@ -423,8 +426,17 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
           </section>
 
           <section className="card-page__stack">
-            {showcaseCards.map((item) => (
-              <article key={item.title} className="card-page__mini-card">
+              {showcaseCards.map((item) => (
+              <article
+                key={item.title}
+                className={`card-page__mini-card${item.post ? " card-page__mini-card--clickable" : ""}`}
+                onClick={() => {
+                  if (item.post) {
+                    onSelectPost?.(item.post);
+                    setPage("article");
+                  }
+                }}
+              >
                 <div className="card-page__mini-copy">
                   <p>{item.eyebrow}</p>
                   <h3>{item.title}</h3>
