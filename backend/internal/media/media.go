@@ -16,3 +16,7 @@ func UploadRoot() string {
 func ImageDir() string {
 	return filepath.Join(UploadRoot(), "images")
 }
+
+func AudioDir() string {
+	return filepath.Join(UploadRoot(), "audio")
+}

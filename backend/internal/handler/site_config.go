@@ -35,6 +35,8 @@ func (h *Handler) UpdateSiteConfig(ctx context.Context, c *app.RequestContext) {
 	existing.LandingGradientEnd = req.LandingGradientEnd
 	existing.LandingGlow = req.LandingGlow
 	existing.MusicPlaceholder = req.MusicPlaceholder
+	existing.AudioSrc = req.AudioSrc
+	existing.CodeBlockContent = req.CodeBlockContent
 	if err := h.svc.UpdateSiteConfig(&existing); err != nil {
 		writeError(c, err)
 		return

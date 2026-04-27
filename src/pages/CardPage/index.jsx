@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { fallbackImages } from "../../data/fallback";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { fallbackImages, fallbackSiteConfig } from "../../data/fallback";
 import { mediaURL } from "../../shared/lib/format";
 import { Icon } from "../../shared/ui/Icon";
+
+const defaultCodeBlockContent = fallbackSiteConfig.codeBlockContent;
 
 function SocialGlyph({ name }) {
   const glyphs = {
@@ -34,13 +36,21 @@ function SocialGlyph({ name }) {
 
 export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
   const [flipped, setFlipped] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [volume, setVolume] = useState(0.8);
+  const sectionRef = useRef(null);
+  const audioRef = useRef(null);
+  const copiedTimeoutRef = useRef(0);
   const avatar = mediaURL(author?.avatar) || fallbackImages.author;
   const intro = siteConfig?.heroTitle || "在外城边缘，记录技术、阅读与日常。";
   const summary = author?.bio || "把前端工程、个人项目和阅读记录，沉淀成一个可长期维护的小站。";
-  const email = author?.contact || "hello@outercity.dev";
-  const emailHref = email.startsWith("mailto:") ? email : `mailto:${email}`;
+  const email = (author?.contact || "hello@outercity.dev").replace(/^mailto:/, "");
   const twitter = author?.twitter || "https://x.com";
   const musicPlaceholder = siteConfig?.musicPlaceholder || "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。";
+  const audioSrc = mediaURL(siteConfig?.audioSrc || "");
   const publishedCount = Math.max((adminSummary?.posts || posts?.length || 0) - (adminSummary?.drafts || 0), 0);
   const heroPost = posts?.[0] || {};
   const showcaseCards = [
@@ -66,19 +76,194 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
       icon: "analytics",
     },
   ];
+  const codeLines = useMemo(() => formatCodeLines(siteConfig?.codeBlockContent || defaultCodeBlockContent), [siteConfig?.codeBlockContent]);
+  const trackTitle = useMemo(() => getTrackTitle(audioSrc), [audioSrc]);
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const socialLinks = [
     { id: "github", label: "GitHub", href: author?.github || "https://github.com", external: true },
     { id: "twitter", label: "Twitter", href: twitter, external: true },
-    { id: "email", label: "Email", href: emailHref, external: false },
   ];
   const backgroundStyle = {
     "--card-page-start": siteConfig?.landingGradientStart || "#193554",
     "--card-page-end": siteConfig?.landingGradientEnd || "#1d1646",
     "--card-page-accent": siteConfig?.landingGlow || "rgba(122, 163, 255, 0.24)",
+    "--card-glow-x": "78%",
+    "--card-glow-y": "14%",
+    "--card-glow-offset-x": "0px",
+    "--card-scroll-offset": "0px",
+    "--card-orb-shift-x": "0px",
+    "--card-orb-shift-y": "0px",
   };
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return undefined;
+
+    const target = {
+      x: window.innerWidth * 0.78,
+      y: window.innerHeight * 0.14,
+      scroll: window.scrollY || 0,
+    };
+    const current = { ...target };
+    let rafId = 0;
+    let scrollQueued = false;
+
+    const update = () => {
+      rafId = 0;
+      current.x += (target.x - current.x) * 0.12;
+      current.y += (target.y - current.y) * 0.12;
+      current.scroll += (target.scroll - current.scroll) * 0.1;
+
+      const xRatio = current.x / Math.max(window.innerWidth, 1);
+      const yRatio = current.y / Math.max(window.innerHeight, 1);
+      const centeredX = (xRatio - 0.5) * 42;
+      const centeredY = (yRatio - 0.5) * 36;
+      const scrollOffset = Math.min(current.scroll * 0.08, 38);
+
+      section.style.setProperty("--card-glow-x", `${(xRatio * 100).toFixed(2)}%`);
+      section.style.setProperty("--card-glow-y", `${(yRatio * 100).toFixed(2)}%`);
+      section.style.setProperty("--card-glow-offset-x", `${centeredX.toFixed(2)}px`);
+      section.style.setProperty("--card-scroll-offset", `${scrollOffset.toFixed(2)}px`);
+      section.style.setProperty("--card-orb-shift-x", `${(centeredX * 0.55).toFixed(2)}px`);
+      section.style.setProperty("--card-orb-shift-y", `${(centeredY + scrollOffset).toFixed(2)}px`);
+
+      const needsMoreFrames =
+        Math.abs(target.x - current.x) > 0.2 ||
+        Math.abs(target.y - current.y) > 0.2 ||
+        Math.abs(target.scroll - current.scroll) > 0.2;
+
+      if (needsMoreFrames) {
+        rafId = window.requestAnimationFrame(update);
+      }
+    };
+
+    const requestTick = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(update);
+    };
+
+    const handleMouseMove = (event) => {
+      target.x = event.clientX;
+      target.y = event.clientY;
+      requestTick();
+    };
+
+    const handleScroll = () => {
+      if (scrollQueued) return;
+      scrollQueued = true;
+      window.requestAnimationFrame(() => {
+        scrollQueued = false;
+        target.scroll = window.scrollY || 0;
+        requestTick();
+      });
+    };
+
+    const handleResize = () => {
+      target.x = Math.min(target.x, window.innerWidth);
+      target.y = Math.min(target.y, window.innerHeight);
+      requestTick();
+    };
+
+    requestTick();
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+      window.cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = volume;
+  }, [volume]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return undefined;
+
+    const syncState = () => {
+      setCurrentTime(audio.currentTime || 0);
+      setDuration(audio.duration || 0);
+      setVolume(audio.volume);
+      setIsPlaying(!audio.paused && !audio.ended);
+    };
+
+    syncState();
+    audio.addEventListener("loadedmetadata", syncState);
+    audio.addEventListener("timeupdate", syncState);
+    audio.addEventListener("play", syncState);
+    audio.addEventListener("pause", syncState);
+    audio.addEventListener("ended", syncState);
+    audio.addEventListener("volumechange", syncState);
+
+    return () => {
+      audio.removeEventListener("loadedmetadata", syncState);
+      audio.removeEventListener("timeupdate", syncState);
+      audio.removeEventListener("play", syncState);
+      audio.removeEventListener("pause", syncState);
+      audio.removeEventListener("ended", syncState);
+      audio.removeEventListener("volumechange", syncState);
+    };
+  }, [audioSrc]);
+
+  useEffect(() => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+  }, [audioSrc]);
+
+  useEffect(() => () => window.clearTimeout(copiedTimeoutRef.current), []);
+
+  async function handleCopyEmail() {
+    if (!email) return;
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      window.clearTimeout(copiedTimeoutRef.current);
+      copiedTimeoutRef.current = window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  async function togglePlayback() {
+    const audio = audioRef.current;
+    if (!audio || !audioSrc) return;
+    if (audio.paused) {
+      try {
+        await audio.play();
+      } catch {
+        setIsPlaying(false);
+      }
+      return;
+    }
+    audio.pause();
+  }
+
+  function handleSeek(event) {
+    const audio = audioRef.current;
+    if (!audio || !duration) return;
+    const nextTime = (Number(event.target.value) / 100) * duration;
+    audio.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  }
+
+  function handleVolumeChange(event) {
+    const audio = audioRef.current;
+    const nextVolume = Number(event.target.value);
+    setVolume(nextVolume);
+    if (audio) {
+      audio.volume = nextVolume;
+    }
+  }
+
   return (
-    <section className="card-page" style={backgroundStyle}>
+    <section ref={sectionRef} className="card-page" style={backgroundStyle}>
       <div className="card-page__grid">
         <div className="card-page__main">
           <div className="card-page__status">
@@ -120,14 +305,16 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
                   outercity.config.ts
                 </span>
                 <code className="card-page__code-block">
-                  <span>const outerCity = {"{"}</span>
-                  <span>  route: &quot;#home&quot;,</span>
-                  <span>  focus: [&quot;前端&quot;, &quot;长期写作&quot;, &quot;设计系统&quot;],</span>
-                  <span>  published: {publishedCount},</span>
-                  <span>  tags: {adminSummary?.tags || 0},</span>
-                  <span>  contact: &quot;{email}&quot;,</span>
-                  <span>  stack: [&quot;React&quot;, &quot;Vite&quot;, &quot;Node&quot;],</span>
-                  <span>{"};"}</span>
+                  <span className="card-page__code-line">
+                    <span className="card-page__code-keyword">const</span> outerCity = {"{"}
+                  </span>
+                  {codeLines.map((line, index) => (
+                    <span key={`${line}-${index}`} className="card-page__code-line">
+                      <span className="card-page__code-indent">  </span>
+                      {renderCodeLine(line)}
+                    </span>
+                  ))}
+                  <span className="card-page__code-line">{"};"}</span>
                 </code>
                 <span className="card-page__code-note">点击名片正反切换，进入博客后继续浏览完整内容。</span>
               </span>
@@ -156,6 +343,10 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
                 <span>{item.label}</span>
               </a>
             ))}
+            <button type="button" className="card-page__social-link" aria-label="复制邮箱地址" onClick={handleCopyEmail}>
+              <SocialGlyph name="email" />
+              <span>{copied ? "已复制" : "Email"}</span>
+            </button>
           </div>
         </div>
 
@@ -163,17 +354,45 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
           <section className="card-page__panel card-page__music">
             <div className="card-page__panel-head">
               <span>Music Deck</span>
-              <button type="button" aria-label="音乐播放占位">
-                <Icon>play_arrow</Icon>
+              <button type="button" aria-label={isPlaying ? "暂停音乐" : "播放音乐"} onClick={togglePlayback} disabled={!audioSrc}>
+                <Icon>{isPlaying ? "pause" : "play_arrow"}</Icon>
               </button>
             </div>
-            <div className="card-page__music-body">
-              <img src={fallbackImages.article} alt="播放封面占位" />
-              <div>
-                <strong>Night Shift / Placeholder</strong>
-                <p>{musicPlaceholder}</p>
+
+            <audio ref={audioRef} src={audioSrc} preload="metadata" />
+
+            {audioSrc ? (
+              <div className="card-page__audio-player">
+                <div className="card-page__audio-meta">
+                  <img src={fallbackImages.article} alt={trackTitle} />
+                  <div>
+                    <strong>{trackTitle}</strong>
+                    <p>{isPlaying ? "Now playing" : "Ready to play"}</p>
+                  </div>
+                </div>
+
+                <div className="card-page__audio-controls">
+                  <label className="card-page__audio-slider">
+                    <span>{formatClock(currentTime)}</span>
+                    <input type="range" min="0" max="100" step="0.1" value={progress} onChange={handleSeek} />
+                    <span>{formatClock(duration)}</span>
+                  </label>
+
+                  <label className="card-page__audio-volume">
+                    <Icon>{volume <= 0.01 ? "volume_off" : volume < 0.5 ? "volume_down" : "volume_up"}</Icon>
+                    <input type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} />
+                  </label>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="card-page__music-empty">
+                <img src={fallbackImages.article} alt="音乐封面占位" />
+                <div>
+                  <strong>未设置歌曲</strong>
+                  <p>{musicPlaceholder}</p>
+                </div>
+              </div>
+            )}
           </section>
 
           <section className="card-page__stack">
@@ -196,4 +415,46 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
       </div>
     </section>
   );
+}
+
+function formatCodeLines(content) {
+  return (content || defaultCodeBlockContent)
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .filter((line) => line.trim().length > 0);
+}
+
+function renderCodeLine(line) {
+  const match = line.match(/^([A-Za-z0-9_$]+)\s*:\s*(.*?)(,?)$/);
+  if (!match) {
+    return line;
+  }
+
+  const [, key, value, trailingComma] = match;
+  return (
+    <>
+      <span className="card-page__code-prop">{key}</span>
+      <span className="card-page__code-punct">: </span>
+      <span className="card-page__code-value">{value}</span>
+      {trailingComma ? <span className="card-page__code-punct">{trailingComma}</span> : null}
+    </>
+  );
+}
+
+function getTrackTitle(audioSrc) {
+  if (!audioSrc) return "未设置歌曲";
+  const filename = audioSrc.split("/").pop() || audioSrc;
+  const cleanName = filename.replace(/\.[^.]+$/, "");
+  try {
+    return decodeURIComponent(cleanName);
+  } catch {
+    return cleanName;
+  }
+}
+
+function formatClock(value) {
+  if (!value || Number.isNaN(value)) return "0:00";
+  const minutes = Math.floor(value / 60);
+  const seconds = Math.floor(value % 60);
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }

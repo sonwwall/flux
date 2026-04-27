@@ -171,5 +171,7 @@ var seedSiteConfig = models.SiteConfig{
 	LandingGradientEnd:   "#1d1646",
 	LandingGlow:          "rgba(122, 163, 255, 0.24)",
 	MusicPlaceholder:     "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。",
+	AudioSrc:             "",
+	CodeBlockContent:     "route: \"#home\",\nfocus: [\"前端\", \"长期写作\", \"设计系统\"],\npublished: 36,\ntags: 18,\ncontact: \"hello@outercity.dev\",\nstack: [\"React\", \"Vite\", \"Go\"]",
 	AdminSecret:          "123456",
 }

@@ -60,7 +60,7 @@ export default function App() {
   const { page, setPage } = useHashRoute();
   const auth = useAuth();
   const hasToken = auth.isAuthenticated || auth.hasToken();
-  const isImmersivePage = page === "card";
+  const isImmersivePage = page === "card" || page === "splash";
   const [content, setContent] = useState(() => resolveBundle());
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");

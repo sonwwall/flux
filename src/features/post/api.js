@@ -102,3 +102,28 @@ export async function uploadImage(file) {
     return { error: "network error" };
   }
 }
+
+export async function uploadAudio(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("/api/admin/uploads/audio", {
+      method: "POST",
+      headers: authHeader(),
+      body: formData,
+    });
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      if (response.status === 413) {
+        return { error: "音频太大，请上传 20MB 以内的文件" };
+      }
+      return { error: data?.error || `upload failed: ${response.status}` };
+    }
+
+    return data;
+  } catch {
+    return { error: "network error" };
+  }
+}

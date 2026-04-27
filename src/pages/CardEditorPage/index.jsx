@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { fallbackSiteConfig } from "../../data/fallback";
+import { uploadAudio } from "../../features/post/api";
 import { Icon } from "../../shared/ui/Icon";
 
 const defaultLandingColors = {
@@ -8,6 +10,7 @@ const defaultLandingColors = {
 };
 
 const defaultMusicPlaceholder = "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。";
+const defaultCodeBlockContent = fallbackSiteConfig.codeBlockContent;
 
 export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
   const [draftSiteConfig, setDraftSiteConfig] = useState(() => ({
@@ -17,6 +20,8 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     landingGradientEnd: siteConfig?.landingGradientEnd || defaultLandingColors.landingGradientEnd,
     landingGlow: toColorValue(siteConfig?.landingGlow, defaultLandingColors.landingGlow),
     musicPlaceholder: siteConfig?.musicPlaceholder || defaultMusicPlaceholder,
+    audioSrc: siteConfig?.audioSrc || "",
+    codeBlockContent: siteConfig?.codeBlockContent || defaultCodeBlockContent,
   }));
   const [draftAuthor, setDraftAuthor] = useState(() => ({
     ...(author || {}),
@@ -26,6 +31,7 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     contact: author?.contact || "hello@outercity.dev",
   }));
   const [message, setMessage] = useState("");
+  const [uploadingAudio, setUploadingAudio] = useState(false);
 
   function updateSite(field, value) {
     setDraftSiteConfig((current) => ({ ...current, [field]: value }));
@@ -35,12 +41,32 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     setDraftAuthor((current) => ({ ...current, [field]: value }));
   }
 
+  async function handleAudioUpload(event) {
+    const [file] = event.target.files || [];
+    if (!file) return;
+
+    setUploadingAudio(true);
+    setMessage("正在上传音频...");
+    const result = await uploadAudio(file);
+    setUploadingAudio(false);
+    event.target.value = "";
+
+    if (result?.error) {
+      setMessage(`音频上传失败：${result.error}`);
+      return;
+    }
+
+    updateSite("audioSrc", result.path || result.url || "");
+    setMessage("音频上传成功，保存后会同步到落地页。");
+  }
+
   async function handleSave() {
     const result = await onSave({
       siteConfig: {
         ...(siteConfig || {}),
         ...draftSiteConfig,
         landingGlow: toRgbaColor(draftSiteConfig.landingGlow),
+        codeBlockContent: normalizeCodeBlockContent(draftSiteConfig.codeBlockContent),
       },
       author: {
         ...(author || {}),
@@ -70,6 +96,10 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     ["Email", draftAuthor.contact],
   ];
 
+  const codePreview = normalizeCodeBlockContent(draftSiteConfig.codeBlockContent || defaultCodeBlockContent)
+    .split(/\r?\n/)
+    .filter(Boolean);
+
   return (
     <div className="content-wrap page-pad editor-page">
       <header className="editor-hero">
@@ -79,7 +109,7 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
             <span>作者后台</span>
           </div>
           <h1>编辑导览页</h1>
-          <p>集中调整导览页的背景、名片文案、社交链接和音乐占位说明，保存后会同步到落地页。</p>
+          <p>集中调整导览页的背景、名片文案、代码框、社交链接和音乐播放器配置，保存后会同步到落地页。</p>
         </div>
         <button className="section-back" onClick={() => setPage("admin")}>
           <Icon>arrow_back</Icon>
@@ -120,6 +150,20 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
           </section>
 
           <section className="card-editor-group">
+            <h2>代码框内容</h2>
+            <label>
+              每行一个键值对
+              <textarea
+                rows="8"
+                className="card-editor-code-input"
+                placeholder='focus: ["前端", "长期写作"]'
+                value={draftSiteConfig.codeBlockContent || ""}
+                onChange={(event) => updateSite("codeBlockContent", event.target.value)}
+              />
+            </label>
+          </section>
+
+          <section className="card-editor-group">
             <h2>社交链接</h2>
             <label>
               GitHub 链接
@@ -136,9 +180,17 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
           </section>
 
           <section className="card-editor-group">
-            <h2>音乐播放器</h2>
+            <h2>音乐管理</h2>
             <label>
-              占位描述
+              当前歌曲 URL / 路径
+              <input value={draftSiteConfig.audioSrc || ""} onChange={(event) => updateSite("audioSrc", event.target.value)} placeholder="/uploads/audio/example.mp3" />
+            </label>
+            <label className="card-editor-upload-field">
+              上传歌曲
+              <input type="file" accept=".mp3,.ogg,.wav,audio/mpeg,audio/ogg,audio/wav" onChange={handleAudioUpload} disabled={uploadingAudio} />
+            </label>
+            <label>
+              空状态说明
               <textarea rows="4" value={draftSiteConfig.musicPlaceholder || ""} onChange={(event) => updateSite("musicPlaceholder", event.target.value)} />
             </label>
           </section>
@@ -183,11 +235,26 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
 
               <div style={{ padding: "18px", borderRadius: 18, background: "rgba(7, 12, 22, 0.62)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
+                  <span style={{ color: "rgba(255,255,255,0.64)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>outercity.config.ts</span>
+                  <span style={{ color: "rgba(255,255,255,0.56)", fontSize: "0.74rem" }}>{codePreview.length} lines</span>
+                </div>
+                <pre className="card-editor-code-preview">
+                  <span>const outerCity = {"{"}</span>
+                  {codePreview.map((line, index) => (
+                    <span key={`${line}-${index}`}>  {line}</span>
+                  ))}
+                  <span>{"};"}</span>
+                </pre>
+              </div>
+
+              <div style={{ padding: "18px", borderRadius: 18, background: "rgba(7, 12, 22, 0.62)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
                   <span style={{ color: "rgba(255,255,255,0.64)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>Music Deck</span>
                   <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#fff" }}>
-                    play_arrow
+                    queue_music
                   </span>
                 </div>
+                <p style={{ margin: "0 0 10px", color: "#fff", fontWeight: 700 }}>{draftSiteConfig.audioSrc || "未设置歌曲路径"}</p>
                 <p style={{ margin: 0, color: "rgba(255,255,255,0.74)", lineHeight: 1.8 }}>{draftSiteConfig.musicPlaceholder || defaultMusicPlaceholder}</p>
               </div>
             </div>
@@ -196,6 +263,14 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
       </section>
     </div>
   );
+}
+
+function normalizeCodeBlockContent(value) {
+  return (value || defaultCodeBlockContent)
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .filter((line) => line.trim().length > 0)
+    .join("\n");
 }
 
 function toColorValue(value, fallback) {

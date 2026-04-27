@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const readHash = () => window.location.hash.slice(1) || "card";
+const readHash = () => window.location.hash.slice(1) || "splash";
 
 export function useHashRoute() {
   const [page, setPageState] = useState(readHash);

@@ -78,6 +78,8 @@ type SiteConfig struct {
 	LandingGradientEnd   string    `gorm:"size:32" json:"landingGradientEnd"`
 	LandingGlow          string    `gorm:"size:64" json:"landingGlow"`
 	MusicPlaceholder     string    `gorm:"size:512" json:"musicPlaceholder"`
+	AudioSrc             string    `gorm:"size:1024" json:"audioSrc"`
+	CodeBlockContent     string    `gorm:"type:text" json:"codeBlockContent"`
 	AdminSecret          string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
 	UpdatedAt            time.Time `json:"updatedAt"`
 }

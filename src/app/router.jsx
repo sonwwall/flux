@@ -9,10 +9,12 @@ import { EditorPage } from "../pages/EditorPage";
 import { HomePage } from "../pages/HomePage";
 import { MissingPage } from "../pages/MissingPage";
 import { SiteConfigEditorPage } from "../pages/SiteConfigEditorPage";
+import { SplashPage } from "../pages/SplashPage";
 import { TagsPage } from "../pages/TagsPage";
 import { TourEditorPage } from "../pages/TourEditorPage";
 
 export const routes = {
+  splash: SplashPage,
   card: CardPage,
   home: HomePage,
   blog: BlogPage,
@@ -35,6 +37,7 @@ export function RouterView({ page, routeProps }) {
   };
 
   const routeElements = {
+    splash: <SplashPage setPage={routeProps.setPage} />,
     card: (
       <CardPage
         author={routeProps.author}

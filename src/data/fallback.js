@@ -95,6 +95,9 @@ export const fallbackSiteConfig = {
   landingGradientEnd: "#1d1646",
   landingGlow: "rgba(122, 163, 255, 0.24)",
   musicPlaceholder: "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。",
+  audioSrc: "",
+  codeBlockContent:
+    'route: "#home",\nfocus: ["前端", "长期写作", "设计系统"],\npublished: 36,\ntags: 18,\ncontact: "hello@outercity.dev",\nstack: ["React", "Vite", "Go"]',
 };
 
 export const fallbackAdminSummary = {
