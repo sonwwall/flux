@@ -646,7 +646,9 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, activity
   const displayName = profile?.name || username || "GitHub";
   const displayHandle = username ? `@${username}` : "";
   const featuredRepo = repos?.[0];
-  const activityPath = buildActivityPath(activity);
+  const activityValues = normalizeActivity(activity);
+  const safeActivityDelta = Number.isFinite(Number(activityDelta)) ? Number(activityDelta) : 0;
+  const activityMax = Math.max(...activityValues, 1);
   const monthLabels = getRecentMonthLabels();
 
   return (
@@ -666,25 +668,21 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, activity
             <div className="card-page__github-info">
               <span className="card-page__github-name">{displayName}</span>
               <span className="card-page__github-handle">{displayHandle}</span>
-              {profile?.bio && <span className="card-page__github-bio">{profile.bio}</span>}
             </div>
           </button>
 
           <div className="card-page__github-stats">
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <Icon>inventory_2</Icon>
-              <span>Repos</span>
               <strong>{formatCompactNumber(profile?.public_repos ?? 0)}</strong>
+              <span>Repos</span>
             </button>
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=stars`)}>
-              <Icon>star</Icon>
-              <span>Stars</span>
               <strong>{formatCompactNumber(totalStars || 0)}</strong>
+              <span>Stars</span>
             </button>
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=followers`)}>
-              <Icon>groups</Icon>
-              <span>Follows</span>
               <strong>{formatCompactNumber(profile?.followers ?? 0)}</strong>
+              <span>Follow</span>
             </button>
           </div>
 
@@ -720,13 +718,22 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, activity
           <button type="button" className="card-page__github-activity" onClick={() => openExternal(safeProfileUrl)}>
             <span className="card-page__github-activity-head">
               <strong>Commit Activity</strong>
-              <em>{activityDelta >= 0 ? "+" : ""}{activityDelta}% this month</em>
+              <em>{safeActivityDelta >= 0 ? "+" : ""}{safeActivityDelta}%</em>
             </span>
-            <svg viewBox="0 0 260 72" aria-hidden="true">
-              <path d={activityPath} />
-            </svg>
+            <span className="card-page__github-activity-chart" aria-hidden="true">
+              {activityValues.map((value, index) => (
+                <span key={`${monthLabels[index]}-${index}`} className="card-page__github-activity-column">
+                  <span
+                    className="card-page__github-activity-bar"
+                    style={{
+                      "--github-activity-height": `${value > 0 ? Math.max(8, Math.round((value / activityMax) * 34)) : 6}px`,
+                    }}
+                  />
+                </span>
+              ))}
+            </span>
             <span className="card-page__github-months">
-              {monthLabels.map((label) => <small key={label}>{label}</small>)}
+              {monthLabels.map((label, index) => <small key={`${label}-${index}`}>{label}</small>)}
             </span>
           </button>
 
@@ -737,6 +744,69 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, activity
       )}
     </div>
   );
+}
+
+function extractGithubUsername(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const normalized = raw.replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(normalized)) {
+    try {
+      const url = new URL(normalized);
+      if (!/github\.com$/i.test(url.hostname)) return "";
+      const [username] = url.pathname.split("/").filter(Boolean);
+      return username || "";
+    } catch {
+      return "";
+    }
+  }
+
+  return normalized.replace(/^@/, "").split("/").filter(Boolean)[0] || "";
+}
+
+function getLanguageColor(language) {
+  return githubLanguageColors[language] || "#8cacff";
+}
+
+function formatCompactNumber(value) {
+  const number = Number(value) || 0;
+  if (number >= 1000000) return `${(number / 1000000).toFixed(number >= 10000000 ? 0 : 1)}m`;
+  if (number >= 1000) return `${(number / 1000).toFixed(number >= 10000 ? 0 : 1)}k`;
+  return String(number);
+}
+
+function normalizeActivity(activity = []) {
+  const values = Array.isArray(activity)
+    ? activity.slice(-6).map((value) => Math.max(0, Number(value) || 0))
+    : [];
+
+  while (values.length < 6) values.unshift(0);
+  return values;
+}
+
+function getRecentMonthLabels() {
+  const formatter = new Intl.DateTimeFormat("en", { month: "short" });
+  const now = new Date();
+  return Array.from({ length: 6 }, (_, index) => formatter.format(new Date(now.getFullYear(), now.getMonth() - 5 + index, 1)).toUpperCase());
+}
+
+function openExternal(url) {
+  if (!url) return;
+  window.open(url, "_blank", "noopener");
+}
+
+function parseCardTags(value) {
+  return String(value || defaultCardTags)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeEmail(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^mailto:/i, "");
 }
 
 function formatCodeLines(content) {
@@ -826,77 +896,6 @@ function getTotalReadTime(posts) {
   return total > 0 ? total : null;
 }
 
-function extractGithubUsername(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return "";
-
-  const normalized = raw.replace(/\/+$/, "");
-  if (/^https?:\/\//i.test(normalized)) {
-    try {
-      const url = new URL(normalized);
-      if (!/github\.com$/i.test(url.hostname)) return "";
-      const [username] = url.pathname.split("/").filter(Boolean);
-      return username || "";
-    } catch {
-      return "";
-    }
-  }
-
-  return normalized.replace(/^@/, "").split("/").filter(Boolean)[0] || "";
-}
-
-function getLanguageColor(language) {
-  return githubLanguageColors[language] || "#8cacff";
-}
-
-function formatCompactNumber(value) {
-  const number = Number(value) || 0;
-  if (number >= 1000000) return `${(number / 1000000).toFixed(number >= 10000000 ? 0 : 1)}m`;
-  if (number >= 1000) return `${(number / 1000).toFixed(number >= 10000 ? 0 : 1)}k`;
-  return String(number);
-}
-
-function buildActivityPath(activity = []) {
-  const values = activity.length ? activity.slice(-6) : [1, 2, 2, 4, 2, 5];
-  while (values.length < 6) values.unshift(0);
-  const max = Math.max(...values, 1);
-  const points = values.map((value, index) => {
-    const x = 8 + index * 48;
-    const y = 58 - (value / max) * 42;
-    return [x, y];
-  });
-
-  return points.reduce((path, point, index) => {
-    if (index === 0) return `M${point[0]} ${point[1]}`;
-    const previous = points[index - 1];
-    const midX = (previous[0] + point[0]) / 2;
-    return `${path} C${midX} ${previous[1]}, ${midX} ${point[1]}, ${point[0]} ${point[1]}`;
-  }, "");
-}
-
-function getRecentMonthLabels() {
-  const formatter = new Intl.DateTimeFormat("en", { month: "short" });
-  const now = new Date();
-  return Array.from({ length: 6 }, (_, index) => formatter.format(new Date(now.getFullYear(), now.getMonth() - 5 + index, 1)).toUpperCase());
-}
-
-function openExternal(url) {
-  if (!url) return;
-  window.open(url, "_blank", "noopener");
-}
-
-function parseCardTags(value) {
-  return String(value || defaultCardTags)
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function normalizeEmail(value) {
-  return String(value || "")
-    .trim()
-    .replace(/^mailto:/i, "");
-}
 
 function copyWithExecCommand(value) {
   let textarea = null;
