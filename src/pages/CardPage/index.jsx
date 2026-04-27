@@ -5,6 +5,32 @@ import { Icon } from "../../shared/ui/Icon";
 
 const defaultCodeBlockContent = fallbackSiteConfig.codeBlockContent;
 const defaultCardTags = fallbackSiteConfig.cardTags;
+const githubLanguageColors = {
+  JavaScript: "#f1e05a",
+  TypeScript: "#3178c6",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+  SCSS: "#c6538c",
+  Vue: "#41b883",
+  React: "#61dafb",
+  JSX: "#61dafb",
+  TSX: "#3178c6",
+  Astro: "#ff5d01",
+  Svelte: "#ff3e00",
+  Python: "#3572a5",
+  Go: "#00add8",
+  Rust: "#dea584",
+  Java: "#b07219",
+  Kotlin: "#a97bff",
+  Swift: "#f05138",
+  Shell: "#89e051",
+  Markdown: "#083fa1",
+  MDX: "#1f6feb",
+  "C++": "#f34b7d",
+  C: "#555555",
+  PHP: "#4f5d95",
+  Ruby: "#701516",
+};
 
 function SocialGlyph({ name }) {
   const glyphs = {
@@ -51,6 +77,12 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.8);
+  const [githubState, setGithubState] = useState({
+    status: "idle",
+    profile: null,
+    repos: [],
+    totalStars: 0,
+  });
   const sectionRef = useRef(null);
   const audioRef = useRef(null);
   const toastTimeoutRef = useRef(0);
@@ -66,32 +98,60 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
   const audioSrc = mediaURL(siteConfig?.audioSrc || "");
   const publishedCount = Math.max((adminSummary?.posts || posts?.length || 0) - (adminSummary?.drafts || 0), 0);
   const heroPost = posts?.[0] || {};
-  const latestDate = heroPost.date || heroPost.published || "";
-  const formattedDate = latestDate ? new Date(latestDate).toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" }) : "";
-  const showcaseCards = [
-    {
-      eyebrow: "Latest Entry",
-      title: heroPost.title || "最近更新",
-      body: heroPost.excerpt || "继续整理博客内容、页面结构和主题细节。",
-      image: mediaURL(heroPost.image) || fallbackImages.circuit,
-      icon: "deployed_code",
-      post: heroPost,
-    },
-    {
-      eyebrow: "Last Update",
-      title: formattedDate || "近期活跃",
-      body: `最新文章《${heroPost.title || "—"}》` + (adminSummary?.monthPosts ? ` · 本月 ${adminSummary.monthPosts} 篇` : ""),
-      image: fallbackImages.planet,
-      icon: "history",
-    },
-    {
-      eyebrow: "Station Footprint",
-      title: `${publishedCount} 篇 · ${adminSummary?.tags || 0} 个标签`,
-      body: "持续写作与工程沉淀，保持轻量、克制、可维护。",
-      image: fallbackImages.article,
-      icon: "globe",
-    },
-  ];
+  const totalReadTime = useMemo(() => getTotalReadTime(posts), [posts]);
+  const githubUsername = useMemo(() => extractGithubUsername(author?.github), [author?.github]);
+  const githubProfileUrl = githubUsername ? `https://github.com/${githubUsername}` : "";
+  const showcaseCards = useMemo(
+    () => [
+      {
+        eyebrow: "Latest Entry",
+        title: heroPost.title || "最近更新",
+        body: heroPost.excerpt || "继续整理博客内容、页面结构和主题细节。",
+        image: mediaURL(heroPost.image) || fallbackImages.circuit,
+        icon: "deployed_code",
+        post: heroPost,
+      },
+      {
+        key: "site-stats",
+        compact: true,
+        content: (
+          <StationStatsCard
+            publishedCount={publishedCount}
+            tagCount={adminSummary?.tags || 0}
+            totalReadTime={totalReadTime}
+            monthPosts={adminSummary?.monthPosts ?? 0}
+          />
+        ),
+      },
+      {
+        key: "github-card",
+        compact: true,
+        content: (
+          <GitHubInfoCard
+            username={githubUsername}
+            profile={githubState.profile}
+            repos={githubState.repos}
+            status={githubState.status}
+            totalStars={githubState.totalStars}
+            profileUrl={githubProfileUrl}
+          />
+        ),
+      },
+    ],
+    [
+      adminSummary?.monthPosts,
+      adminSummary?.tags,
+      githubProfileUrl,
+      githubState.profile,
+      githubState.repos,
+      githubState.status,
+      githubState.totalStars,
+      githubUsername,
+      heroPost,
+      publishedCount,
+      totalReadTime,
+    ],
+  );
   const codeLines = useMemo(() => formatCodeLines(siteConfig?.codeBlockContent || defaultCodeBlockContent), [siteConfig?.codeBlockContent]);
   const trackTitle = useMemo(() => getTrackTitle(audioSrc), [audioSrc]);
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -232,6 +292,59 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
     setCurrentTime(0);
     setDuration(0);
   }, [audioSrc]);
+
+  useEffect(() => {
+    if (!githubUsername) {
+      setGithubState({
+        status: "missing",
+        profile: null,
+        repos: [],
+        totalStars: 0,
+      });
+      return undefined;
+    }
+
+    const controller = new AbortController();
+
+    setGithubState({
+      status: "loading",
+      profile: null,
+      repos: [],
+      totalStars: 0,
+    });
+
+    Promise.all([
+      fetch(`https://api.github.com/users/${githubUsername}`, { signal: controller.signal }),
+      fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=4&type=all`, { signal: controller.signal }),
+    ])
+      .then(async ([profileResponse, reposResponse]) => {
+        if (!profileResponse.ok || !reposResponse.ok) {
+          throw new Error("GitHub fetch failed");
+        }
+
+        const [profile, reposPayload] = await Promise.all([profileResponse.json(), reposResponse.json()]);
+        const repos = Array.isArray(reposPayload) ? reposPayload.slice(0, 4) : [];
+        const totalStars = repos.reduce((sum, repo) => sum + (repo?.stargazers_count || 0), 0);
+
+        setGithubState({
+          status: "success",
+          profile,
+          repos,
+          totalStars,
+        });
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") return;
+        setGithubState({
+          status: "error",
+          profile: null,
+          repos: [],
+          totalStars: 0,
+        });
+      });
+
+    return () => controller.abort();
+  }, [githubUsername]);
 
   useEffect(() => () => window.clearTimeout(toastTimeoutRef.current), []);
 
@@ -426,10 +539,10 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
           </section>
 
           <section className="card-page__stack">
-              {showcaseCards.map((item) => (
+            {showcaseCards.map((item) => (
               <article
-                key={item.title}
-                className={`card-page__mini-card${item.post ? " card-page__mini-card--clickable" : ""}`}
+                key={item.key || item.title}
+                className={`card-page__mini-card${item.post ? " card-page__mini-card--clickable" : ""}${item.compact ? " card-page__mini-card--compact" : ""}`}
                 onClick={() => {
                   if (item.post) {
                     onSelectPost?.(item.post);
@@ -437,22 +550,139 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
                   }
                 }}
               >
-                <div className="card-page__mini-copy">
-                  <p>{item.eyebrow}</p>
-                  <h3>{item.title}</h3>
-                  <span>{item.body}</span>
-                  <small>
-                    <Icon>{item.icon}</Icon>
-                    外城小站
-                  </small>
-                </div>
-                <img src={item.image} alt={item.title} />
+                {item.content ? (
+                  item.content
+                ) : (
+                  <>
+                    <div className="card-page__mini-copy">
+                      <p>{item.eyebrow}</p>
+                      <h3>{item.title}</h3>
+                      <span>{item.body}</span>
+                      <small>
+                        <Icon>{item.icon}</Icon>
+                        外城小站
+                      </small>
+                    </div>
+                    <img src={item.image} alt={item.title} />
+                  </>
+                )}
               </article>
             ))}
           </section>
         </div>
       </div>
     </section>
+  );
+}
+
+function StationStatsCard({ publishedCount, tagCount, totalReadTime, monthPosts }) {
+  const statRows = [
+    {
+      label: "文章总量",
+      value: `📝 ${publishedCount} 篇文章`,
+      progress: "60%",
+    },
+    {
+      label: "标签归档",
+      value: `🏷️ ${tagCount} 个标签`,
+      progress: "40%",
+    },
+    {
+      label: "阅读量",
+      value: totalReadTime == null ? "⏱️ — 分钟阅读量" : `⏱️ ${totalReadTime} 分钟阅读量`,
+      progress: "80%",
+    },
+  ];
+
+  return (
+    <div className="card-page__mini-body card-page__mini-body--stats">
+      <div className="card-page__mini-copy">
+        <p>Site Stats</p>
+        <h3>站点统计</h3>
+      </div>
+
+      <div className="card-page__stats-list">
+        {statRows.map((item) => (
+          <div key={item.label} className="card-page__stats-row">
+            <div className="card-page__stats-head">
+              <span className="card-page__stats-label">{item.label}</span>
+              <strong className="card-page__stats-value">{item.value}</strong>
+            </div>
+            <div className="card-page__stats-meter" style={{ "--card-progress": item.progress }}>
+              <span />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <small className="card-page__stats-footnote">本月更新 {monthPosts} 篇</small>
+    </div>
+  );
+}
+
+function GitHubInfoCard({ username, profile, repos, status, totalStars, profileUrl }) {
+  const safeProfileUrl = profile?.html_url || profileUrl;
+
+  return (
+    <div className="card-page__mini-body card-page__mini-body--github">
+      <div className="card-page__github-head">
+        <div className="card-page__github-title">
+          {profile?.avatar_url ? <img className="card-page__github-avatar" src={profile.avatar_url} alt={`${username} avatar`} /> : null}
+          <div className="card-page__mini-copy">
+            <p>GitHub</p>
+            <h3>{username ? `GitHub · ${username}` : "GitHub 信息"}</h3>
+          </div>
+        </div>
+        {status === "loading" ? <span className="card-page__github-status">加载中...</span> : null}
+        {status === "error" ? <span className="card-page__github-status">加载失败</span> : null}
+      </div>
+
+      {!username ? <div className="card-page__github-empty">未配置 GitHub 账号</div> : null}
+
+      {username && status === "success" ? (
+        <>
+          <div className="card-page__github-stats" role="list" aria-label={`${username} GitHub 统计`}>
+            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
+              <span>📦 仓库</span>
+              <strong>{profile?.public_repos ?? 0}</strong>
+            </button>
+            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
+              <span>⭐ 星标</span>
+              <strong>{totalStars}</strong>
+            </button>
+            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=followers`)}>
+              <span>👥 关注者</span>
+              <strong>{profile?.followers ?? 0}</strong>
+            </button>
+          </div>
+
+          <div className="card-page__github-repos">
+            {repos.length ? (
+              repos.map((repo) => (
+                <button key={repo.id || repo.full_name} type="button" className="card-page__github-repo" onClick={() => openExternal(repo.html_url)}>
+                  <div className="card-page__github-repo-top">
+                    <div className="card-page__github-repo-main">
+                      <span className="card-page__github-repo-name">{repo.name}</span>
+                      <span className="card-page__github-language">
+                        <span
+                          className="card-page__github-language-dot"
+                          style={{ "--github-language-color": getLanguageColor(repo.language) }}
+                        />
+                        {repo.language || "Unknown"}
+                      </span>
+                    </div>
+                    <span className="card-page__github-stars">★ {repo.stargazers_count || 0}</span>
+                  </div>
+                  <span className="card-page__github-description">{repo.description || "暂无项目描述"}</span>
+                </button>
+              ))
+            ) : (
+              <div className="card-page__github-empty">暂无最近更新的仓库</div>
+            )}
+          </div>
+        </>
+      ) : null}
+    </div>
   );
 }
 
@@ -530,6 +760,45 @@ function formatClock(value) {
   const minutes = Math.floor(value / 60);
   const seconds = Math.floor(value % 60);
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function getTotalReadTime(posts) {
+  if (!Array.isArray(posts) || posts.length === 0) return null;
+
+  const total = posts.reduce((sum, post) => {
+    const match = String(post?.readTime || "").match(/(\d+)/);
+    return sum + (match ? Number(match[1]) : 0);
+  }, 0);
+
+  return total > 0 ? total : null;
+}
+
+function extractGithubUsername(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const normalized = raw.replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(normalized)) {
+    try {
+      const url = new URL(normalized);
+      if (!/github\.com$/i.test(url.hostname)) return "";
+      const [username] = url.pathname.split("/").filter(Boolean);
+      return username || "";
+    } catch {
+      return "";
+    }
+  }
+
+  return normalized.replace(/^@/, "").split("/").filter(Boolean)[0] || "";
+}
+
+function getLanguageColor(language) {
+  return githubLanguageColors[language] || "#8cacff";
+}
+
+function openExternal(url) {
+  if (!url) return;
+  window.open(url, "_blank", "noopener");
 }
 
 function parseCardTags(value) {
