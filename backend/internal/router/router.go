@@ -27,7 +27,9 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 		PathRewrite: app.NewPathSlashesStripper(1),
 	})
 
-	hdl := handler.New(service.New(dao.New(db)), cfg.JWTSecret)
+	svc := service.New(dao.New(db))
+	svc.StartGitHubSync(context.Background())
+	hdl := handler.New(svc, cfg.JWTSecret)
 	api := h.Group("/api")
 
 	api.GET("/health", hdl.Health)
@@ -35,7 +37,9 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	api.GET("/posts", hdl.ListPosts)
 	api.GET("/posts/:slug", hdl.GetPost)
 	api.GET("/tags", hdl.ListTags)
+	api.GET("/tour", hdl.GetTourConfig)
 	api.GET("/author", hdl.GetAuthor)
+	api.GET("/github/profile", hdl.GetGitHubProfile)
 	api.GET("/admin/site", hdl.GetSiteConfig)
 
 	api.POST("/auth/login", hdl.Login)
@@ -44,6 +48,7 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	authed.POST("/auth/change-secret", hdl.ChangeSecret)
 	authed.PUT("/author", hdl.UpdateAuthor)
 	authed.PUT("/admin/site", hdl.UpdateSiteConfig)
+	authed.PUT("/admin/tour", hdl.UpdateTourPage)
 	authed.GET("/admin/summary", hdl.AdminSummary)
 	authed.GET("/admin/posts", hdl.ListAdminPosts)
 	authed.POST("/admin/posts", hdl.CreatePost)
@@ -51,6 +56,10 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	authed.PATCH("/admin/posts/:id/status", hdl.UpdatePostStatus)
 	authed.DELETE("/admin/posts/:id", hdl.DeletePost)
 	authed.POST("/admin/uploads/images", hdl.UploadImage)
+	authed.POST("/admin/uploads/audio", hdl.UploadAudio)
+	authed.GET("/admin/uploads/audio", hdl.ListAudio)
+	authed.PUT("/admin/uploads/audio", hdl.RenameAudio)
+	authed.DELETE("/admin/uploads/audio/:filename", hdl.DeleteAudio)
 
 	return h
 }

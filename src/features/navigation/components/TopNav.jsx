@@ -17,6 +17,7 @@ export function TopNav({ page, setPage, query, setQuery, apiStatus, setCategoryF
           ["blog", "博客"],
           ["tags", "标签云"],
           ["author", "作者"],
+          ["card", "导览页"],
         ].map(([id, label]) => (
           <button key={id} className={page === id ? "active" : ""} onClick={() => navigate(id)}>
             {label}

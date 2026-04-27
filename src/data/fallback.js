@@ -64,6 +64,12 @@ export const fallbackTags = [
   ["标签", "内容组织方法", "6", "sell", "secondary"],
 ];
 
+export const fallbackTourConfig = {
+  badge: "标签云",
+  title: "内容索引",
+  description: "通过标签快速进入不同主题。标签大小和文章数会随着后续内容增加继续扩展。",
+};
+
 export const fallbackAuthor = {
   name: "外城",
   handle: "@outercity / 外城小站",
@@ -71,6 +77,7 @@ export const fallbackAuthor = {
   bio: "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
   avatar: fallbackImages.author,
   github: "https://github.com",
+  twitter: "https://x.com",
   contact: "",
   noteSubtitle: "当前阶段普通用户不开放登录",
   notes: [
@@ -84,6 +91,19 @@ export const fallbackSiteConfig = {
   heroSubtitle: "外城小站 / 个人博客 / flux 主题",
   heroDesc: "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
   heroImage: "",
+  landingGradientStart: "#193554",
+  landingGradientEnd: "#1d1646",
+  landingGlow: "rgba(122, 163, 255, 0.24)",
+  musicPlaceholder: "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。",
+  audioSrc: "",
+  cardTags: "前端,写作,独立博客",
+  codeBlockContent:
+    'const outerCity = {\n  route: "#home",\n  focus: ["前端", "长期写作", "设计系统"],\n  published: 36,\n  tags: 18,\n  contact: "hello@outercity.dev",\n  stack: ["React", "Vite", "Go"],\n};',
+  splashEyebrow: "Flux Landing Sequence",
+  splashTitle: "外城小站",
+  splashSubtitle: "FLUX",
+  splashDesc: "在城市边缘启动一座长期写作与工程沉淀的小站。",
+  splashEnter: "点击进入 / Tap to enter",
 };
 
 export const fallbackAdminSummary = {

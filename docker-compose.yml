@@ -23,6 +23,8 @@ services:
       dockerfile: Dockerfile
     container_name: flux-backend
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       APP_ADDR: 0.0.0.0:8080
       DB_DSN: flux:flux_pass@tcp(mysql:3306)/flux_blog?charset=utf8mb4&parseTime=True&loc=Local

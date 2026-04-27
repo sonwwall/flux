@@ -1,43 +1,241 @@
-import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import ErrorBoundary from '../components/ErrorBoundary';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
-import Content from '../components/Content';
-import LoginDialog from '../components/LoginDialog';
-import { AuthProvider } from '../hooks/useAuth';
-import { ApiProvider } from '../hooks/useApiStatus';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { useCallback, useEffect, useState } from "react";
+import { LoginDialog } from "../features/auth/components/LoginDialog";
+import { useAuth } from "../features/auth/hooks";
+import {
+  fallbackAuthor,
+  fallbackPosts,
+  fallbackSiteConfig,
+  fallbackTags,
+  fallbackTourConfig,
+} from "../data/fallback";
+import {
+  deletePost,
+  fetchContentBundle,
+  saveAuthor,
+  savePost,
+  saveSiteConfig,
+  saveTourPage,
+  updatePostStatus,
+} from "../features/post/api";
+import { SideNav } from "../features/navigation/components/SideNav";
+import { TopNav } from "../features/navigation/components/TopNav";
+import { newEditorDraft, normalizePost, toEditorDraft } from "../features/post/model";
+import { useHashRoute } from "../shared/hooks/useHashRoute";
+import { RouterView } from "./router";
 
-function App() {
-  return (
-    <ErrorBoundary>
-      <Router>
-        <AuthProvider>
-          <ApiProvider>
-            <div className="flex flex-col h-screen">
-              <Header />
-              <div className="flex flex-1 overflow-hidden">
-                <Sidebar />
-                <Suspense fallback={<LoadingSpinner />}>
-                  <Content />
-                </Suspense>
-              </div>
-            </div>
-            
-            <Routes>
-              <Route path="/login" element={<LoginDialog />} />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<div>Dashboard Content</div>} />
-              <Route path="/posts" element={<div>Posts Content</div>} />
-              <Route path="/categories" element={<div>Categories Content</div>} />
-              <Route path="/users" element={<div>Users Content</div>} />
-            </Routes>
-          </ApiProvider>
-        </AuthProvider>
-      </Router>
-    </ErrorBoundary>
-  );
+const protectedPages = new Set(["admin", "editor", "authorEditor", "siteConfigEditor", "tourEditor", "cardEditor"]);
+
+function summarize(posts, tags) {
+  const now = new Date();
+  const monthPosts = posts.filter((post) => {
+    const published = post.published ? new Date(post.published) : null;
+    return published && published.getFullYear() === now.getFullYear() && published.getMonth() === now.getMonth();
+  }).length;
+
+  return {
+    posts: posts.length,
+    drafts: posts.filter((post) => post.status === "draft").length,
+    tags: tags.length,
+    monthPosts,
+  };
 }
 
-export default App;
+function resolveBundle(bundle = {}) {
+  const posts = bundle.posts || fallbackPosts;
+  const tags = bundle.tags || fallbackTags;
+
+  return {
+    posts,
+    tags,
+    author: bundle.author || fallbackAuthor,
+    siteConfig: bundle.siteConfig || fallbackSiteConfig,
+    tourConfig: bundle.tourConfig || fallbackTourConfig,
+    githubData: bundle.githubData || null,
+    adminPosts: bundle.adminPosts || posts,
+    adminSummary: bundle.adminSummary || summarize(bundle.adminPosts || posts, tags),
+    apiStatus: bundle.apiStatus || "offline",
+  };
+}
+
+export default function App() {
+  const { page, setPage } = useHashRoute();
+  const auth = useAuth();
+  const hasToken = auth.isAuthenticated || auth.hasToken();
+  const isImmersivePage = page === "card" || page === "splash";
+  const [content, setContent] = useState(() => resolveBundle());
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [selectedPost, setSelectedPost] = useState(fallbackPosts[0] || null);
+  const [editorDraft, setEditorDraft] = useState(() => newEditorDraft());
+  const [showLogin, setShowLogin] = useState(false);
+
+  const applyBundle = useCallback((bundle) => {
+    const nextContent = resolveBundle(bundle);
+    setContent(nextContent);
+    setSelectedPost((current) => {
+      if (!current) return nextContent.posts[0] || null;
+      return (
+        nextContent.posts.find((post) => (current.id && post.id === current.id) || (current.slug && post.slug === current.slug) || post.title === current.title) ||
+        nextContent.posts[0] ||
+        null
+      );
+    });
+  }, []);
+
+  const refreshBundle = useCallback(async () => {
+    const bundle = await fetchContentBundle();
+    applyBundle(bundle);
+  }, [applyBundle]);
+
+  useEffect(() => {
+    refreshBundle();
+  }, [refreshBundle]);
+
+  useEffect(() => {
+    if (protectedPages.has(page) && !hasToken) {
+      setShowLogin(true);
+      setPage("home");
+    }
+  }, [hasToken, page, setPage]);
+
+  function goAdmin() {
+    if (hasToken) {
+      setPage("admin");
+      return;
+    }
+    setShowLogin(true);
+  }
+
+  async function handleLogin(secret) {
+    const result = await auth.login(secret);
+    if (!result?.error) {
+      setShowLogin(false);
+      await refreshBundle();
+      setPage("admin");
+    }
+    return result;
+  }
+
+  async function handleSavePost(draft) {
+    const saved = await savePost(draft);
+    if (!saved?.error) {
+      setSelectedPost(normalizePost(saved));
+      await refreshBundle();
+    }
+    return saved;
+  }
+
+  async function handleUpdatePostStatus(post, status) {
+    const updated = await updatePostStatus(post.id, status);
+    if (!updated?.error) {
+      await refreshBundle();
+    }
+    return updated;
+  }
+
+  async function handleDeletePost(post) {
+    const result = await deletePost(post.id);
+    if (!result?.error) {
+      await refreshBundle();
+    }
+    return result;
+  }
+
+  async function handleSaveAuthor(nextAuthor) {
+    const saved = await saveAuthor(nextAuthor);
+    if (!saved?.error) {
+      setContent((current) => ({ ...current, author: saved }));
+    }
+    return saved;
+  }
+
+  async function handleSaveSiteConfig(nextConfig) {
+    const saved = await saveSiteConfig(nextConfig);
+    if (!saved?.error) {
+      setContent((current) => ({ ...current, siteConfig: saved }));
+    }
+    return saved;
+  }
+
+  async function handleSaveLandingConfig(payload) {
+    const savedSiteConfig = await saveSiteConfig(payload.siteConfig);
+    if (savedSiteConfig?.error) {
+      return savedSiteConfig;
+    }
+
+    const savedAuthor = await saveAuthor(payload.author);
+    if (savedAuthor?.error) {
+      setContent((current) => ({ ...current, siteConfig: savedSiteConfig }));
+      return { error: `导览页视觉配置已保存，但作者信息保存失败：${savedAuthor.error}` };
+    }
+
+    setContent((current) => ({
+      ...current,
+      siteConfig: savedSiteConfig,
+      author: savedAuthor,
+    }));
+    return { siteConfig: savedSiteConfig, author: savedAuthor };
+  }
+
+  async function handleSaveTour(nextTourPage) {
+    const saved = await saveTourPage(nextTourPage);
+    if (!saved?.error) {
+      setContent((current) => ({
+        ...current,
+        tourConfig: {
+          badge: saved.badge,
+          title: saved.title,
+          description: saved.description,
+        },
+        tags: (saved.tags || []).map((tag) => [tag.name, tag.description, String(tag.count), tag.icon, tag.color]),
+        adminSummary: {
+          ...current.adminSummary,
+          tags: (saved.tags || []).length,
+        },
+      }));
+    }
+    return saved;
+  }
+
+  return (
+    <>
+      {!isImmersivePage && (
+        <TopNav page={page} setPage={setPage} query={query} setQuery={setQuery} apiStatus={content.apiStatus} setCategoryFilter={setCategoryFilter} />
+      )}
+      {!isImmersivePage && <SideNav page={page} setPage={setPage} setCategoryFilter={setCategoryFilter} goAdmin={goAdmin} />}
+
+      <main className={`app-shell ${isImmersivePage ? "card-shell" : ""}`.trim()}>
+        <RouterView
+          page={page}
+          routeProps={{
+            ...content,
+            query,
+            categoryFilter,
+            selectedPost,
+            editorDraft,
+            setPage,
+            setCategoryFilter,
+            setSelectedPost,
+            setEditorDraft,
+            toEditorDraft,
+            goAdmin,
+            onNewPost: () => {
+              setEditorDraft(newEditorDraft());
+              setPage("editor");
+            },
+            onSavePost: handleSavePost,
+            onUpdatePostStatus: handleUpdatePostStatus,
+            onDeletePost: handleDeletePost,
+            onSaveAuthor: handleSaveAuthor,
+            onSaveSiteConfig: handleSaveSiteConfig,
+            onSaveLandingConfig: handleSaveLandingConfig,
+            onSaveTourPage: handleSaveTour,
+            onEditCard: () => setPage("cardEditor"),
+          }}
+        />
+      </main>
+
+      {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}
+    </>
+  );
+}

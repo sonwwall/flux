@@ -3,11 +3,13 @@ import { authHeader } from "../auth/api";
 import { normalizePost, normalizeTag } from "./model";
 
 export async function fetchContentBundle() {
-  const [postData, tagData, authorData, siteData, adminPostData, summaryData] = await Promise.all([
+  const [postData, tagData, authorData, siteData, tourData, githubData, adminPostData, summaryData] = await Promise.all([
     loadJSON("/api/posts"),
     loadJSON("/api/tags"),
     loadJSON("/api/author"),
     loadJSON("/api/admin/site"),
+    loadJSON("/api/tour"),
+    loadJSON("/api/github/profile"),
     apiJSON("/api/admin/posts", { headers: authHeader() }),
     apiJSON("/api/admin/summary", { headers: authHeader() }),
   ]);
@@ -17,6 +19,8 @@ export async function fetchContentBundle() {
     tags: tagData ? tagData.map(normalizeTag) : null,
     author: authorData,
     siteConfig: siteData && !siteData.error ? siteData : null,
+    tourConfig: tourData && !tourData.error ? tourData : null,
+    githubData: githubData && !githubData.error ? githubData : null,
     adminPosts: adminPostData && !adminPostData.error ? adminPostData.map(normalizePost) : null,
     adminSummary: summaryData && !summaryData.error ? summaryData : null,
     apiStatus: [postData, tagData, authorData].some(Boolean) ? "online" : "offline",
@@ -68,6 +72,14 @@ export function saveSiteConfig(data) {
   });
 }
 
+export function saveTourPage(data) {
+  return apiJSON("/api/admin/tour", {
+    method: "PUT",
+    body: data,
+    headers: authHeader(),
+  });
+}
+
 export async function uploadImage(file) {
   const formData = new FormData();
   formData.append("file", file);
@@ -91,4 +103,50 @@ export async function uploadImage(file) {
   } catch {
     return { error: "network error" };
   }
+}
+
+export async function uploadAudio(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("/api/admin/uploads/audio", {
+      method: "POST",
+      headers: authHeader(),
+      body: formData,
+    });
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      if (response.status === 413) {
+        return { error: "音频太大，请上传 20MB 以内的文件" };
+      }
+      return { error: data?.error || `upload failed: ${response.status}` };
+    }
+
+    return data;
+  } catch {
+    return { error: "network error" };
+  }
+}
+
+export function listAudio() {
+  return apiJSON("/api/admin/uploads/audio", {
+    headers: authHeader(),
+  });
+}
+
+export function renameAudio(oldName, newName) {
+  return apiJSON("/api/admin/uploads/audio", {
+    method: "PUT",
+    body: { oldName, newName },
+    headers: authHeader(),
+  });
+}
+
+export function deleteAudio(filename) {
+  return apiJSON(`/api/admin/uploads/audio/${encodeURIComponent(filename)}`, {
+    method: "DELETE",
+    headers: authHeader(),
+  });
 }

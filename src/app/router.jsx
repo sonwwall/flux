@@ -3,13 +3,19 @@ import { ArticlePage } from "../pages/ArticlePage";
 import { AuthorEditorPage } from "../pages/AuthorEditorPage";
 import { AuthorPage } from "../pages/AuthorPage";
 import { BlogPage } from "../pages/BlogPage";
+import { CardPage } from "../pages/CardPage";
+import { CardEditorPage } from "../pages/CardEditorPage";
 import { EditorPage } from "../pages/EditorPage";
 import { HomePage } from "../pages/HomePage";
 import { MissingPage } from "../pages/MissingPage";
 import { SiteConfigEditorPage } from "../pages/SiteConfigEditorPage";
+import { SplashPage } from "../pages/SplashPage";
 import { TagsPage } from "../pages/TagsPage";
+import { TourEditorPage } from "../pages/TourEditorPage";
 
 export const routes = {
+  splash: SplashPage,
+  card: CardPage,
   home: HomePage,
   blog: BlogPage,
   tags: TagsPage,
@@ -18,7 +24,9 @@ export const routes = {
   admin: AdminPage,
   editor: EditorPage,
   authorEditor: AuthorEditorPage,
+  cardEditor: CardEditorPage,
   siteConfigEditor: SiteConfigEditorPage,
+  tourEditor: TourEditorPage,
   missing: MissingPage,
 };
 
@@ -29,9 +37,21 @@ export function RouterView({ page, routeProps }) {
   };
 
   const routeElements = {
+    splash: <SplashPage setPage={routeProps.setPage} siteConfig={routeProps.siteConfig} />,
+    card: (
+      <CardPage
+        author={routeProps.author}
+        siteConfig={routeProps.siteConfig}
+        adminSummary={routeProps.adminSummary}
+        githubData={routeProps.githubData}
+        posts={routeProps.posts}
+        setPage={routeProps.setPage}
+        onSelectPost={routeProps.setSelectedPost}
+      />
+    ),
     home: <HomePage posts={routeProps.posts} siteConfig={routeProps.siteConfig} onSelectPost={routeProps.setSelectedPost} setPage={routeProps.setPage} />,
     blog: <BlogPage posts={routeProps.posts} query={routeProps.query} categoryFilter={routeProps.categoryFilter} onSelectPost={routeProps.setSelectedPost} {...common} />,
-    tags: <TagsPage tags={routeProps.tags} posts={routeProps.posts} {...common} />,
+    tags: <TagsPage tags={routeProps.tags} posts={routeProps.posts} tourConfig={routeProps.tourConfig} {...common} />,
     article: <ArticlePage post={routeProps.selectedPost || routeProps.posts[0]} author={routeProps.author} {...common} />,
     author: <AuthorPage author={routeProps.author} adminSummary={routeProps.adminSummary} goAdmin={routeProps.goAdmin} />,
     admin: (
@@ -47,11 +67,14 @@ export function RouterView({ page, routeProps }) {
         onDeletePost={routeProps.onDeletePost}
         onEditAuthor={() => routeProps.setPage("authorEditor")}
         onEditSite={() => routeProps.setPage("siteConfigEditor")}
+        onEditCard={routeProps.onEditCard}
       />
     ),
     editor: <EditorPage draft={routeProps.editorDraft} setDraft={routeProps.setEditorDraft} onSavePost={routeProps.onSavePost} setPage={routeProps.setPage} />,
     authorEditor: <AuthorEditorPage author={routeProps.author} onSave={routeProps.onSaveAuthor} setPage={routeProps.setPage} />,
+    cardEditor: <CardEditorPage siteConfig={routeProps.siteConfig} author={routeProps.author} onSave={routeProps.onSaveLandingConfig} setPage={routeProps.setPage} />,
     siteConfigEditor: <SiteConfigEditorPage siteConfig={routeProps.siteConfig} onSave={routeProps.onSaveSiteConfig} setPage={routeProps.setPage} />,
+    tourEditor: <TourEditorPage tourConfig={routeProps.tourConfig} tags={routeProps.tags} posts={routeProps.posts} onSave={routeProps.onSaveTourPage} setPage={routeProps.setPage} />,
     missing: <MissingPage setPage={routeProps.setPage} />,
   };
 

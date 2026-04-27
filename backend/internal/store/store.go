@@ -13,7 +13,7 @@ func Open(dsn string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.AuthorProfile{}, &models.SiteConfig{}); err != nil {
+	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.TourConfig{}, &models.AuthorProfile{}, &models.SiteConfig{}, &models.GitHubSnapshot{}); err != nil {
 		return nil, err
 	}
 	if err := seed(db); err != nil {
@@ -46,14 +46,27 @@ func seed(db *gorm.DB) error {
 		return err
 	}
 	if count == 0 {
-		return db.Create(&seedAuthor).Error
+		if err := db.Create(&seedAuthor).Error; err != nil {
+			return err
+		}
+	}
+
+	if err := db.Model(&models.TourConfig{}).Count(&count).Error; err != nil {
+		return err
+	}
+	if count == 0 {
+		if err := db.Create(&seedTourConfig).Error; err != nil {
+			return err
+		}
 	}
 
 	if err := db.Model(&models.SiteConfig{}).Count(&count).Error; err != nil {
 		return err
 	}
 	if count == 0 {
-		return db.Create(&seedSiteConfig).Error
+		if err := db.Create(&seedSiteConfig).Error; err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -133,18 +146,38 @@ var seedTags = []models.Tag{
 }
 
 var seedAuthor = models.AuthorProfile{
-	Name:   "外城",
-	Handle: "@outercity / 外城小站",
-	Role:   "站长 / 作者",
-	Bio:    "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
-	Avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
-	Github: "https://github.com",
+	Name:    "外城",
+	Handle:  "@outercity / 外城小站",
+	Role:    "站长 / 作者",
+	Bio:     "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
+	Avatar:  "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
+	Github:  "https://github.com",
+	Twitter: "https://x.com",
+	Contact: "hello@outercity.dev",
+}
+
+var seedTourConfig = models.TourConfig{
+	Badge:       "标签云",
+	Title:       "内容索引",
+	Description: "通过标签快速进入不同主题。标签大小和文章数会随着后续内容增加继续扩展。",
 }
 
 var seedSiteConfig = models.SiteConfig{
-	HeroTitle:    "在外城边缘，记录技术、阅读与日常。",
-	HeroSubtitle: "外城小站 / 个人博客 / flux 主题",
-	HeroDesc:     "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
-	HeroImage:    "",
-	AdminSecret:  "123456",
+	HeroTitle:            "在外城边缘，记录技术、阅读与日常。",
+	HeroSubtitle:         "外城小站 / 个人博客 / flux 主题",
+	HeroDesc:             "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
+	HeroImage:            "",
+	LandingGradientStart: "#193554",
+	LandingGradientEnd:   "#1d1646",
+	LandingGlow:          "rgba(122, 163, 255, 0.24)",
+	MusicPlaceholder:     "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。",
+	AudioSrc:             "",
+	CardTags:             "前端,写作,独立博客",
+	CodeBlockContent:     "const outerCity = {\n  route: \"#home\",\n  focus: [\"前端\", \"长期写作\", \"设计系统\"],\n  published: 36,\n  tags: 18,\n  contact: \"hello@outercity.dev\",\n  stack: [\"React\", \"Vite\", \"Go\"],\n};",
+	SplashEyebrow:        "Flux Landing Sequence",
+	SplashTitle:          "外城小站",
+	SplashSubtitle:       "FLUX",
+	SplashDesc:           "在城市边缘启动一座长期写作与工程沉淀的小站。",
+	SplashEnter:          "点击进入 / Tap to enter",
+	AdminSecret:          "123456",
 }

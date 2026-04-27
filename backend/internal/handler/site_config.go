@@ -31,6 +31,18 @@ func (h *Handler) UpdateSiteConfig(ctx context.Context, c *app.RequestContext) {
 	existing.HeroSubtitle = req.HeroSubtitle
 	existing.HeroDesc = req.HeroDesc
 	existing.HeroImage = req.HeroImage
+	existing.LandingGradientStart = req.LandingGradientStart
+	existing.LandingGradientEnd = req.LandingGradientEnd
+	existing.LandingGlow = req.LandingGlow
+	existing.MusicPlaceholder = req.MusicPlaceholder
+	existing.AudioSrc = req.AudioSrc
+	existing.CardTags = req.CardTags
+	existing.CodeBlockContent = req.CodeBlockContent
+	existing.SplashEyebrow = req.SplashEyebrow
+	existing.SplashTitle = req.SplashTitle
+	existing.SplashSubtitle = req.SplashSubtitle
+	existing.SplashDesc = req.SplashDesc
+	existing.SplashEnter = req.SplashEnter
 	if err := h.svc.UpdateSiteConfig(&existing); err != nil {
 		writeError(c, err)
 		return
