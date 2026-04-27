@@ -3,6 +3,7 @@ import { ArticlePage } from "../pages/ArticlePage";
 import { AuthorEditorPage } from "../pages/AuthorEditorPage";
 import { AuthorPage } from "../pages/AuthorPage";
 import { BlogPage } from "../pages/BlogPage";
+import { CardPage } from "../pages/CardPage";
 import { EditorPage } from "../pages/EditorPage";
 import { HomePage } from "../pages/HomePage";
 import { MissingPage } from "../pages/MissingPage";
@@ -11,6 +12,7 @@ import { TagsPage } from "../pages/TagsPage";
 import { TourEditorPage } from "../pages/TourEditorPage";
 
 export const routes = {
+  card: CardPage,
   home: HomePage,
   blog: BlogPage,
   tags: TagsPage,
@@ -31,6 +33,15 @@ export function RouterView({ page, routeProps }) {
   };
 
   const routeElements = {
+    card: (
+      <CardPage
+        author={routeProps.author}
+        siteConfig={routeProps.siteConfig}
+        adminSummary={routeProps.adminSummary}
+        posts={routeProps.posts}
+        setPage={routeProps.setPage}
+      />
+    ),
     home: <HomePage posts={routeProps.posts} siteConfig={routeProps.siteConfig} onSelectPost={routeProps.setSelectedPost} setPage={routeProps.setPage} />,
     blog: <BlogPage posts={routeProps.posts} query={routeProps.query} categoryFilter={routeProps.categoryFilter} onSelectPost={routeProps.setSelectedPost} {...common} />,
     tags: <TagsPage tags={routeProps.tags} posts={routeProps.posts} tourConfig={routeProps.tourConfig} {...common} />,

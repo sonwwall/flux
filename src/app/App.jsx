@@ -60,6 +60,7 @@ export default function App() {
   const { page, setPage } = useHashRoute();
   const auth = useAuth();
   const hasToken = auth.isAuthenticated || auth.hasToken();
+  const isImmersivePage = page === "card";
   const [content, setContent] = useState(() => resolveBundle());
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -177,10 +178,12 @@ export default function App() {
 
   return (
     <>
-      <TopNav page={page} setPage={setPage} query={query} setQuery={setQuery} apiStatus={content.apiStatus} setCategoryFilter={setCategoryFilter} />
-      <SideNav page={page} setPage={setPage} setCategoryFilter={setCategoryFilter} goAdmin={goAdmin} />
+      {!isImmersivePage && (
+        <TopNav page={page} setPage={setPage} query={query} setQuery={setQuery} apiStatus={content.apiStatus} setCategoryFilter={setCategoryFilter} />
+      )}
+      {!isImmersivePage && <SideNav page={page} setPage={setPage} setCategoryFilter={setCategoryFilter} goAdmin={goAdmin} />}
 
-      <main className="app-shell">
+      <main className={`app-shell ${isImmersivePage ? "card-shell" : ""}`.trim()}>
         <RouterView
           page={page}
           routeProps={{
