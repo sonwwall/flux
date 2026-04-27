@@ -348,7 +348,6 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
               <Icon>north_east</Icon>
               进入博客
             </button>
-            <p>新首页采用独立落地页形式，博客内容仍保留原有结构与导航。</p>
           </div>
 
           <div className="card-page__socials" aria-label="社交链接">

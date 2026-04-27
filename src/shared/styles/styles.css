@@ -2790,17 +2790,21 @@ p {
 
 .card-page__actions {
   display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 18px;
 }
 
-.card-page__actions p {
-  max-width: 320px;
-  font-size: 0.94rem;
+.card-page__enter {
+  min-width: 220px;
+  min-height: 52px;
+  padding: 0 32px;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  border-radius: 999px;
 }
 
-.card-page__enter {
-  min-width: 180px;
+.card-page__enter .material-symbols-outlined {
+  font-size: 1.25rem;
 }
 
 .card-page__socials {
