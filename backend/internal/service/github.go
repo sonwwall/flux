@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -167,7 +168,12 @@ func fetchGitHubJSON[T any](ctx context.Context, endpoint string) (T, error) {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
-	client := http.Client{Timeout: 10 * time.Second}
+	client := http.Client{
+		Timeout: 10 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return zero, err
