@@ -11,6 +11,7 @@ const defaultLandingColors = {
 
 const defaultMusicPlaceholder = "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。";
 const defaultCodeBlockContent = fallbackSiteConfig.codeBlockContent;
+const defaultCardTags = fallbackSiteConfig.cardTags;
 
 export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
   const [draftSiteConfig, setDraftSiteConfig] = useState(() => ({
@@ -21,10 +22,13 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     landingGlow: toColorValue(siteConfig?.landingGlow, defaultLandingColors.landingGlow),
     musicPlaceholder: siteConfig?.musicPlaceholder || defaultMusicPlaceholder,
     audioSrc: siteConfig?.audioSrc || "",
+    cardTags: siteConfig?.cardTags || defaultCardTags,
     codeBlockContent: siteConfig?.codeBlockContent || defaultCodeBlockContent,
   }));
   const [draftAuthor, setDraftAuthor] = useState(() => ({
     ...(author || {}),
+    name: author?.name || "外城",
+    handle: author?.handle || "Outer City",
     bio: author?.bio || "",
     github: author?.github || "https://github.com",
     twitter: author?.twitter || "https://x.com",
@@ -93,12 +97,11 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
   const socialPreview = [
     ["GitHub", draftAuthor.github],
     ["Twitter", draftAuthor.twitter],
-    ["Email", draftAuthor.contact],
+    ["Email", normalizeEmail(draftAuthor.contact)],
   ];
 
-  const codePreview = normalizeCodeBlockContent(draftSiteConfig.codeBlockContent || defaultCodeBlockContent)
-    .split(/\r?\n/)
-    .filter(Boolean);
+  const codePreview = toCodePreviewLines(draftSiteConfig.codeBlockContent || defaultCodeBlockContent);
+  const cardTagsPreview = parseCardTags(draftSiteConfig.cardTags || defaultCardTags);
 
   return (
     <div className="content-wrap page-pad editor-page">
@@ -140,6 +143,18 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
           <section className="card-editor-group">
             <h2>名片内容</h2>
             <label>
+              名字
+              <input value={draftAuthor.name || ""} onChange={(event) => updateAuthor("name", event.target.value)} />
+            </label>
+            <label>
+              副标题 / 外文名
+              <input value={draftAuthor.handle || ""} onChange={(event) => updateAuthor("handle", event.target.value)} />
+            </label>
+            <label>
+              标签（逗号分隔）
+              <input value={draftSiteConfig.cardTags || ""} onChange={(event) => updateSite("cardTags", event.target.value)} placeholder="前端,写作,独立博客" />
+            </label>
+            <label>
               标题文字
               <input value={draftSiteConfig.heroTitle || ""} onChange={(event) => updateSite("heroTitle", event.target.value)} />
             </label>
@@ -152,11 +167,11 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
           <section className="card-editor-group">
             <h2>代码框内容</h2>
             <label>
-              每行一个键值对
+              完整代码内容
               <textarea
-                rows="8"
+                rows="10"
                 className="card-editor-code-input"
-                placeholder='focus: ["前端", "长期写作"]'
+                placeholder={'const outerCity = {\n  route: "#home",\n};'}
                 value={draftSiteConfig.codeBlockContent || ""}
                 onChange={(event) => updateSite("codeBlockContent", event.target.value)}
               />
@@ -219,9 +234,33 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
               </div>
 
               <div style={{ padding: "24px", borderRadius: 22, background: "rgba(7, 12, 22, 0.72)", backdropFilter: "blur(16px)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.08)" }}>
-                <strong style={{ display: "block", marginBottom: 14, fontSize: "1.3rem" }}>外城</strong>
+                <strong style={{ display: "block", marginBottom: 10, fontSize: "1.3rem" }}>{draftAuthor.name || "外城"}</strong>
+                <p style={{ margin: 0, color: "rgba(255,255,255,0.58)", fontSize: "0.95rem", fontWeight: 700 }}>{draftAuthor.handle || "Outer City"}</p>
                 <h3 style={{ margin: 0, fontSize: "1.75rem", lineHeight: 1.2 }}>{draftSiteConfig.heroTitle || "（标题）"}</h3>
                 <p style={{ margin: "14px 0 0", color: "rgba(255,255,255,0.74)", lineHeight: 1.8 }}>{draftAuthor.bio || "（简介）"}</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 16 }}>
+                  {cardTagsPreview.map((tag) => (
+                    <span
+                      key={tag}
+                      style={{
+                        minHeight: 32,
+                        padding: "0 14px",
+                        borderRadius: 999,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        color: "rgba(247,247,247,0.88)",
+                        background: "rgba(255,255,255,0.05)",
+                        boxShadow: "inset 0 0 0 1px rgba(167,175,255,0.08)",
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               <div style={{ display: "grid", gap: 10 }}>
@@ -239,11 +278,9 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
                   <span style={{ color: "rgba(255,255,255,0.56)", fontSize: "0.74rem" }}>{codePreview.length} lines</span>
                 </div>
                 <pre className="card-editor-code-preview">
-                  <span>const outerCity = {"{"}</span>
                   {codePreview.map((line, index) => (
-                    <span key={`${line}-${index}`}>  {line}</span>
+                    <span key={`${line}-${index}`}>{line || " "}</span>
                   ))}
-                  <span>{"};"}</span>
                 </pre>
               </div>
 
@@ -266,11 +303,7 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
 }
 
 function normalizeCodeBlockContent(value) {
-  return (value || defaultCodeBlockContent)
-    .split(/\r?\n/)
-    .map((line) => line.trimEnd())
-    .filter((line) => line.trim().length > 0)
-    .join("\n");
+  return toCodePreviewLines(value || defaultCodeBlockContent).join("\n");
 }
 
 function toColorValue(value, fallback) {
@@ -293,4 +326,31 @@ function toRgbaColor(value) {
   const g = Number.parseInt(expanded.slice(2, 4), 16);
   const b = Number.parseInt(expanded.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, 0.24)`;
+}
+
+function toCodePreviewLines(value) {
+  const lines = (value || defaultCodeBlockContent).split(/\r?\n/).map((line) => line.trimEnd());
+
+  while (lines.length && lines[0].trim().length === 0) {
+    lines.shift();
+  }
+
+  while (lines.length && lines[lines.length - 1].trim().length === 0) {
+    lines.pop();
+  }
+
+  return lines;
+}
+
+function parseCardTags(value) {
+  return String(value || defaultCardTags)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeEmail(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^mailto:/i, "");
 }

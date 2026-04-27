@@ -2348,6 +2348,46 @@ p {
   transform: translate3d(calc(var(--card-orb-shift-x) * -0.4), var(--card-orb-shift-y), 0);
 }
 
+.card-page__toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 18px;
+  border-radius: 999px;
+  color: #f7f7f7;
+  background: rgba(8, 11, 24, 0.94);
+  box-shadow:
+    0 18px 40px rgba(4, 6, 18, 0.34),
+    inset 0 0 0 1px rgba(168, 176, 255, 0.12);
+  backdrop-filter: blur(18px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -18px);
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.card-page__toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.card-page__toast .material-symbols-outlined {
+  font-size: 1.15rem;
+  color: #9fbeff;
+}
+
+.card-page__toast span {
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
 .card-page__grid {
   position: relative;
   z-index: 1;
@@ -2619,6 +2659,10 @@ p {
 
 .card-page__code-line {
   white-space: pre-wrap;
+}
+
+.card-page__code-indent {
+  white-space: pre;
 }
 
 .card-page__code-keyword,

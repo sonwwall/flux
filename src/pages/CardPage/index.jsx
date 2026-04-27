@@ -4,6 +4,7 @@ import { mediaURL } from "../../shared/lib/format";
 import { Icon } from "../../shared/ui/Icon";
 
 const defaultCodeBlockContent = fallbackSiteConfig.codeBlockContent;
+const defaultCardTags = fallbackSiteConfig.cardTags;
 
 function SocialGlyph({ name }) {
   const glyphs = {
@@ -34,20 +35,32 @@ function SocialGlyph({ name }) {
   );
 }
 
+function Toast({ open, children }) {
+  return (
+    <div className={`card-page__toast ${open ? "is-visible" : ""}`} role="status" aria-live="polite" aria-hidden={!open}>
+      <Icon>mail</Icon>
+      <span>{children}</span>
+    </div>
+  );
+}
+
 export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
   const [flipped, setFlipped] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const sectionRef = useRef(null);
   const audioRef = useRef(null);
-  const copiedTimeoutRef = useRef(0);
+  const toastTimeoutRef = useRef(0);
   const avatar = mediaURL(author?.avatar) || fallbackImages.author;
   const intro = siteConfig?.heroTitle || "在外城边缘，记录技术、阅读与日常。";
   const summary = author?.bio || "把前端工程、个人项目和阅读记录，沉淀成一个可长期维护的小站。";
-  const email = (author?.contact || "hello@outercity.dev").replace(/^mailto:/, "");
+  const displayName = author?.name || "外城";
+  const displayHandle = author?.handle || "Outer City";
+  const cardTags = useMemo(() => parseCardTags(siteConfig?.cardTags || defaultCardTags), [siteConfig?.cardTags]);
+  const email = normalizeEmail(author?.contact || "hello@outercity.dev");
   const twitter = author?.twitter || "https://x.com";
   const musicPlaceholder = siteConfig?.musicPlaceholder || "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。";
   const audioSrc = mediaURL(siteConfig?.audioSrc || "");
@@ -217,17 +230,17 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
     setDuration(0);
   }, [audioSrc]);
 
-  useEffect(() => () => window.clearTimeout(copiedTimeoutRef.current), []);
+  useEffect(() => () => window.clearTimeout(toastTimeoutRef.current), []);
 
   async function handleCopyEmail() {
     if (!email) return;
     try {
       await navigator.clipboard.writeText(email);
-      setCopied(true);
-      window.clearTimeout(copiedTimeoutRef.current);
-      copiedTimeoutRef.current = window.setTimeout(() => setCopied(false), 2000);
+      setToastVisible(true);
+      window.clearTimeout(toastTimeoutRef.current);
+      toastTimeoutRef.current = window.setTimeout(() => setToastVisible(false), 2500);
     } catch {
-      setCopied(false);
+      setToastVisible(false);
     }
   }
 
@@ -264,6 +277,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
 
   return (
     <section ref={sectionRef} className="card-page" style={backgroundStyle}>
+      <Toast open={toastVisible}>邮箱地址已复制 ✉️</Toast>
+
       <div className="card-page__grid">
         <div className="card-page__main">
           <div className="card-page__status">
@@ -282,18 +297,18 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
             <span className="card-page__card-shell">
               <span className="card-page__card-face card-page__card-front">
                 <span className="card-page__avatar-ring">
-                  <img src={avatar} alt="外城头像" className="card-page__avatar" />
+                  <img src={avatar} alt={`${displayName}头像`} className="card-page__avatar" />
                 </span>
                 <span className="card-page__name-row">
-                  <strong>外城</strong>
-                  <em>Outer City</em>
+                  <strong>{displayName}</strong>
+                  <em>{displayHandle}</em>
                 </span>
                 <span className="card-page__intro">{intro}</span>
                 <span className="card-page__summary">{summary}</span>
                 <span className="card-page__chip-row">
-                  <span>前端</span>
-                  <span>写作</span>
-                  <span>独立博客</span>
+                  {cardTags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
                 </span>
               </span>
 
@@ -305,16 +320,11 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
                   outercity.config.ts
                 </span>
                 <code className="card-page__code-block">
-                  <span className="card-page__code-line">
-                    <span className="card-page__code-keyword">const</span> outerCity = {"{"}
-                  </span>
                   {codeLines.map((line, index) => (
                     <span key={`${line}-${index}`} className="card-page__code-line">
-                      <span className="card-page__code-indent">  </span>
                       {renderCodeLine(line)}
                     </span>
                   ))}
-                  <span className="card-page__code-line">{"};"}</span>
                 </code>
                 <span className="card-page__code-note">点击名片正反切换，进入博客后继续浏览完整内容。</span>
               </span>
@@ -345,7 +355,7 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
             ))}
             <button type="button" className="card-page__social-link" aria-label="复制邮箱地址" onClick={handleCopyEmail}>
               <SocialGlyph name="email" />
-              <span>{copied ? "已复制" : "Email"}</span>
+              <span>Email</span>
             </button>
           </div>
         </div>
@@ -418,21 +428,55 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
 }
 
 function formatCodeLines(content) {
-  return (content || defaultCodeBlockContent)
-    .split(/\r?\n/)
-    .map((line) => line.trimEnd())
-    .filter((line) => line.trim().length > 0);
+  const lines = (content || defaultCodeBlockContent).split(/\r?\n/).map((line) => line.trimEnd());
+
+  while (lines.length && lines[0].trim().length === 0) {
+    lines.shift();
+  }
+
+  while (lines.length && lines[lines.length - 1].trim().length === 0) {
+    lines.pop();
+  }
+
+  return lines;
 }
 
 function renderCodeLine(line) {
-  const match = line.match(/^([A-Za-z0-9_$]+)\s*:\s*(.*?)(,?)$/);
+  const [, indent = "", content = ""] = line.match(/^(\s*)(.*)$/) || [];
+
+  if (!content) {
+    return <span className="card-page__code-indent"> </span>;
+  }
+
+  const constMatch = content.match(/^(const|let|var)\s+([A-Za-z0-9_$]+)(\s*=\s*)(.*)$/);
+  if (constMatch) {
+    const [, keyword, name, punctuation, value] = constMatch;
+    return (
+      <>
+        <span className="card-page__code-indent">{indent}</span>
+        <span className="card-page__code-keyword">{keyword}</span>
+        <span className="card-page__code-punct"> </span>
+        <span className="card-page__code-prop">{name}</span>
+        <span className="card-page__code-punct">{punctuation}</span>
+        <span className="card-page__code-value">{value}</span>
+      </>
+    );
+  }
+
+  const match = content.match(/^([A-Za-z0-9_$]+)\s*:\s*(.*?)(,?)$/);
   if (!match) {
-    return line;
+    return (
+      <>
+        <span className="card-page__code-indent">{indent}</span>
+        {content}
+      </>
+    );
   }
 
   const [, key, value, trailingComma] = match;
   return (
     <>
+      <span className="card-page__code-indent">{indent}</span>
       <span className="card-page__code-prop">{key}</span>
       <span className="card-page__code-punct">: </span>
       <span className="card-page__code-value">{value}</span>
@@ -457,4 +501,17 @@ function formatClock(value) {
   const minutes = Math.floor(value / 60);
   const seconds = Math.floor(value % 60);
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function parseCardTags(value) {
+  return String(value || defaultCardTags)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeEmail(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^mailto:/i, "");
 }
