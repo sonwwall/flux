@@ -70,7 +70,7 @@ function Toast({ open, children }) {
   );
 }
 
-export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onSelectPost }) {
+export function CardPage({ author, siteConfig, adminSummary, githubData, posts, setPage, onSelectPost }) {
   const [flipped, setFlipped] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -82,6 +82,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
     profile: null,
     repos: [],
     totalStars: 0,
+    activity: [],
+    activityDelta: 0,
   });
   const sectionRef = useRef(null);
   const audioRef = useRef(null);
@@ -133,6 +135,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
             repos={githubState.repos}
             status={githubState.status}
             totalStars={githubState.totalStars}
+            activity={githubState.activity}
+            activityDelta={githubState.activityDelta}
             profileUrl={githubProfileUrl}
           />
         ),
@@ -146,6 +150,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
       githubState.repos,
       githubState.status,
       githubState.totalStars,
+      githubState.activity,
+      githubState.activityDelta,
       githubUsername,
       heroPost,
       publishedCount,
@@ -300,6 +306,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
         profile: null,
         repos: [],
         totalStars: 0,
+        activity: [],
+        activityDelta: 0,
       });
       return undefined;
     }
@@ -311,26 +319,24 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
       profile: null,
       repos: [],
       totalStars: 0,
+      activity: [],
+      activityDelta: 0,
     });
 
-    Promise.all([
-      fetch(`https://api.github.com/users/${githubUsername}`, { signal: controller.signal }),
-      fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=4&type=all`, { signal: controller.signal }),
-    ])
-      .then(async ([profileResponse, reposResponse]) => {
-        if (!profileResponse.ok || !reposResponse.ok) {
-          throw new Error("GitHub fetch failed");
-        }
-
-        const [profile, reposPayload] = await Promise.all([profileResponse.json(), reposResponse.json()]);
-        const repos = Array.isArray(reposPayload) ? reposPayload.slice(0, 4) : [];
-        const totalStars = repos.reduce((sum, repo) => sum + (repo?.stargazers_count || 0), 0);
+    fetch("/api/github/profile", { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("GitHub cache fetch failed");
+        const payload = await response.json();
+        if (!payload?.login) throw new Error("GitHub cache missing");
+        const repos = Array.isArray(payload.repos) ? payload.repos.slice(0, 4) : [];
 
         setGithubState({
           status: "success",
-          profile,
+          profile: payload,
           repos,
-          totalStars,
+          totalStars: payload.total_stars || repos.reduce((sum, repo) => sum + (repo?.stargazers_count || 0), 0),
+          activity: Array.isArray(payload.activity) ? payload.activity : [],
+          activityDelta: payload.activity_delta || 0,
         });
       })
       .catch((error) => {
@@ -340,11 +346,26 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage, onS
           profile: null,
           repos: [],
           totalStars: 0,
+          activity: [],
+          activityDelta: 0,
         });
       });
 
     return () => controller.abort();
   }, [githubUsername]);
+
+  useEffect(() => {
+    if (!githubData?.login) return;
+    const repos = Array.isArray(githubData.repos) ? githubData.repos.slice(0, 4) : [];
+    setGithubState({
+      status: "success",
+      profile: githubData,
+      repos,
+      totalStars: githubData.total_stars || repos.reduce((sum, repo) => sum + (repo?.stargazers_count || 0), 0),
+      activity: Array.isArray(githubData.activity) ? githubData.activity : [],
+      activityDelta: githubData.activity_delta || 0,
+    });
+  }, [githubData]);
 
   useEffect(() => () => window.clearTimeout(toastTimeoutRef.current), []);
 
@@ -620,17 +641,16 @@ function StationStatsCard({ publishedCount, tagCount, totalReadTime, monthPosts 
   );
 }
 
-function GitHubInfoCard({ username, profile, repos, status, totalStars, profileUrl }) {
+function GitHubInfoCard({ username, profile, repos, status, totalStars, activity, activityDelta, profileUrl }) {
   const safeProfileUrl = profile?.html_url || profileUrl;
   const displayName = profile?.name || username || "GitHub";
   const displayHandle = username ? `@${username}` : "";
+  const featuredRepo = repos?.[0];
+  const activityPath = buildActivityPath(activity);
+  const monthLabels = getRecentMonthLabels();
 
   return (
     <div className="card-page__mini-body card-page__mini-body--github">
-      <div className="card-page__mini-copy">
-        <p>GitHub</p>
-      </div>
-
       {!username ? (
         <div className="card-page__github-empty">未配置 GitHub 账号</div>
       ) : status === "loading" ? (
@@ -639,48 +659,80 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, profileU
         <div className="card-page__github-status">加载失败</div>
       ) : (
         <>
-          <div className="card-page__github-profile">
+          <button type="button" className="card-page__github-profile" onClick={() => openExternal(safeProfileUrl)}>
             {profile?.avatar_url ? (
               <img className="card-page__github-avatar" src={profile.avatar_url} alt={username} />
             ) : null}
             <div className="card-page__github-info">
               <span className="card-page__github-name">{displayName}</span>
               <span className="card-page__github-handle">{displayHandle}</span>
+              {profile?.bio && <span className="card-page__github-bio">{profile.bio}</span>}
             </div>
-          </div>
+          </button>
 
           <div className="card-page__github-stats">
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <span>仓库</span>
-              <strong>{profile?.public_repos ?? 0}</strong>
+              <Icon>inventory_2</Icon>
+              <span>Repos</span>
+              <strong>{formatCompactNumber(profile?.public_repos ?? 0)}</strong>
             </button>
-            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <span>星标</span>
-              <strong>{totalStars}</strong>
+            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=stars`)}>
+              <Icon>star</Icon>
+              <span>Stars</span>
+              <strong>{formatCompactNumber(totalStars || 0)}</strong>
+            </button>
+            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=followers`)}>
+              <Icon>groups</Icon>
+              <span>Follows</span>
+              <strong>{formatCompactNumber(profile?.followers ?? 0)}</strong>
             </button>
           </div>
 
-          <div className="card-page__github-repos">
-            {repos.length ? (
-              repos.map((repo) => (
-                <button key={repo.id || repo.name} type="button" className="card-page__github-repo" onClick={() => openExternal(repo.html_url)}>
-                  <div className="card-page__github-repo-row">
-                    <span className="card-page__github-repo-name">{repo.name}</span>
-                    <span className="card-page__github-repo-stars">★ {repo.stargazers_count || 0}</span>
-                  </div>
-                  <div className="card-page__github-repo-row">
-                    <span className="card-page__github-repo-lang">
-                      <span className="card-page__github-lang-dot" style={{ background: getLanguageColor(repo.language) }} />
-                      {repo.language || "Unknown"}
-                    </span>
-                    {repo.fork && <span className="card-page__github-repo-badge">fork</span>}
-                  </div>
-                </button>
-              ))
-            ) : (
+          {featuredRepo ? (
+            <button type="button" className="card-page__github-repo" onClick={() => openExternal(featuredRepo.html_url)}>
+              <div className="card-page__github-repo-row">
+                <span className="card-page__github-repo-name">
+                  <Icon>deployed_code</Icon>
+                  {featuredRepo.name}
+                </span>
+                <span className="card-page__github-repo-badge">{featuredRepo.private ? "Private" : featuredRepo.fork ? "Fork" : "Public"}</span>
+              </div>
+              <p>{featuredRepo.description || "最近更新的 GitHub 仓库。"}</p>
+              <div className="card-page__github-repo-row card-page__github-repo-row--meta">
+                <span className="card-page__github-repo-lang">
+                  <span className="card-page__github-lang-dot" style={{ background: getLanguageColor(featuredRepo.language) }} />
+                  {featuredRepo.language || "Unknown"}
+                </span>
+                <span className="card-page__github-repo-stars">
+                  <Icon>star</Icon>
+                  {formatCompactNumber(featuredRepo.stargazers_count || 0)}
+                </span>
+                <span className="card-page__github-repo-stars">
+                  <Icon>call_split</Icon>
+                  {formatCompactNumber(featuredRepo.forks_count || 0)}
+                </span>
+              </div>
+            </button>
+          ) : (
               <div className="card-page__github-empty">暂无公开仓库</div>
-            )}
-          </div>
+          )}
+
+          <button type="button" className="card-page__github-activity" onClick={() => openExternal(safeProfileUrl)}>
+            <span className="card-page__github-activity-head">
+              <strong>Commit Activity</strong>
+              <em>{activityDelta >= 0 ? "+" : ""}{activityDelta}% this month</em>
+            </span>
+            <svg viewBox="0 0 260 72" aria-hidden="true">
+              <path d={activityPath} />
+            </svg>
+            <span className="card-page__github-months">
+              {monthLabels.map((label) => <small key={label}>{label}</small>)}
+            </span>
+          </button>
+
+          <button type="button" className="card-page__github-follow" onClick={() => openExternal(safeProfileUrl)}>
+            Follow on GitHub <Icon>open_in_new</Icon>
+          </button>
         </>
       )}
     </div>
@@ -795,6 +847,37 @@ function extractGithubUsername(value) {
 
 function getLanguageColor(language) {
   return githubLanguageColors[language] || "#8cacff";
+}
+
+function formatCompactNumber(value) {
+  const number = Number(value) || 0;
+  if (number >= 1000000) return `${(number / 1000000).toFixed(number >= 10000000 ? 0 : 1)}m`;
+  if (number >= 1000) return `${(number / 1000).toFixed(number >= 10000 ? 0 : 1)}k`;
+  return String(number);
+}
+
+function buildActivityPath(activity = []) {
+  const values = activity.length ? activity.slice(-6) : [1, 2, 2, 4, 2, 5];
+  while (values.length < 6) values.unshift(0);
+  const max = Math.max(...values, 1);
+  const points = values.map((value, index) => {
+    const x = 8 + index * 48;
+    const y = 58 - (value / max) * 42;
+    return [x, y];
+  });
+
+  return points.reduce((path, point, index) => {
+    if (index === 0) return `M${point[0]} ${point[1]}`;
+    const previous = points[index - 1];
+    const midX = (previous[0] + point[0]) / 2;
+    return `${path} C${midX} ${previous[1]}, ${midX} ${point[1]}, ${point[0]} ${point[1]}`;
+  }, "");
+}
+
+function getRecentMonthLabels() {
+  const formatter = new Intl.DateTimeFormat("en", { month: "short" });
+  const now = new Date();
+  return Array.from({ length: 6 }, (_, index) => formatter.format(new Date(now.getFullYear(), now.getMonth() - 5 + index, 1)).toUpperCase());
 }
 
 function openExternal(url) {

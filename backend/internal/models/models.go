@@ -68,6 +68,38 @@ type AdminSummary struct {
 	MonthPosts int64 `json:"monthPosts"`
 }
 
+type GitHubRepoSnapshot struct {
+	ID              int64     `json:"id"`
+	Name            string    `json:"name"`
+	Description     string    `json:"description"`
+	HTMLURL         string    `json:"html_url"`
+	Language        string    `json:"language"`
+	StargazersCount int       `json:"stargazers_count"`
+	ForksCount      int       `json:"forks_count"`
+	Fork            bool      `json:"fork"`
+	Private         bool      `json:"private"`
+	PushedAt        time.Time `json:"pushed_at"`
+}
+
+type GitHubSnapshot struct {
+	ID            uint                 `gorm:"primaryKey" json:"id"`
+	Login         string               `gorm:"size:80;uniqueIndex;not null" json:"login"`
+	Name          string               `gorm:"size:120" json:"name"`
+	Bio           string               `gorm:"size:512" json:"bio"`
+	AvatarURL     string               `gorm:"size:1024" json:"avatar_url"`
+	HTMLURL       string               `gorm:"size:1024" json:"html_url"`
+	PublicRepos   int                  `json:"public_repos"`
+	Followers     int                  `json:"followers"`
+	Following     int                  `json:"following"`
+	TotalStars    int                  `json:"total_stars"`
+	Activity      []int                `gorm:"serializer:json" json:"activity"`
+	ActivityDelta int                  `json:"activity_delta"`
+	Repos         []GitHubRepoSnapshot `gorm:"serializer:json" json:"repos"`
+	SyncedAt      time.Time            `json:"synced_at"`
+	CreatedAt     time.Time            `json:"createdAt"`
+	UpdatedAt     time.Time            `json:"updatedAt"`
+}
+
 type SiteConfig struct {
 	ID                   uint      `gorm:"primaryKey" json:"id"`
 	HeroTitle            string    `gorm:"size:200" json:"heroTitle"`

@@ -50,6 +50,7 @@ function resolveBundle(bundle = {}) {
     author: bundle.author || fallbackAuthor,
     siteConfig: bundle.siteConfig || fallbackSiteConfig,
     tourConfig: bundle.tourConfig || fallbackTourConfig,
+    githubData: bundle.githubData || null,
     adminPosts: bundle.adminPosts || posts,
     adminSummary: bundle.adminSummary || summarize(bundle.adminPosts || posts, tags),
     apiStatus: bundle.apiStatus || "offline",

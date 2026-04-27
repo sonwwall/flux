@@ -27,7 +27,9 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 		PathRewrite: app.NewPathSlashesStripper(1),
 	})
 
-	hdl := handler.New(service.New(dao.New(db)), cfg.JWTSecret)
+	svc := service.New(dao.New(db))
+	svc.StartGitHubSync(context.Background())
+	hdl := handler.New(svc, cfg.JWTSecret)
 	api := h.Group("/api")
 
 	api.GET("/health", hdl.Health)
@@ -37,6 +39,7 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	api.GET("/tags", hdl.ListTags)
 	api.GET("/tour", hdl.GetTourConfig)
 	api.GET("/author", hdl.GetAuthor)
+	api.GET("/github/profile", hdl.GetGitHubProfile)
 	api.GET("/admin/site", hdl.GetSiteConfig)
 
 	api.POST("/auth/login", hdl.Login)

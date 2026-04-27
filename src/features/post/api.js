@@ -3,12 +3,13 @@ import { authHeader } from "../auth/api";
 import { normalizePost, normalizeTag } from "./model";
 
 export async function fetchContentBundle() {
-  const [postData, tagData, authorData, siteData, tourData, adminPostData, summaryData] = await Promise.all([
+  const [postData, tagData, authorData, siteData, tourData, githubData, adminPostData, summaryData] = await Promise.all([
     loadJSON("/api/posts"),
     loadJSON("/api/tags"),
     loadJSON("/api/author"),
     loadJSON("/api/admin/site"),
     loadJSON("/api/tour"),
+    loadJSON("/api/github/profile"),
     apiJSON("/api/admin/posts", { headers: authHeader() }),
     apiJSON("/api/admin/summary", { headers: authHeader() }),
   ]);
@@ -19,6 +20,7 @@ export async function fetchContentBundle() {
     author: authorData,
     siteConfig: siteData && !siteData.error ? siteData : null,
     tourConfig: tourData && !tourData.error ? tourData : null,
+    githubData: githubData && !githubData.error ? githubData : null,
     adminPosts: adminPostData && !adminPostData.error ? adminPostData.map(normalizePost) : null,
     adminSummary: summaryData && !summaryData.error ? summaryData : null,
     apiStatus: [postData, tagData, authorData].some(Boolean) ? "online" : "offline",

@@ -43,6 +43,7 @@ export function RouterView({ page, routeProps }) {
         author={routeProps.author}
         siteConfig={routeProps.siteConfig}
         adminSummary={routeProps.adminSummary}
+        githubData={routeProps.githubData}
         posts={routeProps.posts}
         setPage={routeProps.setPage}
         onSelectPost={routeProps.setSelectedPost}

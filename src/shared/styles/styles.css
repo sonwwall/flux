@@ -3131,110 +3131,147 @@ p {
 }
 
 .card-page__mini-body--github {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
+  min-height: 100%;
+  padding: 18px;
+  margin: -18px;
+  color: rgba(247, 247, 247, 0.94);
+  background:
+    linear-gradient(145deg, rgba(50, 42, 126, 0.95), rgba(91, 23, 151, 0.96) 54%, rgba(128, 48, 221, 0.92)),
+    rgba(24, 18, 56, 0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(232, 216, 255, 0.14),
+    inset 0 1px rgba(255, 255, 255, 0.08);
 }
 
-.card-page__mini-body--github .card-page__mini-copy {
-  gap: 0;
+.card-page__mini-body--github button {
+  appearance: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
 }
 
-.card-page__mini-body--github .card-page__mini-copy p {
-  margin-bottom: 0;
-}
-
-/* Profile row: avatar + name + handle */
 .card-page__github-profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  padding: 0;
+  background: transparent;
+  text-align: left;
 }
 
 .card-page__github-avatar {
-  width: 24px;
-  height: 24px;
-  flex: 0 0 24px;
-  border-radius: 50%;
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 18px;
   object-fit: cover;
+  box-shadow: 0 0 0 2px rgba(244, 235, 255, 0.72), 0 0 26px rgba(186, 150, 255, 0.42);
 }
 
 .card-page__github-info {
   display: grid;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
 }
 
 .card-page__github-name {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: rgba(247, 247, 247, 0.95);
-  line-height: 1.2;
-  white-space: nowrap;
   overflow: hidden;
+  color: #fff;
+  font-family: Manrope, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 850;
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-page__github-handle,
+.card-page__github-bio {
+  overflow: hidden;
+  color: rgba(231, 220, 255, 0.7);
+  font-size: 0.76rem;
+  line-height: 1.35;
   text-overflow: ellipsis;
 }
 
 .card-page__github-handle {
-  font-size: 0.72rem;
-  color: rgba(247, 247, 247, 0.5);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* Stats row */
+.card-page__github-bio {
+  display: -webkit-box;
+  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
 .card-page__github-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .card-page__github-stat {
-  appearance: none;
-  border: 0;
-  color: #fff;
-  cursor: pointer;
-  font: inherit;
   display: grid;
-  gap: 4px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  text-align: left;
-  transition: background 180ms ease, box-shadow 180ms ease;
+  place-items: center;
+  min-height: 78px;
+  padding: 10px 6px;
+  border-radius: 18px;
+  background: rgba(232, 211, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(237, 225, 255, 0.13);
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.card-page__github-stat:hover,
+.card-page__github-repo:hover,
+.card-page__github-activity:hover {
+  background: rgba(232, 211, 255, 0.13);
+  transform: translateY(-1px);
+}
+
+.card-page__github-stat .material-symbols-outlined {
+  color: #83dcff;
+  font-size: 1.25rem;
+  font-variation-settings: "FILL" 1, "wght" 430, "GRAD" 0, "opsz" 24;
 }
 
 .card-page__github-stat span {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: rgba(247, 247, 247, 0.5);
+  margin-top: 6px;
+  color: rgba(231, 220, 255, 0.66);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .card-page__github-stat strong {
-  font-size: 1.1rem;
-  font-weight: 800;
+  color: #fff;
+  font-size: 1rem;
   line-height: 1.1;
 }
 
-/* Repo list */
-.card-page__github-repos {
+.card-page__github-repo,
+.card-page__github-activity {
   display: grid;
-  gap: 6px;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(232, 211, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(237, 225, 255, 0.1);
+  text-align: left;
+  transition: background 180ms ease, transform 180ms ease;
 }
 
-.card-page__github-repo {
-  appearance: none;
-  border: 0;
-  color: #fff;
-  cursor: pointer;
-  font: inherit;
-  display: grid;
-  gap: 4px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  text-align: left;
-  transition: background 180ms ease;
+.card-page__github-repo p {
+  margin: 0;
+  color: rgba(231, 220, 255, 0.68);
+  font-size: 0.76rem;
+  line-height: 1.55;
 }
 
 .card-page__github-repo-row {
@@ -3245,32 +3282,31 @@ p {
 }
 
 .card-page__github-repo-name {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: rgba(247, 247, 247, 0.92);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
-}
-
-.card-page__github-repo:hover .card-page__github-repo-name {
-  color: #8cacff;
-}
-
-.card-page__github-repo-stars {
-  font-size: 0.72rem;
-  color: rgba(247, 247, 247, 0.5);
+  overflow: hidden;
+  color: #fff;
+  font-family: Manrope, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 0 0 auto;
+}
+
+.card-page__github-repo-name .material-symbols-outlined {
+  color: rgba(244, 235, 255, 0.84);
+  font-size: 1.1rem;
 }
 
 .card-page__github-repo-lang {
-  font-size: 0.7rem;
-  color: rgba(247, 247, 247, 0.45);
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  color: rgba(231, 220, 255, 0.7);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.7rem;
 }
 
 .card-page__github-lang-dot {
@@ -3281,16 +3317,101 @@ p {
 }
 
 .card-page__github-repo-badge {
-  font-size: 0.62rem;
-  padding: 1px 6px;
+  flex: 0 0 auto;
+  padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(247, 247, 247, 0.08);
-  color: rgba(247, 247, 247, 0.45);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.12);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.58rem;
+  font-style: normal;
+  text-transform: capitalize;
 }
 
-/* Status / empty */
+.card-page__github-repo-row--meta {
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+.card-page__github-repo-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: rgba(231, 220, 255, 0.7);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.card-page__github-repo-stars .material-symbols-outlined {
+  font-size: 0.92rem;
+}
+
+.card-page__github-activity-head,
+.card-page__github-months {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-page__github-activity-head strong {
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card-page__github-activity-head em {
+  color: #83dcff;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.card-page__github-activity svg {
+  width: 100%;
+  height: 58px;
+  overflow: visible;
+}
+
+.card-page__github-activity path {
+  fill: none;
+  stroke: #78dcff;
+  stroke-linecap: round;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 8px rgba(120, 220, 255, 0.42));
+}
+
+.card-page__github-months small {
+  color: rgba(231, 220, 255, 0.42);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.58rem;
+  font-weight: 800;
+}
+
+.card-page__github-follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  margin-top: auto;
+  border-radius: 18px;
+  color: #5e21a5;
+  background: #dec7ff;
+  font-family: Manrope, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 800;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.card-page__github-follow:hover {
+  color: #43147f;
+  background: #ebdcff;
+  transform: translateY(-1px);
+}
+
 .card-page__github-status,
 .card-page__github-empty {
   color: rgba(247, 247, 247, 0.5);

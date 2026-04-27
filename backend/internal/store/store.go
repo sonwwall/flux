@@ -13,7 +13,7 @@ func Open(dsn string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.TourConfig{}, &models.AuthorProfile{}, &models.SiteConfig{}); err != nil {
+	if err := db.AutoMigrate(&models.Post{}, &models.Tag{}, &models.TourConfig{}, &models.AuthorProfile{}, &models.SiteConfig{}, &models.GitHubSnapshot{}); err != nil {
 		return nil, err
 	}
 	if err := seed(db); err != nil {
