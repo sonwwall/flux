@@ -1939,6 +1939,41 @@ p {
   background-repeat: no-repeat;
 }
 
+.editor-sidebar input[type="color"] {
+  min-height: 48px;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.card-editor-group {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 10px;
+  background: var(--surface-low);
+  box-shadow: inset 0 0 0 1px rgba(72, 72, 71, 0.12);
+}
+
+.card-editor-group h2 {
+  margin: 0;
+  color: var(--text);
+  font-family: "Space Grotesk", monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.card-editor-color-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card-editor-color-field {
+  min-width: 0;
+}
+
 .editor-stat {
   display: flex;
   align-items: center;

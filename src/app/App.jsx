@@ -23,7 +23,7 @@ import { newEditorDraft, normalizePost, toEditorDraft } from "../features/post/m
 import { useHashRoute } from "../shared/hooks/useHashRoute";
 import { RouterView } from "./router";
 
-const protectedPages = new Set(["admin", "editor", "authorEditor", "siteConfigEditor", "tourEditor"]);
+const protectedPages = new Set(["admin", "editor", "authorEditor", "siteConfigEditor", "tourEditor", "cardEditor"]);
 
 function summarize(posts, tags) {
   const now = new Date();
@@ -156,6 +156,26 @@ export default function App() {
     return saved;
   }
 
+  async function handleSaveLandingConfig(payload) {
+    const savedSiteConfig = await saveSiteConfig(payload.siteConfig);
+    if (savedSiteConfig?.error) {
+      return savedSiteConfig;
+    }
+
+    const savedAuthor = await saveAuthor(payload.author);
+    if (savedAuthor?.error) {
+      setContent((current) => ({ ...current, siteConfig: savedSiteConfig }));
+      return { error: `导览页视觉配置已保存，但作者信息保存失败：${savedAuthor.error}` };
+    }
+
+    setContent((current) => ({
+      ...current,
+      siteConfig: savedSiteConfig,
+      author: savedAuthor,
+    }));
+    return { siteConfig: savedSiteConfig, author: savedAuthor };
+  }
+
   async function handleSaveTour(nextTourPage) {
     const saved = await saveTourPage(nextTourPage);
     if (!saved?.error) {
@@ -207,7 +227,9 @@ export default function App() {
             onDeletePost: handleDeletePost,
             onSaveAuthor: handleSaveAuthor,
             onSaveSiteConfig: handleSaveSiteConfig,
+            onSaveLandingConfig: handleSaveLandingConfig,
             onSaveTourPage: handleSaveTour,
+            onEditCard: () => setPage("cardEditor"),
           }}
         />
       </main>

@@ -146,12 +146,14 @@ var seedTags = []models.Tag{
 }
 
 var seedAuthor = models.AuthorProfile{
-	Name:   "外城",
-	Handle: "@outercity / 外城小站",
-	Role:   "站长 / 作者",
-	Bio:    "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
-	Avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
-	Github: "https://github.com",
+	Name:    "外城",
+	Handle:  "@outercity / 外城小站",
+	Role:    "站长 / 作者",
+	Bio:     "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
+	Avatar:  "https://lh3.googleusercontent.com/aida-public/AB6AXuCzxZcXQXaWN5tJwrMXtGB6j8RFLmqgtaNw4yw0wyfozmefgRO-Bi-oPkAL2FXFxrVUI-luu_DBungj7wbwU8BuUwcHXm2vMMSVyVqMI0dS5JMwtTymzSOIbAwNGuSrWBSRJfRsndDQAyWiLQke8hesyKwkb1WJPIfG3eKdAQMhT3eZGvBhWnsG-7cTBNj169H0kVyg6v1qXccqLsh7qcn8Re67IIz9IvQSZGurfA5JphMLw5C6CSL3sgVSsehfLgIOdJT7z70-Zds",
+	Github:  "https://github.com",
+	Twitter: "https://x.com",
+	Contact: "hello@outercity.dev",
 }
 
 var seedTourConfig = models.TourConfig{
@@ -161,9 +163,13 @@ var seedTourConfig = models.TourConfig{
 }
 
 var seedSiteConfig = models.SiteConfig{
-	HeroTitle:    "在外城边缘，记录技术、阅读与日常。",
-	HeroSubtitle: "外城小站 / 个人博客 / flux 主题",
-	HeroDesc:     "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
-	HeroImage:    "",
-	AdminSecret:  "123456",
+	HeroTitle:            "在外城边缘，记录技术、阅读与日常。",
+	HeroSubtitle:         "外城小站 / 个人博客 / flux 主题",
+	HeroDesc:             "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
+	HeroImage:            "",
+	LandingGradientStart: "#193554",
+	LandingGradientEnd:   "#1d1646",
+	LandingGlow:          "rgba(122, 163, 255, 0.24)",
+	MusicPlaceholder:     "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。",
+	AdminSecret:          "123456",
 }

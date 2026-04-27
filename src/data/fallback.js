@@ -77,6 +77,7 @@ export const fallbackAuthor = {
   bio: "这里记录前端工程、个人项目、阅读笔记和一些日常观察。外城小站希望保持轻量、克制、长期可维护。",
   avatar: fallbackImages.author,
   github: "https://github.com",
+  twitter: "https://x.com",
   contact: "",
   noteSubtitle: "当前阶段普通用户不开放登录",
   notes: [
@@ -90,6 +91,10 @@ export const fallbackSiteConfig = {
   heroSubtitle: "外城小站 / 个人博客 / flux 主题",
   heroDesc: "这里是外城小站，一个用来沉淀工程实践、个人项目、阅读笔记和生活观察的独立博客。",
   heroImage: "",
+  landingGradientStart: "#193554",
+  landingGradientEnd: "#1d1646",
+  landingGlow: "rgba(122, 163, 255, 0.24)",
+  musicPlaceholder: "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。",
 };
 
 export const fallbackAdminSummary = {

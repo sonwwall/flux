@@ -4,6 +4,7 @@ import { AuthorEditorPage } from "../pages/AuthorEditorPage";
 import { AuthorPage } from "../pages/AuthorPage";
 import { BlogPage } from "../pages/BlogPage";
 import { CardPage } from "../pages/CardPage";
+import { CardEditorPage } from "../pages/CardEditorPage";
 import { EditorPage } from "../pages/EditorPage";
 import { HomePage } from "../pages/HomePage";
 import { MissingPage } from "../pages/MissingPage";
@@ -21,6 +22,7 @@ export const routes = {
   admin: AdminPage,
   editor: EditorPage,
   authorEditor: AuthorEditorPage,
+  cardEditor: CardEditorPage,
   siteConfigEditor: SiteConfigEditorPage,
   tourEditor: TourEditorPage,
   missing: MissingPage,
@@ -60,11 +62,12 @@ export function RouterView({ page, routeProps }) {
         onDeletePost={routeProps.onDeletePost}
         onEditAuthor={() => routeProps.setPage("authorEditor")}
         onEditSite={() => routeProps.setPage("siteConfigEditor")}
-        onEditTour={() => routeProps.setPage("tourEditor")}
+        onEditCard={routeProps.onEditCard}
       />
     ),
     editor: <EditorPage draft={routeProps.editorDraft} setDraft={routeProps.setEditorDraft} onSavePost={routeProps.onSavePost} setPage={routeProps.setPage} />,
     authorEditor: <AuthorEditorPage author={routeProps.author} onSave={routeProps.onSaveAuthor} setPage={routeProps.setPage} />,
+    cardEditor: <CardEditorPage siteConfig={routeProps.siteConfig} author={routeProps.author} onSave={routeProps.onSaveLandingConfig} setPage={routeProps.setPage} />,
     siteConfigEditor: <SiteConfigEditorPage siteConfig={routeProps.siteConfig} onSave={routeProps.onSaveSiteConfig} setPage={routeProps.setPage} />,
     tourEditor: <TourEditorPage tourConfig={routeProps.tourConfig} tags={routeProps.tags} posts={routeProps.posts} onSave={routeProps.onSaveTourPage} setPage={routeProps.setPage} />,
     missing: <MissingPage setPage={routeProps.setPage} />,

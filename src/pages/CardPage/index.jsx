@@ -38,6 +38,9 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
   const intro = siteConfig?.heroTitle || "在外城边缘，记录技术、阅读与日常。";
   const summary = author?.bio || "把前端工程、个人项目和阅读记录，沉淀成一个可长期维护的小站。";
   const email = author?.contact || "hello@outercity.dev";
+  const emailHref = email.startsWith("mailto:") ? email : `mailto:${email}`;
+  const twitter = author?.twitter || "https://x.com";
+  const musicPlaceholder = siteConfig?.musicPlaceholder || "音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。";
   const publishedCount = Math.max((adminSummary?.posts || posts?.length || 0) - (adminSummary?.drafts || 0), 0);
   const heroPost = posts?.[0] || {};
   const showcaseCards = [
@@ -65,8 +68,8 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
   ];
   const socialLinks = [
     { id: "github", label: "GitHub", href: author?.github || "https://github.com", external: true },
-    { id: "twitter", label: "Twitter", href: "https://x.com", external: true },
-    { id: "email", label: "Email", href: `mailto:${email}`, external: false },
+    { id: "twitter", label: "Twitter", href: twitter, external: true },
+    { id: "email", label: "Email", href: emailHref, external: false },
   ];
   const backgroundStyle = {
     "--card-page-start": siteConfig?.landingGradientStart || "#193554",
@@ -168,7 +171,7 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
               <img src={fallbackImages.article} alt="播放封面占位" />
               <div>
                 <strong>Night Shift / Placeholder</strong>
-                <p>音乐播放器区域先保留 UI，可在后端接入歌单或外链播放器。</p>
+                <p>{musicPlaceholder}</p>
               </div>
             </div>
           </section>

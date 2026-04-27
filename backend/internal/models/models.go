@@ -53,6 +53,7 @@ type AuthorProfile struct {
 	Bio          string       `gorm:"size:512;not null" json:"bio"`
 	Avatar       string       `gorm:"size:1024" json:"avatar"`
 	Github       string       `gorm:"size:160" json:"github"`
+	Twitter      string       `gorm:"size:160" json:"twitter"`
 	Contact      string       `gorm:"size:160" json:"contact"`
 	NoteSubtitle string       `gorm:"size:160" json:"noteSubtitle"`
 	Notes        []AuthorNote `gorm:"serializer:json" json:"notes"`
@@ -68,11 +69,15 @@ type AdminSummary struct {
 }
 
 type SiteConfig struct {
-	ID           uint      `gorm:"primaryKey" json:"id"`
-	HeroTitle    string    `gorm:"size:200" json:"heroTitle"`
-	HeroSubtitle string    `gorm:"size:200" json:"heroSubtitle"`
-	HeroDesc     string    `gorm:"size:512" json:"heroDesc"`
-	HeroImage    string    `gorm:"size:1024" json:"heroImage"`
-	AdminSecret  string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
-	UpdatedAt    time.Time `json:"updatedAt"`
+	ID                   uint      `gorm:"primaryKey" json:"id"`
+	HeroTitle            string    `gorm:"size:200" json:"heroTitle"`
+	HeroSubtitle         string    `gorm:"size:200" json:"heroSubtitle"`
+	HeroDesc             string    `gorm:"size:512" json:"heroDesc"`
+	HeroImage            string    `gorm:"size:1024" json:"heroImage"`
+	LandingGradientStart string    `gorm:"size:32" json:"landingGradientStart"`
+	LandingGradientEnd   string    `gorm:"size:32" json:"landingGradientEnd"`
+	LandingGlow          string    `gorm:"size:64" json:"landingGlow"`
+	MusicPlaceholder     string    `gorm:"size:512" json:"musicPlaceholder"`
+	AdminSecret          string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
+	UpdatedAt            time.Time `json:"updatedAt"`
 }

@@ -24,6 +24,7 @@ func (h *Handler) UpdateAuthor(ctx context.Context, c *app.RequestContext) {
 	existing.Bio = req.Bio
 	existing.Avatar = req.Avatar
 	existing.Github = req.Github
+	existing.Twitter = req.Twitter
 	existing.Contact = req.Contact
 	existing.NoteSubtitle = req.NoteSubtitle
 	existing.Notes = req.Notes
