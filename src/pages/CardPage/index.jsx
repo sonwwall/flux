@@ -622,6 +622,8 @@ function StationStatsCard({ publishedCount, tagCount, totalReadTime, monthPosts 
 
 function GitHubInfoCard({ username, profile, repos, status, totalStars, profileUrl }) {
   const safeProfileUrl = profile?.html_url || profileUrl;
+  const githubTitle = profile?.name || username || "GitHub 信息";
+  const githubSubtitle = profile?.bio || (username ? `@${username}` : "未配置 GitHub 账号");
 
   return (
     <div className="card-page__mini-body card-page__mini-body--github">
@@ -630,7 +632,8 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, profileU
           {profile?.avatar_url ? <img className="card-page__github-avatar" src={profile.avatar_url} alt={`${username} avatar`} /> : null}
           <div className="card-page__mini-copy">
             <p>GitHub</p>
-            <h3>{username ? `GitHub · ${username}` : "GitHub 信息"}</h3>
+            <h3>{githubTitle}</h3>
+            <span className="card-page__github-subtitle">{githubSubtitle}</span>
           </div>
         </div>
         {status === "loading" ? <span className="card-page__github-status">加载中...</span> : null}
@@ -643,16 +646,12 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, profileU
         <>
           <div className="card-page__github-stats" role="list" aria-label={`${username} GitHub 统计`}>
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <span>📦 仓库</span>
+              <span>📦 仓库数</span>
               <strong>{profile?.public_repos ?? 0}</strong>
             </button>
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <span>⭐ 星标</span>
+              <span>⭐ 星标数</span>
               <strong>{totalStars}</strong>
-            </button>
-            <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=followers`)}>
-              <span>👥 关注者</span>
-              <strong>{profile?.followers ?? 0}</strong>
             </button>
           </div>
 
@@ -661,19 +660,20 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, profileU
               repos.map((repo) => (
                 <button key={repo.id || repo.full_name} type="button" className="card-page__github-repo" onClick={() => openExternal(repo.html_url)}>
                   <div className="card-page__github-repo-top">
-                    <div className="card-page__github-repo-main">
-                      <span className="card-page__github-repo-name">{repo.name}</span>
-                      <span className="card-page__github-language">
-                        <span
-                          className="card-page__github-language-dot"
-                          style={{ "--github-language-color": getLanguageColor(repo.language) }}
-                        />
-                        {repo.language || "Unknown"}
-                      </span>
-                    </div>
-                    <span className="card-page__github-stars">★ {repo.stargazers_count || 0}</span>
+                    <span className="card-page__github-repo-name">{repo.name}</span>
+                    <span className="card-page__github-visibility">{repo.visibility || (repo.private ? "private" : "public")}</span>
                   </div>
                   <span className="card-page__github-description">{repo.description || "暂无项目描述"}</span>
+                  <div className="card-page__github-repo-meta">
+                    <span className="card-page__github-language">
+                      <span
+                        className="card-page__github-language-dot"
+                        style={{ "--github-language-color": getLanguageColor(repo.language) }}
+                      />
+                      {repo.language || "Unknown"}
+                    </span>
+                    <span className="card-page__github-stars">⭐ {repo.stargazers_count || 0}</span>
+                  </div>
                 </button>
               ))
             ) : (
