@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fallbackSiteConfig } from "../../data/fallback";
-import { listAudio, renameAudio, uploadAudio } from "../../features/post/api";
+import { deleteAudio, listAudio, renameAudio, uploadAudio } from "../../features/post/api";
 import { Icon } from "../../shared/ui/Icon";
 
 const defaultLandingColors = {
@@ -24,6 +24,11 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     audioSrc: siteConfig?.audioSrc || "",
     cardTags: siteConfig?.cardTags || defaultCardTags,
     codeBlockContent: siteConfig?.codeBlockContent || defaultCodeBlockContent,
+    splashEyebrow: siteConfig?.splashEyebrow || fallbackSiteConfig.splashEyebrow,
+    splashTitle: siteConfig?.splashTitle || fallbackSiteConfig.splashTitle,
+    splashSubtitle: siteConfig?.splashSubtitle || fallbackSiteConfig.splashSubtitle,
+    splashDesc: siteConfig?.splashDesc || fallbackSiteConfig.splashDesc,
+    splashEnter: siteConfig?.splashEnter || fallbackSiteConfig.splashEnter,
   }));
   const [draftAuthor, setDraftAuthor] = useState(() => ({
     ...(author || {}),
@@ -85,7 +90,7 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
       return;
     }
 
-    setMessage("导览页配置已保存。");
+    setMessage("导览页与加载页配置已保存。");
   }
 
   const previewStyle = {
@@ -177,6 +182,30 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
                 value={draftSiteConfig.codeBlockContent || ""}
                 onChange={(event) => updateSite("codeBlockContent", event.target.value)}
               />
+            </label>
+          </section>
+
+          <section className="card-editor-group">
+            <h2>加载页设置</h2>
+            <label>
+              标题
+              <input value={draftSiteConfig.splashTitle || ""} onChange={(event) => updateSite("splashTitle", event.target.value)} />
+            </label>
+            <label>
+              副标题
+              <input value={draftSiteConfig.splashSubtitle || ""} onChange={(event) => updateSite("splashSubtitle", event.target.value)} />
+            </label>
+            <label>
+              说明文字
+              <textarea rows="4" value={draftSiteConfig.splashDesc || ""} onChange={(event) => updateSite("splashDesc", event.target.value)} />
+            </label>
+            <label>
+              按钮文字
+              <input value={draftSiteConfig.splashEnter || ""} onChange={(event) => updateSite("splashEnter", event.target.value)} />
+            </label>
+            <label>
+              装饰文字
+              <input value={draftSiteConfig.splashEyebrow || ""} onChange={(event) => updateSite("splashEyebrow", event.target.value)} />
             </label>
           </section>
 
@@ -368,6 +397,7 @@ function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
   const [editingName, setEditingName] = useState("");
   const [draftName, setDraftName] = useState("");
   const [renamingName, setRenamingName] = useState("");
+  const [deletingName, setDeletingName] = useState("");
   const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
@@ -434,6 +464,32 @@ function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
     onMessage("歌曲名称已更新。");
   }
 
+  async function handleDelete(file) {
+    if (!window.confirm(`确定删除歌曲 ${file.name}？`)) {
+      return;
+    }
+
+    setDeletingName(file.name);
+    const result = await deleteAudio(file.name);
+    setDeletingName("");
+
+    if (result?.error) {
+      onMessage(`删除歌曲失败：${result.error}`);
+      return;
+    }
+
+    if (currentPath === file.path) {
+      onSelectAudio("");
+    }
+
+    if (editingName === file.name) {
+      cancelRename();
+    }
+
+    setReloadToken((current) => current + 1);
+    onMessage(`歌曲 ${file.name} 已删除。`);
+  }
+
   return (
     <div className="music-manager">
       <div className="music-manager__head">
@@ -453,6 +509,7 @@ function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
             const isActive = currentPath === file.path;
             const isEditing = editingName === file.name;
             const isRenaming = renamingName === file.name;
+            const isDeleting = deletingName === file.name;
 
             return (
               <div key={file.name} className={`music-manager__item ${isActive ? "is-active" : ""}`} role="listitem">
@@ -471,17 +528,17 @@ function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
                             cancelRename();
                           }
                         }}
-                        disabled={isRenaming}
+                        disabled={isRenaming || isDeleting}
                       />
-                      <button type="button" onClick={() => submitRename(file.name)} disabled={isRenaming}>
+                      <button type="button" onClick={() => submitRename(file.name)} disabled={isRenaming || isDeleting}>
                         确认
                       </button>
-                      <button type="button" onClick={cancelRename} disabled={isRenaming}>
+                      <button type="button" onClick={cancelRename} disabled={isRenaming || isDeleting}>
                         取消
                       </button>
                     </div>
                   ) : (
-                    <button type="button" className="music-manager__name" onClick={() => startRename(file.name)}>
+                    <button type="button" className="music-manager__name" onClick={() => startRename(file.name)} disabled={isDeleting}>
                       {file.name}
                     </button>
                   )}
@@ -493,14 +550,17 @@ function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
                 </div>
 
                 <div className="music-manager__actions">
-                  <button type="button" onClick={() => onSelectAudio(file.path)}>
+                  <button type="button" onClick={() => onSelectAudio(file.path)} disabled={isDeleting}>
                     🎵 切换
                   </button>
                   {!isEditing ? (
-                    <button type="button" onClick={() => startRename(file.name)}>
+                    <button type="button" onClick={() => startRename(file.name)} disabled={isDeleting}>
                       ✏️ 重命名
                     </button>
                   ) : null}
+                  <button type="button" onClick={() => handleDelete(file)} disabled={isRenaming || isDeleting}>
+                    🗑️ 删除
+                  </button>
                 </div>
               </div>
             );

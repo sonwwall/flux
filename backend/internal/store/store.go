@@ -174,5 +174,10 @@ var seedSiteConfig = models.SiteConfig{
 	AudioSrc:             "",
 	CardTags:             "前端,写作,独立博客",
 	CodeBlockContent:     "const outerCity = {\n  route: \"#home\",\n  focus: [\"前端\", \"长期写作\", \"设计系统\"],\n  published: 36,\n  tags: 18,\n  contact: \"hello@outercity.dev\",\n  stack: [\"React\", \"Vite\", \"Go\"],\n};",
+	SplashEyebrow:        "Flux Landing Sequence",
+	SplashTitle:          "外城小站",
+	SplashSubtitle:       "FLUX",
+	SplashDesc:           "在城市边缘启动一座长期写作与工程沉淀的小站。",
+	SplashEnter:          "点击进入 / Tap to enter",
 	AdminSecret:          "123456",
 }

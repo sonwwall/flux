@@ -1,4 +1,4 @@
-export function SplashPage({ setPage }) {
+export function SplashPage({ setPage, siteConfig }) {
   function enterCardPage(event) {
     event?.stopPropagation?.();
     setPage("card");
@@ -23,16 +23,16 @@ export function SplashPage({ setPage }) {
       </div>
 
       <div className="splash-page__content">
-        <p className="splash-page__eyebrow">Flux Landing Sequence</p>
+        <p className="splash-page__eyebrow">{siteConfig?.splashEyebrow || "Flux Landing Sequence"}</p>
         <div className="splash-page__logo">
-          <span>外城小站</span>
-          <strong>FLUX</strong>
+          <span>{siteConfig?.splashTitle || "外城小站"}</span>
+          <strong>{siteConfig?.splashSubtitle || "FLUX"}</strong>
         </div>
-        <p className="splash-page__copy">在城市边缘启动一座长期写作与工程沉淀的小站。</p>
+        <p className="splash-page__copy">{siteConfig?.splashDesc || "在城市边缘启动一座长期写作与工程沉淀的小站。"}</p>
       </div>
 
       <button type="button" className="splash-page__enter" onClick={enterCardPage}>
-        点击进入 / Tap to enter
+        {siteConfig?.splashEnter || "点击进入 / Tap to enter"}
       </button>
     </section>
   );

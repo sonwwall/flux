@@ -376,9 +376,6 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
           <section className="card-page__panel card-page__music">
             <div className="card-page__panel-head">
               <span>Music Deck</span>
-              <button type="button" aria-label={isPlaying ? "暂停音乐" : "播放音乐"} onClick={togglePlayback} disabled={!audioSrc}>
-                <Icon>{isPlaying ? "pause" : "play_arrow"}</Icon>
-              </button>
             </div>
 
             <audio ref={audioRef} src={audioSrc} preload="metadata" />
@@ -391,6 +388,15 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
                     <strong>{trackTitle}</strong>
                     <p>{isPlaying ? "Now playing" : "Ready to play"}</p>
                   </div>
+                  <button
+                    type="button"
+                    className="card-page__play-btn"
+                    aria-label={isPlaying ? "暂停" : "播放"}
+                    onClick={togglePlayback}
+                    disabled={!audioSrc}
+                  >
+                    <Icon>{isPlaying ? "pause" : "play_arrow"}</Icon>
+                  </button>
                 </div>
 
                 <div className="card-page__audio-controls">

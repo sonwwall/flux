@@ -141,3 +141,10 @@ export function renameAudio(oldName, newName) {
     headers: authHeader(),
   });
 }
+
+export function deleteAudio(filename) {
+  return apiJSON(`/api/admin/uploads/audio/${encodeURIComponent(filename)}`, {
+    method: "DELETE",
+    headers: authHeader(),
+  });
+}

@@ -81,6 +81,11 @@ type SiteConfig struct {
 	AudioSrc             string    `gorm:"size:1024" json:"audioSrc"`
 	CardTags             string    `gorm:"size:256" json:"cardTags"`
 	CodeBlockContent     string    `gorm:"type:text" json:"codeBlockContent"`
+	SplashEyebrow        string    `gorm:"size:160" json:"splashEyebrow"`
+	SplashTitle          string    `gorm:"size:160" json:"splashTitle"`
+	SplashSubtitle       string    `gorm:"size:160" json:"splashSubtitle"`
+	SplashDesc           string    `gorm:"size:512" json:"splashDesc"`
+	SplashEnter          string    `gorm:"size:160" json:"splashEnter"`
 	AdminSecret          string    `gorm:"size:128;not null;default:'flux-admin'" json:"-"`
 	UpdatedAt            time.Time `json:"updatedAt"`
 }

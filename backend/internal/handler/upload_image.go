@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -233,6 +234,41 @@ func (h *Handler) RenameAudio(ctx context.Context, c *app.RequestContext) {
 		"name": newName,
 		"path": path,
 		"url":  uploadOrigin(c) + path,
+	})
+}
+
+func (h *Handler) DeleteAudio(ctx context.Context, c *app.RequestContext) {
+	rawFilename := c.Param("filename")
+	filename, err := url.PathUnescape(rawFilename)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, map[string]string{"error": "invalid audio filename"})
+		return
+	}
+
+	filename, err = normalizeAudioFilename(filename)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+
+	path := filepath.Join(media.AudioDir(), filename)
+	if _, err := os.Stat(path); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			c.JSON(consts.StatusNotFound, map[string]string{"error": "audio not found"})
+			return
+		}
+		c.JSON(consts.StatusInternalServerError, map[string]string{"error": "read audio failed"})
+		return
+	}
+
+	if err := os.Remove(path); err != nil {
+		c.JSON(consts.StatusInternalServerError, map[string]string{"error": "delete audio failed"})
+		return
+	}
+
+	c.JSON(consts.StatusOK, map[string]any{
+		"success":  true,
+		"filename": filename,
 	})
 }
 

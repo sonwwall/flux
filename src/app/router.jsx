@@ -37,7 +37,7 @@ export function RouterView({ page, routeProps }) {
   };
 
   const routeElements = {
-    splash: <SplashPage setPage={routeProps.setPage} />,
+    splash: <SplashPage setPage={routeProps.setPage} siteConfig={routeProps.siteConfig} />,
     card: (
       <CardPage
         author={routeProps.author}

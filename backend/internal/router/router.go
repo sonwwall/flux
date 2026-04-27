@@ -56,6 +56,7 @@ func New(db *gorm.DB, cfg config.Config) *server.Hertz {
 	authed.POST("/admin/uploads/audio", hdl.UploadAudio)
 	authed.GET("/admin/uploads/audio", hdl.ListAudio)
 	authed.PUT("/admin/uploads/audio", hdl.RenameAudio)
+	authed.DELETE("/admin/uploads/audio/:filename", hdl.DeleteAudio)
 
 	return h
 }

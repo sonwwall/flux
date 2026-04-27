@@ -99,6 +99,11 @@ export const fallbackSiteConfig = {
   cardTags: "前端,写作,独立博客",
   codeBlockContent:
     'const outerCity = {\n  route: "#home",\n  focus: ["前端", "长期写作", "设计系统"],\n  published: 36,\n  tags: 18,\n  contact: "hello@outercity.dev",\n  stack: ["React", "Vite", "Go"],\n};',
+  splashEyebrow: "Flux Landing Sequence",
+  splashTitle: "外城小站",
+  splashSubtitle: "FLUX",
+  splashDesc: "在城市边缘启动一座长期写作与工程沉淀的小站。",
+  splashEnter: "点击进入 / Tap to enter",
 };
 
 export const fallbackAdminSummary = {
