@@ -3405,25 +3405,12 @@ p {
 }
 
 .card-page__github-activity-chart {
-  align-items: end;
-  height: 36px;
+  height: 38px;
+  position: relative;
 }
 
-.card-page__github-activity-column {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  height: 100%;
-  padding: 0 1px;
-}
-
-.card-page__github-activity-bar {
-  width: 100%;
-  height: var(--github-activity-height);
-  min-height: 6px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, rgba(123, 248, 191, 0.95), rgba(113, 187, 255, 0.82));
-  box-shadow: 0 8px 18px rgba(90, 174, 255, 0.22);
+.card-page__github-activity-chart svg {
+  display: block;
 }
 
 .card-page__github-months small {

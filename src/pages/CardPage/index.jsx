@@ -662,9 +662,6 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, activity
       ) : (
         <>
           <button type="button" className="card-page__github-profile" onClick={() => openExternal(safeProfileUrl)}>
-            {profile?.avatar_url ? (
-              <img className="card-page__github-avatar" src={profile.avatar_url} alt={username} />
-            ) : null}
             <div className="card-page__github-info">
               <span className="card-page__github-name">{displayName}</span>
               <span className="card-page__github-handle">{displayHandle}</span>
@@ -721,16 +718,27 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, activity
               <em>{safeActivityDelta >= 0 ? "+" : ""}{safeActivityDelta}%</em>
             </span>
             <span className="card-page__github-activity-chart" aria-hidden="true">
-              {activityValues.map((value, index) => (
-                <span key={`${monthLabels[index]}-${index}`} className="card-page__github-activity-column">
-                  <span
-                    className="card-page__github-activity-bar"
-                    style={{
-                      "--github-activity-height": `${value > 0 ? Math.max(8, Math.round((value / activityMax) * 34)) : 6}px`,
-                    }}
-                  />
-                </span>
-              ))}
+              <svg width="100%" height="38" viewBox="0 0 120 38" preserveAspectRatio="none">
+                <polyline
+                  fill="none"
+                  stroke="var(--primary)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  points={activityValues.map((value, index) => {
+                    const x = index * 24;
+                    const y = 36 - (value > 0 ? Math.max(4, (value / activityMax) * 30) : 2);
+                    return `${x},${y}`;
+                  }).join(" ")}
+                />
+                {activityValues.map((value, index) => {
+                  const x = index * 24;
+                  const y = 36 - (value > 0 ? Math.max(4, (value / activityMax) * 30) : 2);
+                  return (
+                    <circle key={index} cx={x} cy={y} r="2.5" fill="var(--primary)" />
+                  );
+                })}
+              </svg>
             </span>
             <span className="card-page__github-months">
               {monthLabels.map((label, index) => <small key={`${label}-${index}`}>{label}</small>)}
