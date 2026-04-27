@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fallbackSiteConfig } from "../../data/fallback";
-import { uploadAudio } from "../../features/post/api";
+import { listAudio, renameAudio, uploadAudio } from "../../features/post/api";
 import { Icon } from "../../shared/ui/Icon";
 
 const defaultLandingColors = {
@@ -36,6 +36,7 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
   }));
   const [message, setMessage] = useState("");
   const [uploadingAudio, setUploadingAudio] = useState(false);
+  const [audioRefreshKey, setAudioRefreshKey] = useState(0);
 
   function updateSite(field, value) {
     setDraftSiteConfig((current) => ({ ...current, [field]: value }));
@@ -61,6 +62,7 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
     }
 
     updateSite("audioSrc", result.path || result.url || "");
+    setAudioRefreshKey((current) => current + 1);
     setMessage("音频上传成功，保存后会同步到落地页。");
   }
 
@@ -196,10 +198,15 @@ export function CardEditorPage({ siteConfig, author, onSave, setPage }) {
 
           <section className="card-editor-group">
             <h2>音乐管理</h2>
-            <label>
-              当前歌曲 URL / 路径
-              <input value={draftSiteConfig.audioSrc || ""} onChange={(event) => updateSite("audioSrc", event.target.value)} placeholder="/uploads/audio/example.mp3" />
-            </label>
+            <MusicManager
+              audioSrc={draftSiteConfig.audioSrc || ""}
+              onMessage={setMessage}
+              onSelectAudio={(path) => {
+                updateSite("audioSrc", path);
+                setMessage("已切换当前歌曲，保存后会同步到落地页。");
+              }}
+              refreshKey={audioRefreshKey}
+            />
             <label className="card-editor-upload-field">
               上传歌曲
               <input type="file" accept=".mp3,.ogg,.wav,audio/mpeg,audio/ogg,audio/wav" onChange={handleAudioUpload} disabled={uploadingAudio} />
@@ -353,4 +360,186 @@ function normalizeEmail(value) {
   return String(value || "")
     .trim()
     .replace(/^mailto:/i, "");
+}
+
+function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editingName, setEditingName] = useState("");
+  const [draftName, setDraftName] = useState("");
+  const [renamingName, setRenamingName] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFiles() {
+      setLoading(true);
+      const result = await listAudio();
+      if (cancelled) return;
+
+      if (result?.error) {
+        setFiles([]);
+        onMessage(`加载音乐列表失败：${result.error}`);
+        setLoading(false);
+        return;
+      }
+
+      setFiles(Array.isArray(result) ? result : []);
+      setLoading(false);
+    }
+
+    loadFiles();
+    return () => {
+      cancelled = true;
+    };
+  }, [onMessage, refreshKey, reloadToken]);
+
+  const currentPath = normalizeAudioPath(audioSrc);
+
+  function startRename(name) {
+    setEditingName(name);
+    setDraftName(name);
+  }
+
+  function cancelRename() {
+    setEditingName("");
+    setDraftName("");
+    setRenamingName("");
+  }
+
+  async function submitRename(oldName) {
+    const nextName = draftName.trim();
+    if (!nextName) {
+      onMessage("文件名不能为空。");
+      return;
+    }
+
+    setRenamingName(oldName);
+    const result = await renameAudio(oldName, nextName);
+    setRenamingName("");
+
+    if (result?.error) {
+      onMessage(`重命名失败：${result.error}`);
+      return;
+    }
+
+    const nextPath = result.path || `/uploads/audio/${result.name || nextName}`;
+    if (normalizeAudioPath(audioSrc) === `/uploads/audio/${oldName}`) {
+      onSelectAudio(nextPath);
+    }
+    cancelRename();
+    setReloadToken((current) => current + 1);
+    onMessage("歌曲名称已更新。");
+  }
+
+  return (
+    <div className="music-manager">
+      <div className="music-manager__head">
+        <span>已上传歌曲</span>
+        <strong>{files.length}</strong>
+      </div>
+
+      {loading ? <p className="music-manager__hint">正在加载音乐列表...</p> : null}
+
+      {!loading && files.length === 0 ? (
+        <p className="music-manager__hint">还没有上传歌曲。上传成功后会自动出现在这里，并可直接切换当前播放文件。</p>
+      ) : null}
+
+      {files.length > 0 ? (
+        <div className="music-manager__list" role="list">
+          {files.map((file) => {
+            const isActive = currentPath === file.path;
+            const isEditing = editingName === file.name;
+            const isRenaming = renamingName === file.name;
+
+            return (
+              <div key={file.name} className={`music-manager__item ${isActive ? "is-active" : ""}`} role="listitem">
+                <div className="music-manager__info">
+                  {isEditing ? (
+                    <div className="music-manager__rename">
+                      <input
+                        value={draftName}
+                        onChange={(event) => setDraftName(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            submitRename(file.name);
+                          }
+                          if (event.key === "Escape") {
+                            cancelRename();
+                          }
+                        }}
+                        disabled={isRenaming}
+                      />
+                      <button type="button" onClick={() => submitRename(file.name)} disabled={isRenaming}>
+                        确认
+                      </button>
+                      <button type="button" onClick={cancelRename} disabled={isRenaming}>
+                        取消
+                      </button>
+                    </div>
+                  ) : (
+                    <button type="button" className="music-manager__name" onClick={() => startRename(file.name)}>
+                      {file.name}
+                    </button>
+                  )}
+
+                  <p className="music-manager__meta">
+                    {formatAudioSize(file.size)} · {formatAudioModified(file.modified)}
+                    {isActive ? " · 当前歌曲" : ""}
+                  </p>
+                </div>
+
+                <div className="music-manager__actions">
+                  <button type="button" onClick={() => onSelectAudio(file.path)}>
+                    🎵 切换
+                  </button>
+                  {!isEditing ? (
+                    <button type="button" onClick={() => startRename(file.name)}>
+                      ✏️ 重命名
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function formatAudioSize(value) {
+  if (!value) return "0 KB";
+  if (value >= 1024 * 1024) {
+    return `${(value / (1024 * 1024)).toFixed(2)} MB`;
+  }
+  return `${Math.max(value / 1024, 0.1).toFixed(1)} KB`;
+}
+
+function formatAudioModified(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "未知时间";
+  return date.toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function normalizeAudioPath(value) {
+  const input = String(value || "").trim();
+  if (!input) return "";
+  if (input.startsWith("/uploads/")) return input;
+  if (/^https?:\/\//.test(input)) {
+    try {
+      return new URL(input).pathname;
+    } catch {
+      return input;
+    }
+  }
+  return input;
 }

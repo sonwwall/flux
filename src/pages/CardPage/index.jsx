@@ -234,14 +234,26 @@ export function CardPage({ author, siteConfig, adminSummary, posts, setPage }) {
 
   async function handleCopyEmail() {
     if (!email) return;
-    try {
-      await navigator.clipboard.writeText(email);
-      setToastVisible(true);
-      window.clearTimeout(toastTimeoutRef.current);
-      toastTimeoutRef.current = window.setTimeout(() => setToastVisible(false), 2500);
-    } catch {
-      setToastVisible(false);
+    let copied = false;
+
+    if (navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(email);
+        copied = true;
+      } catch {
+        copied = copyWithExecCommand(email);
+      }
+    } else {
+      copied = copyWithExecCommand(email);
     }
+
+    if (copied) {
+      showCopyToast(setToastVisible, toastTimeoutRef);
+      return;
+    }
+
+    setToastVisible(false);
+    window.alert(`复制失败，请手动复制邮箱地址：${email}`);
   }
 
   async function togglePlayback() {
@@ -514,4 +526,34 @@ function normalizeEmail(value) {
   return String(value || "")
     .trim()
     .replace(/^mailto:/i, "");
+}
+
+function copyWithExecCommand(value) {
+  let textarea = null;
+  try {
+    textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.setAttribute("readonly", "true");
+    textarea.style.position = "fixed";
+    textarea.style.inset = "0 auto auto 0";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    if (textarea?.parentNode) {
+      textarea.parentNode.removeChild(textarea);
+    }
+  }
+}
+
+function showCopyToast(setToastVisible, toastTimeoutRef) {
+  setToastVisible(true);
+  window.clearTimeout(toastTimeoutRef.current);
+  toastTimeoutRef.current = window.setTimeout(() => setToastVisible(false), 2500);
 }

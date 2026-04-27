@@ -127,3 +127,17 @@ export async function uploadAudio(file) {
     return { error: "network error" };
   }
 }
+
+export function listAudio() {
+  return apiJSON("/api/admin/uploads/audio", {
+    headers: authHeader(),
+  });
+}
+
+export function renameAudio(oldName, newName) {
+  return apiJSON("/api/admin/uploads/audio", {
+    method: "PUT",
+    body: { oldName, newName },
+    headers: authHeader(),
+  });
+}
