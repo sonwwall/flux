@@ -425,7 +425,8 @@ function MusicManager({ audioSrc, onSelectAudio, onMessage, refreshKey }) {
     }
 
     const nextPath = result.path || `/uploads/audio/${result.name || nextName}`;
-    if (normalizeAudioPath(audioSrc) === `/uploads/audio/${oldName}`) {
+    const currentFilename = normalizeAudioPath(audioSrc).split('/').pop();
+    if (currentFilename === oldName) {
       onSelectAudio(nextPath);
     }
     cancelRename();
