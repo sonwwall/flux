@@ -622,35 +622,40 @@ function StationStatsCard({ publishedCount, tagCount, totalReadTime, monthPosts 
 
 function GitHubInfoCard({ username, profile, repos, status, totalStars, profileUrl }) {
   const safeProfileUrl = profile?.html_url || profileUrl;
-  const githubTitle = profile?.name || username || "GitHub 信息";
-  const githubSubtitle = profile?.bio || (username ? `@${username}` : "未配置 GitHub 账号");
+  const displayName = profile?.name || username || "GitHub";
+  const displayHandle = username ? `@${username}` : "";
 
   return (
     <div className="card-page__mini-body card-page__mini-body--github">
-      <div className="card-page__github-head">
-        <div className="card-page__github-title">
-          {profile?.avatar_url ? <img className="card-page__github-avatar" src={profile.avatar_url} alt={`${username} avatar`} /> : null}
-          <div className="card-page__mini-copy">
-            <p>GitHub</p>
-            <h3>{githubTitle}</h3>
-            <span className="card-page__github-subtitle">{githubSubtitle}</span>
-          </div>
-        </div>
-        {status === "loading" ? <span className="card-page__github-status">加载中...</span> : null}
-        {status === "error" ? <span className="card-page__github-status">加载失败</span> : null}
+      <div className="card-page__mini-copy">
+        <p>GitHub</p>
       </div>
 
-      {!username ? <div className="card-page__github-empty">未配置 GitHub 账号</div> : null}
-
-      {username && status === "success" ? (
+      {!username ? (
+        <div className="card-page__github-empty">未配置 GitHub 账号</div>
+      ) : status === "loading" ? (
+        <div className="card-page__github-status">加载中...</div>
+      ) : status === "error" ? (
+        <div className="card-page__github-status">加载失败</div>
+      ) : (
         <>
-          <div className="card-page__github-stats" role="list" aria-label={`${username} GitHub 统计`}>
+          <div className="card-page__github-profile">
+            {profile?.avatar_url ? (
+              <img className="card-page__github-avatar" src={profile.avatar_url} alt={username} />
+            ) : null}
+            <div className="card-page__github-info">
+              <span className="card-page__github-name">{displayName}</span>
+              <span className="card-page__github-handle">{displayHandle}</span>
+            </div>
+          </div>
+
+          <div className="card-page__github-stats">
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <span>📦 仓库数</span>
+              <span>仓库</span>
               <strong>{profile?.public_repos ?? 0}</strong>
             </button>
             <button type="button" className="card-page__github-stat" onClick={() => openExternal(`${safeProfileUrl}?tab=repositories`)}>
-              <span>⭐ 星标数</span>
+              <span>星标</span>
               <strong>{totalStars}</strong>
             </button>
           </div>
@@ -658,30 +663,26 @@ function GitHubInfoCard({ username, profile, repos, status, totalStars, profileU
           <div className="card-page__github-repos">
             {repos.length ? (
               repos.map((repo) => (
-                <button key={repo.id || repo.full_name} type="button" className="card-page__github-repo" onClick={() => openExternal(repo.html_url)}>
-                  <div className="card-page__github-repo-top">
+                <button key={repo.id || repo.name} type="button" className="card-page__github-repo" onClick={() => openExternal(repo.html_url)}>
+                  <div className="card-page__github-repo-row">
                     <span className="card-page__github-repo-name">{repo.name}</span>
-                    <span className="card-page__github-visibility">{repo.visibility || (repo.private ? "private" : "public")}</span>
+                    <span className="card-page__github-repo-stars">★ {repo.stargazers_count || 0}</span>
                   </div>
-                  <span className="card-page__github-description">{repo.description || "暂无项目描述"}</span>
-                  <div className="card-page__github-repo-meta">
-                    <span className="card-page__github-language">
-                      <span
-                        className="card-page__github-language-dot"
-                        style={{ "--github-language-color": getLanguageColor(repo.language) }}
-                      />
+                  <div className="card-page__github-repo-row">
+                    <span className="card-page__github-repo-lang">
+                      <span className="card-page__github-lang-dot" style={{ background: getLanguageColor(repo.language) }} />
                       {repo.language || "Unknown"}
                     </span>
-                    <span className="card-page__github-stars">⭐ {repo.stargazers_count || 0}</span>
+                    {repo.fork && <span className="card-page__github-repo-badge">fork</span>}
                   </div>
                 </button>
               ))
             ) : (
-              <div className="card-page__github-empty">暂无最近更新的仓库</div>
+              <div className="card-page__github-empty">暂无公开仓库</div>
             )}
           </div>
         </>
-      ) : null}
+      )}
     </div>
   );
 }
